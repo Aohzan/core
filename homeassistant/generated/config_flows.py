@@ -111,6 +111,7 @@ FLOWS = [
     "ios",
     "ipma",
     "ipp",
+    "ipx800v4",
     "iqvia",
     "islamic_prayer_times",
     "isy994",
