@@ -69,10 +69,6 @@ async def async_setup_entry(hass, config_entry, async_add_entities) -> None:
 class AnalogInSensor(IpxDevice, Entity):
     """Representation of a IPX sensor through analog input."""
 
-    def __init__(self, device_config, controller: IpxController):
-        """Initialize the AnalogInSensor."""
-        super().__init__(device_config, controller)
-
     @property
     def device_class(self):
         """Return the device class."""
@@ -104,7 +100,7 @@ class XTHLSensor(IpxDevice, Entity):
         """Initialize the XTHLSensor."""
         super().__init__(device_config, controller, suffix_name)
         self._device_class = device_class
-        """Allow overriding of temperature unit if specified in the xthl conf"""
+        # Allow overriding of temperature unit if specified in the xthl conf
         if not (self._unit_of_measurement and device_class == DEVICE_CLASS_TEMPERATURE):
             self._unit_of_measurement = unit_of_measurement
         self._req_type = req_type

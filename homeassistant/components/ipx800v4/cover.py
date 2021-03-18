@@ -51,14 +51,16 @@ class X4VRCover(IpxDevice, CoverEntity):
         """Initialize the X4VRCover."""
         super().__init__(device_config, controller)
         self.control = X4VR(controller.ipx, self._ext_id, self._id)
-        self._supported_features |= (
-            SUPPORT_OPEN | SUPPORT_CLOSE | SUPPORT_STOP | SUPPORT_SET_POSITION
-        )
 
     @property
     def device_class(self):
         """Return the device class."""
         return self._device_class or DEVICE_CLASS_SHUTTER
+
+    @property
+    def supported_features(self):
+        """Flag supported features."""
+        return SUPPORT_OPEN | SUPPORT_CLOSE | SUPPORT_STOP | SUPPORT_SET_POSITION
 
     @property
     def is_closed(self) -> bool:

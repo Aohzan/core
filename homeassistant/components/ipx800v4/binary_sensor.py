@@ -3,7 +3,7 @@ import logging
 
 from homeassistant.components.binary_sensor import BinarySensorEntity
 
-from . import IpxController, IpxDevice
+from . import IpxDevice
 from .const import (
     CONF_COMPONENT,
     CONF_DEVICES,
@@ -40,10 +40,6 @@ async def async_setup_entry(hass, config_entry, async_add_entities) -> None:
 class VirtualOutBinarySensor(IpxDevice, BinarySensorEntity):
     """Representation of a IPX Virtual Out."""
 
-    def __init__(self, device_config, controller: IpxController):
-        """Initialize the VirtualOutBinarySensor."""
-        super().__init__(device_config, controller)
-
     @property
     def device_class(self):
         """Return the device class."""
@@ -57,10 +53,6 @@ class VirtualOutBinarySensor(IpxDevice, BinarySensorEntity):
 
 class DigitalInBinarySensor(IpxDevice, BinarySensorEntity):
     """Representation of a IPX Virtual In."""
-
-    def __init__(self, device_config, controller: IpxController):
-        """Initialize the DigitalInBinarySensor."""
-        super().__init__(device_config, controller)
 
     @property
     def device_class(self):

@@ -23,6 +23,7 @@ from .const import (
     CONF_DEVICES,
     CONF_TYPE,
     CONTROLLER,
+    DEFAULT_TRANSITION,
     DOMAIN,
     GLOBAL_PARALLEL_UPDATES,
     TYPE_RELAY,
@@ -105,7 +106,12 @@ class XDimmerLight(IpxDevice, LightEntity):
         self.control = XDimmer(controller.ipx, self._id)
 
         self._brightness = None
-        self._supported_features |= SUPPORT_BRIGHTNESS | SUPPORT_TRANSITION
+        self._transition = DEFAULT_TRANSITION
+
+    @property
+    def supported_features(self):
+        """Flag supported features."""
+        return SUPPORT_BRIGHTNESS | SUPPORT_TRANSITION
 
     @property
     def is_on(self) -> bool:
@@ -149,7 +155,12 @@ class XPWMLight(IpxDevice, LightEntity):
         self.control = XPWM(controller.ipx, self._id)
 
         self._brightness = None
-        self._supported_features |= SUPPORT_BRIGHTNESS | SUPPORT_TRANSITION
+        self._transition = DEFAULT_TRANSITION
+
+    @property
+    def supported_features(self):
+        """Flag supported features."""
+        return SUPPORT_BRIGHTNESS | SUPPORT_TRANSITION
 
     @property
     def is_on(self) -> bool:
@@ -196,9 +207,12 @@ class XPWMRGBLight(IpxDevice, LightEntity):
 
         self._brightness = None
         self._rgb_color = None
-        self._supported_features |= (
-            SUPPORT_BRIGHTNESS | SUPPORT_TRANSITION | SUPPORT_COLOR
-        )
+        self._transition = DEFAULT_TRANSITION
+
+    @property
+    def supported_features(self):
+        """Flag supported features."""
+        return SUPPORT_BRIGHTNESS | SUPPORT_TRANSITION | SUPPORT_COLOR
 
     @property
     def is_on(self) -> bool:
@@ -303,7 +317,12 @@ class XPWMRGBWLight(IpxDevice, LightEntity):
         self._brightness = None
         self._rgb_color = None
         self._white_value = None
-        self._supported_features |= (
+        self._transition = DEFAULT_TRANSITION
+
+    @property
+    def supported_features(self):
+        """Flag supported features."""
+        return (
             SUPPORT_BRIGHTNESS
             | SUPPORT_TRANSITION
             | SUPPORT_COLOR

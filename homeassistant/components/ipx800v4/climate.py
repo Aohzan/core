@@ -55,7 +55,10 @@ class X4FPClimate(IpxDevice, ClimateEntity):
         super().__init__(device_config, controller)
         self.control = X4FP(controller.ipx, self._ext_id, self._id)
 
-        self._supported_features |= SUPPORT_PRESET_MODE
+    @property
+    def supported_features(self):
+        """Flag supported features."""
+        return SUPPORT_PRESET_MODE
 
     @property
     def temperature_unit(self):
@@ -126,7 +129,10 @@ class RelayClimate(IpxDevice, ClimateEntity):
         self.control_minus = Relay(controller.ipx, self._ids[0])
         self.control_plus = Relay(controller.ipx, self._ids[1])
 
-        self._supported_features |= SUPPORT_PRESET_MODE
+    @property
+    def supported_features(self):
+        """Flag supported features."""
+        return SUPPORT_PRESET_MODE
 
     @property
     def temperature_unit(self):

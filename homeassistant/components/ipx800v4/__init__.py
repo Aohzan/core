@@ -5,6 +5,7 @@ import logging
 import re
 
 from aiohttp import web
+from pypx800 import IPX800
 import voluptuous as vol
 
 from homeassistant.components.http import HomeAssistantView
@@ -44,7 +45,6 @@ from .const import (
     CONTROLLER,
     DEFAULT_TRANSITION,
     DOMAIN,
-    IPX800,
     REQUEST_REFRESH_DELAY,
     TYPE_RELAY,
     TYPE_X4VR,
@@ -154,11 +154,10 @@ async def async_setup_entry(hass, config_entry):
             )
 
         return True
-    else:
-        _LOGGER.error(
-            "Can't connect to the IPX800 named %s, please check host, port and api_key.",
-            controller.name,
-        )
+    _LOGGER.error(
+        "Can't connect to the IPX800 named %s, please check host, port and api_key.",
+        controller.name,
+    )
     return False
 
 
@@ -220,86 +219,81 @@ class IpxController:
         """Read and process the device list."""
         _LOGGER.debug("Read and process devices configuration")
         for device_config in self._devices_config:
-            _LOGGER.debug(f"Read device name: {device_config.get(CONF_NAME)}")
-            try:
-                """Check if component is supported"""
-                if device_config[CONF_COMPONENT] not in CONF_COMPONENT_ALLOWED:
-                    _LOGGER.error(
-                        "Device %s skipped: %s %s not correct or supported.",
-                        device_config[CONF_NAME],
-                        CONF_COMPONENT,
-                        device_config[CONF_COMPONENT],
-                    )
-                    continue
+            _LOGGER.debug("Read device name: %s", device_config.get(CONF_NAME))
 
-                """Check if type is supported"""
-                if device_config[CONF_TYPE] not in CONF_TYPE_ALLOWED:
-                    _LOGGER.error(
-                        "Device %s skipped: %s %s not correct or supported.",
-                        device_config[CONF_NAME],
-                        CONF_TYPE,
-                        device_config[CONF_TYPE],
-                    )
-                    continue
-
-                """Check if X4VR have extension id set"""
-                if (
-                    device_config[CONF_TYPE] == TYPE_X4VR
-                    and CONF_EXT_ID not in device_config
-                ):
-                    _LOGGER.error(
-                        "Device %s skipped: %s must have %s set.",
-                        device_config[CONF_NAME],
-                        TYPE_X4VR,
-                        CONF_EXT_ID,
-                    )
-                    continue
-
-                """Check if RGB/RBW or FP/RELAY have ids set"""
-                if (
-                    device_config[CONF_TYPE] == TYPE_XPWM_RGB
-                    or device_config[CONF_TYPE] == TYPE_XPWM_RGBW
-                    or (
-                        device_config[CONF_TYPE] == TYPE_RELAY
-                        and device_config[CONF_COMPONENT] == "climate"
-                    )
-                ) and CONF_IDS not in device_config:
-                    _LOGGER.error(
-                        "Device %s skipped: RGB/RGBW must have %s set.",
-                        device_config[CONF_NAME],
-                        CONF_IDS,
-                    )
-                    continue
-
-                """Check if other device types have id set"""
-                if (
-                    device_config[CONF_TYPE] != TYPE_XPWM_RGB
-                    and device_config[CONF_TYPE] != TYPE_XPWM_RGBW
-                    and not (
-                        device_config[CONF_TYPE] == TYPE_RELAY
-                        and device_config[CONF_COMPONENT] == "climate"
-                    )
-                    and CONF_ID not in device_config
-                ):
-                    _LOGGER.error(
-                        "Device %s skipped: must have %s set.",
-                        device_config[CONF_NAME],
-                        CONF_ID,
-                    )
-                    continue
-
-                device_config[CONTROLLER] = self.name
-                self.devices.append(device_config)
-                _LOGGER.info(
-                    "Device %s added (component: %s).",
+            # Check if component is supported
+            if device_config[CONF_COMPONENT] not in CONF_COMPONENT_ALLOWED:
+                _LOGGER.error(
+                    "Device %s skipped: %s %s not correct or supported.",
                     device_config[CONF_NAME],
+                    CONF_COMPONENT,
                     device_config[CONF_COMPONENT],
                 )
-            except "DeviceError":
+                continue
+
+            # Check if type is supported
+            if device_config[CONF_TYPE] not in CONF_TYPE_ALLOWED:
                 _LOGGER.error(
-                    "Error to handle device %s. Please check its config",
-                    device_config.get(CONF_NAME),
+                    "Device %s skipped: %s %s not correct or supported.",
+                    device_config[CONF_NAME],
+                    CONF_TYPE,
+                    device_config[CONF_TYPE],
                 )
+                continue
+
+            # Check if X4VR have extension id set
+            if (
+                device_config[CONF_TYPE] == TYPE_X4VR
+                and CONF_EXT_ID not in device_config
+            ):
+                _LOGGER.error(
+                    "Device %s skipped: %s must have %s set.",
+                    device_config[CONF_NAME],
+                    TYPE_X4VR,
+                    CONF_EXT_ID,
+                )
+                continue
+
+            # Check if RGB/RBW or FP/RELAY have ids set
+            if (
+                device_config[CONF_TYPE] == TYPE_XPWM_RGB
+                or device_config[CONF_TYPE] == TYPE_XPWM_RGBW
+                or (
+                    device_config[CONF_TYPE] == TYPE_RELAY
+                    and device_config[CONF_COMPONENT] == "climate"
+                )
+            ) and CONF_IDS not in device_config:
+                _LOGGER.error(
+                    "Device %s skipped: RGB/RGBW must have %s set.",
+                    device_config[CONF_NAME],
+                    CONF_IDS,
+                )
+                continue
+
+            # Check if other device types have id set
+            if (
+                device_config[CONF_TYPE] != TYPE_XPWM_RGB
+                and device_config[CONF_TYPE] != TYPE_XPWM_RGBW
+                and not (
+                    device_config[CONF_TYPE] == TYPE_RELAY
+                    and device_config[CONF_COMPONENT] == "climate"
+                )
+                and CONF_ID not in device_config
+            ):
+                _LOGGER.error(
+                    "Device %s skipped: must have %s set.",
+                    device_config[CONF_NAME],
+                    CONF_ID,
+                )
+                continue
+
+            device_config[CONTROLLER] = self.name
+            self.devices.append(device_config)
+            _LOGGER.info(
+                "Device %s added (component: %s).",
+                device_config[CONF_NAME],
+                device_config[CONF_COMPONENT],
+            )
 
 
 class IpxRequestView(HomeAssistantView):
@@ -317,8 +311,7 @@ class IpxRequestView(HomeAssistantView):
         if old_state:
             hass.states.async_set(entity_id, state, old_state.attributes)
             return web.Response(status=HTTP_OK, text="OK")
-        else:
-            _LOGGER.warning("Entity not found for state updating: %s", entity_id)
+        _LOGGER.warning("Entity not found for state updating: %s", entity_id)
 
 
 class IpxRequestDataView(HomeAssistantView):
