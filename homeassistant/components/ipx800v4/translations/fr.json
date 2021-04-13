@@ -1,0 +1,8 @@
+{
+    "title": "GCE IPX800 V4",
+    "config": {
+      "abort": {
+        "yaml_config_needed": "Configuration en YAML nécessaire."
+      }
+    }
+  }
