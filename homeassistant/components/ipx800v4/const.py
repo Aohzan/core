@@ -2,6 +2,7 @@
 DOMAIN = "ipx800v4"
 
 CONTROLLER = "controller"
+COORDINATOR = "coordinator"
 UNDO_UPDATE_LISTENER = "undo_update_listener"
 GLOBAL_PARALLEL_UPDATES = 1
 

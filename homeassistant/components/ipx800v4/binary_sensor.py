@@ -5,10 +5,10 @@ from homeassistant.components.binary_sensor import BinarySensorEntity
 
 from . import IpxDevice
 from .const import (
-    CONF_COMPONENT,
     CONF_DEVICES,
     CONF_TYPE,
     CONTROLLER,
+    COORDINATOR,
     DOMAIN,
     GLOBAL_PARALLEL_UPDATES,
     TYPE_DIGITALIN,
@@ -22,17 +22,16 @@ PARALLEL_UPDATES = GLOBAL_PARALLEL_UPDATES
 async def async_setup_entry(hass, config_entry, async_add_entities) -> None:
     """Set up the IPX800 binary sensors."""
     controller = hass.data[DOMAIN][config_entry.entry_id][CONTROLLER]
-    devices = filter(
-        lambda d: d[CONF_COMPONENT] == "binary_sensor", config_entry.data[CONF_DEVICES]
-    )
+    devices = hass.data[DOMAIN][config_entry.entry_id][CONF_DEVICES]
+    coordinator = hass.data[DOMAIN][config_entry.entry_id][COORDINATOR]
 
     entities = []
 
     for device in devices:
         if device.get(CONF_TYPE) == TYPE_VIRTUALOUT:
-            entities.append(VirtualOutBinarySensor(device, controller))
+            entities.append(VirtualOutBinarySensor(device, controller, coordinator))
         elif device.get(CONF_TYPE) == TYPE_DIGITALIN:
-            entities.append(DigitalInBinarySensor(device, controller))
+            entities.append(DigitalInBinarySensor(device, controller, coordinator))
 
     async_add_entities(entities, True)
 

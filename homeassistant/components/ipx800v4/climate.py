@@ -1,7 +1,7 @@
 """Support for IPX800 V4 climates."""
 import logging
 
-from pypx800 import X4FP, Relay
+from pypx800 import IPX800, X4FP, Relay
 
 from homeassistant.components.climate import ClimateEntity
 from homeassistant.components.climate.const import (
@@ -12,13 +12,14 @@ from homeassistant.components.climate.const import (
     SUPPORT_PRESET_MODE,
 )
 from homeassistant.const import TEMP_CELSIUS
+from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 
-from . import IpxController, IpxDevice
+from . import IpxDevice
 from .const import (
-    CONF_COMPONENT,
     CONF_DEVICES,
     CONF_TYPE,
     CONTROLLER,
+    COORDINATOR,
     DOMAIN,
     GLOBAL_PARALLEL_UPDATES,
     TYPE_RELAY,
@@ -32,17 +33,16 @@ PARALLEL_UPDATES = GLOBAL_PARALLEL_UPDATES
 async def async_setup_entry(hass, config_entry, async_add_entities) -> None:
     """Set up the IPX800 climates."""
     controller = hass.data[DOMAIN][config_entry.entry_id][CONTROLLER]
-    devices = filter(
-        lambda d: d[CONF_COMPONENT] == "climate", config_entry.data[CONF_DEVICES]
-    )
+    devices = hass.data[DOMAIN][config_entry.entry_id][CONF_DEVICES]
+    coordinator = hass.data[DOMAIN][config_entry.entry_id][COORDINATOR]
 
     entities = []
 
     for device in devices:
         if device.get(CONF_TYPE) == TYPE_X4FP:
-            entities.append(X4FPClimate(device, controller))
+            entities.append(X4FPClimate(device, controller, coordinator))
         elif device.get(CONF_TYPE) == TYPE_RELAY:
-            entities.append(RelayClimate(device, controller))
+            entities.append(RelayClimate(device, controller, coordinator))
 
     async_add_entities(entities, True)
 
@@ -50,10 +50,15 @@ async def async_setup_entry(hass, config_entry, async_add_entities) -> None:
 class X4FPClimate(IpxDevice, ClimateEntity):
     """Representation of a IPX Climate through X4FP."""
 
-    def __init__(self, device_config, controller: IpxController):
+    def __init__(
+        self,
+        device_config: dict,
+        ipx: IPX800,
+        coordinator: DataUpdateCoordinator,
+    ):
         """Initialize the X4FPClimate."""
-        super().__init__(device_config, controller)
-        self.control = X4FP(controller.ipx, self._ext_id, self._id)
+        super().__init__(device_config, ipx, coordinator)
+        self.control = X4FP(ipx, self._ext_id, self._id)
 
     @property
     def supported_features(self):
@@ -123,11 +128,16 @@ class X4FPClimate(IpxDevice, ClimateEntity):
 class RelayClimate(IpxDevice, ClimateEntity):
     """Representation of a IPX Climate through 2 relais."""
 
-    def __init__(self, device_config, controller: IpxController):
+    def __init__(
+        self,
+        device_config: dict,
+        ipx: IPX800,
+        coordinator: DataUpdateCoordinator,
+    ):
         """Initialize the RelayClimate."""
-        super().__init__(device_config, controller)
-        self.control_minus = Relay(controller.ipx, self._ids[0])
-        self.control_plus = Relay(controller.ipx, self._ids[1])
+        super().__init__(device_config, ipx, coordinator)
+        self.control_minus = Relay(ipx, self._ids[0])
+        self.control_plus = Relay(ipx, self._ids[1])
 
     @property
     def supported_features(self):

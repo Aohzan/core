@@ -1,7 +1,7 @@
 """Support for IPX800 V4 lights."""
 import logging
 
-from pypx800 import XPWM, Relay, XDimmer
+from pypx800 import IPX800, XPWM, Relay, XDimmer
 
 from homeassistant.components.light import (
     ATTR_BRIGHTNESS,
@@ -15,14 +15,15 @@ from homeassistant.components.light import (
     SUPPORT_WHITE_VALUE,
     LightEntity,
 )
+from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 import homeassistant.util.color as color_util
 
-from . import IpxController, IpxDevice
+from . import IpxDevice
 from .const import (
-    CONF_COMPONENT,
     CONF_DEVICES,
     CONF_TYPE,
     CONTROLLER,
+    COORDINATOR,
     DEFAULT_TRANSITION,
     DOMAIN,
     GLOBAL_PARALLEL_UPDATES,
@@ -50,23 +51,22 @@ def scaleto100(value):
 async def async_setup_entry(hass, config_entry, async_add_entities) -> None:
     """Set up the IPX800 lights."""
     controller = hass.data[DOMAIN][config_entry.entry_id][CONTROLLER]
-    devices = filter(
-        lambda d: d[CONF_COMPONENT] == "light", config_entry.data[CONF_DEVICES]
-    )
+    devices = hass.data[DOMAIN][config_entry.entry_id][CONF_DEVICES]
+    coordinator = hass.data[DOMAIN][config_entry.entry_id][COORDINATOR]
 
     entities = []
 
     for device in devices:
         if device.get(CONF_TYPE) == TYPE_RELAY:
-            entities.append(RelayLight(device, controller))
+            entities.append(RelayLight(device, controller, coordinator))
         elif device.get(CONF_TYPE) == TYPE_XDIMMER:
-            entities.append(XDimmerLight(device, controller))
+            entities.append(XDimmerLight(device, controller, coordinator))
         elif device.get(CONF_TYPE) == TYPE_XPWM:
-            entities.append(XPWMLight(device, controller))
+            entities.append(XPWMLight(device, controller, coordinator))
         elif device.get(CONF_TYPE) == TYPE_XPWM_RGB:
-            entities.append(XPWMRGBLight(device, controller))
+            entities.append(XPWMRGBLight(device, controller, coordinator))
         elif device.get(CONF_TYPE) == TYPE_XPWM_RGBW:
-            entities.append(XPWMRGBWLight(device, controller))
+            entities.append(XPWMRGBWLight(device, controller, coordinator))
 
     async_add_entities(entities, True)
 
@@ -74,10 +74,15 @@ async def async_setup_entry(hass, config_entry, async_add_entities) -> None:
 class RelayLight(IpxDevice, LightEntity):
     """Representation of a IPX Light through relay."""
 
-    def __init__(self, device_config, controller: IpxController):
+    def __init__(
+        self,
+        device_config: dict,
+        ipx: IPX800,
+        coordinator: DataUpdateCoordinator,
+    ):
         """Initialize the RelayLight."""
-        super().__init__(device_config, controller)
-        self.control = Relay(controller.ipx, self._id)
+        super().__init__(device_config, ipx, coordinator)
+        self.control = Relay(ipx, self._id)
 
     @property
     def is_on(self) -> bool:
@@ -100,10 +105,15 @@ class RelayLight(IpxDevice, LightEntity):
 class XDimmerLight(IpxDevice, LightEntity):
     """Representation of a IPX Light through X-Dimmer."""
 
-    def __init__(self, device_config, controller: IpxController):
+    def __init__(
+        self,
+        device_config: dict,
+        ipx: IPX800,
+        coordinator: DataUpdateCoordinator,
+    ):
         """Initialize the class XDimmerLight."""
-        super().__init__(device_config, controller)
-        self.control = XDimmer(controller.ipx, self._id)
+        super().__init__(device_config, ipx, coordinator)
+        self.control = XDimmer(ipx, self._id)
 
         self._brightness = None
         self._transition = DEFAULT_TRANSITION
@@ -149,10 +159,15 @@ class XDimmerLight(IpxDevice, LightEntity):
 class XPWMLight(IpxDevice, LightEntity):
     """Representation of a IPX Light through X-PWM single channel."""
 
-    def __init__(self, device_config, controller: IpxController):
+    def __init__(
+        self,
+        device_config: dict,
+        ipx: IPX800,
+        coordinator: DataUpdateCoordinator,
+    ):
         """Initialize the XPWMLight."""
-        super().__init__(device_config, controller)
-        self.control = XPWM(controller.ipx, self._id)
+        super().__init__(device_config, ipx, coordinator)
+        self.control = XPWM(ipx, self._id)
 
         self._brightness = None
         self._transition = DEFAULT_TRANSITION
@@ -198,12 +213,17 @@ class XPWMLight(IpxDevice, LightEntity):
 class XPWMRGBLight(IpxDevice, LightEntity):
     """Representation of a RGB light through 3 X-PWM channels."""
 
-    def __init__(self, device_config, controller: IpxController):
+    def __init__(
+        self,
+        device_config: dict,
+        ipx: IPX800,
+        coordinator: DataUpdateCoordinator,
+    ):
         """Initialize the XPWMRGBLight."""
-        super().__init__(device_config, controller)
-        self.xpwm_rgb_r = XPWM(controller.ipx, self._ids[0])
-        self.xpwm_rgb_g = XPWM(controller.ipx, self._ids[1])
-        self.xpwm_rgb_b = XPWM(controller.ipx, self._ids[2])
+        super().__init__(device_config, ipx, coordinator)
+        self.xpwm_rgb_r = XPWM(ipx, self._ids[0])
+        self.xpwm_rgb_g = XPWM(ipx, self._ids[1])
+        self.xpwm_rgb_b = XPWM(ipx, self._ids[2])
 
         self._brightness = None
         self._rgb_color = None
@@ -306,13 +326,18 @@ class XPWMRGBLight(IpxDevice, LightEntity):
 class XPWMRGBWLight(IpxDevice, LightEntity):
     """Representation of a RGBW light through 4 X-PWM channels."""
 
-    def __init__(self, device_config, controller: IpxController):
+    def __init__(
+        self,
+        device_config: dict,
+        ipx: IPX800,
+        coordinator: DataUpdateCoordinator,
+    ):
         """Initialize the XPWMRGBWLight."""
-        super().__init__(device_config, controller)
-        self.xpwm_rgbw_r = XPWM(controller.ipx, self._ids[0])
-        self.xpwm_rgbw_g = XPWM(controller.ipx, self._ids[1])
-        self.xpwm_rgbw_b = XPWM(controller.ipx, self._ids[2])
-        self.xpwm_rgbw_w = XPWM(controller.ipx, self._ids[3])
+        super().__init__(device_config, ipx, coordinator)
+        self.xpwm_rgbw_r = XPWM(ipx, self._ids[0])
+        self.xpwm_rgbw_g = XPWM(ipx, self._ids[1])
+        self.xpwm_rgbw_b = XPWM(ipx, self._ids[2])
+        self.xpwm_rgbw_w = XPWM(ipx, self._ids[3])
 
         self._brightness = None
         self._rgb_color = None

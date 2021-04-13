@@ -1,7 +1,7 @@
 """Support for IPX800 V4 covers."""
 import logging
 
-from pypx800 import X4VR
+from pypx800 import IPX800, X4VR
 
 from homeassistant.components.cover import (
     ATTR_POSITION,
@@ -12,13 +12,14 @@ from homeassistant.components.cover import (
     SUPPORT_STOP,
     CoverEntity,
 )
+from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 
-from . import IpxController, IpxDevice
+from . import IpxDevice
 from .const import (
-    CONF_COMPONENT,
     CONF_DEVICES,
     CONF_TYPE,
     CONTROLLER,
+    COORDINATOR,
     DOMAIN,
     GLOBAL_PARALLEL_UPDATES,
     TYPE_X4VR,
@@ -31,15 +32,14 @@ PARALLEL_UPDATES = GLOBAL_PARALLEL_UPDATES
 async def async_setup_entry(hass, config_entry, async_add_entities) -> None:
     """Set up the IPX800 covers."""
     controller = hass.data[DOMAIN][config_entry.entry_id][CONTROLLER]
-    devices = filter(
-        lambda d: d[CONF_COMPONENT] == "cover", config_entry.data[CONF_DEVICES]
-    )
+    devices = hass.data[DOMAIN][config_entry.entry_id][CONF_DEVICES]
+    coordinator = hass.data[DOMAIN][config_entry.entry_id][COORDINATOR]
 
     entities = []
 
     for device in devices:
         if device.get(CONF_TYPE) == TYPE_X4VR:
-            entities.append(X4VRCover(device, controller))
+            entities.append(X4VRCover(device, controller, coordinator))
 
     async_add_entities(entities, True)
 
@@ -47,10 +47,15 @@ async def async_setup_entry(hass, config_entry, async_add_entities) -> None:
 class X4VRCover(IpxDevice, CoverEntity):
     """Representation of a IPX Cover through X4VR."""
 
-    def __init__(self, device_config, controller: IpxController):
+    def __init__(
+        self,
+        device_config: dict,
+        ipx: IPX800,
+        coordinator: DataUpdateCoordinator,
+    ):
         """Initialize the X4VRCover."""
-        super().__init__(device_config, controller)
-        self.control = X4VR(controller.ipx, self._ext_id, self._id)
+        super().__init__(device_config, ipx, coordinator)
+        self.control = X4VR(ipx, self._ext_id, self._id)
 
     @property
     def device_class(self):

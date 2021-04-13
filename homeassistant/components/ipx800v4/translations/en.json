@@ -1,22 +1,8 @@
 {
+    "title": "GCE IPX800 V4",
     "config": {
-        "abort": {
-            "already_configured": "Device is already configured"
-        },
-        "error": {
-            "cannot_connect": "Failed to connect",
-            "invalid_auth": "Invalid authentication",
-            "unknown": "Unexpected error"
-        },
-        "step": {
-            "user": {
-                "data": {
-                    "host": "Host",
-                    "password": "Password",
-                    "username": "Username"
-                }
-            }
-        }
-    },
-    "title": "GCE IPX800 V4"
-}
+      "abort": {
+        "yaml_config_needed": "YAML configuration needed."
+      }
+    }
+  }

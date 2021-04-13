@@ -879,7 +879,7 @@ pyprof2calltree==1.4.5
 pyps4-2ndscreen==1.2.0
 
 # homeassistant.components.ipx800v4
-pypx800==1.8.0
+pypx800==2.1.0
 
 # homeassistant.components.qwikswitch
 pyqwikswitch==0.93
