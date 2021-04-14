@@ -97,12 +97,15 @@ CONFIG_SCHEMA = vol.Schema(
 
 async def async_setup(hass: HomeAssistantType, config: ConfigType) -> bool:
     """Set up the IPX800 from config file."""
-    for gateway in config.get(DOMAIN):
-        hass.async_create_task(
-            hass.config_entries.flow.async_init(
-                DOMAIN, context={"source": SOURCE_IMPORT}, data=gateway
+    hass.data.setdefault(DOMAIN, {})
+
+    if DOMAIN in config:
+        for gateway in config.get(DOMAIN):
+            hass.async_create_task(
+                hass.config_entries.flow.async_init(
+                    DOMAIN, context={"source": SOURCE_IMPORT}, data=gateway
+                )
             )
-        )
 
     return True
 
@@ -123,8 +126,12 @@ async def async_setup_entry(hass: HomeAssistantType, entry: ConfigEntry) -> bool
     )
 
     try:
-        await ipx.ping()
+        await ipx.global_get()
     except Ipx800CannotConnectError as exception:
+        _LOGGER.error(
+            "Cannot connect to the IPX800 named %s, check host, port or api_key",
+            entry.data[CONF_NAME],
+        )
         raise ConfigEntryNotReady from exception
 
     async def async_update_data():
@@ -179,8 +186,14 @@ async def async_setup_entry(hass: HomeAssistantType, entry: ConfigEntry) -> bool
         name=entry.data[CONF_NAME],
     )
 
+    if CONF_DEVICES not in entry.data:
+        _LOGGER.warning(
+            "No devices configuration found for the IPX800 %s", entry.data[CONF_NAME]
+        )
+        return True
+
     # Load each supported component entities from their devices
-    devices = build_device_list(entry.data.get(CONF_DEVICES))
+    devices = build_device_list(entry.data[CONF_DEVICES])
 
     for component in CONF_COMPONENT_ALLOWED:
         _LOGGER.debug("Load component %s.", component)
