@@ -1,7 +1,7 @@
 """Support for IPX800 V4 covers."""
 import logging
 
-from pypx800 import IPX800, X4VR
+from pypx800 import IPX800, X4VR, Ipx800RequestError
 
 from homeassistant.components.cover import (
     ATTR_POSITION,
@@ -12,6 +12,8 @@ from homeassistant.components.cover import (
     SUPPORT_STOP,
     CoverEntity,
 )
+from homeassistant.config_entries import ConfigEntry
+from homeassistant.core import HomeAssistant
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 
 from . import IpxDevice
@@ -29,11 +31,15 @@ _LOGGER = logging.getLogger(__name__)
 PARALLEL_UPDATES = GLOBAL_PARALLEL_UPDATES
 
 
-async def async_setup_entry(hass, config_entry, async_add_entities) -> None:
+async def async_setup_entry(
+    hass: HomeAssistant,
+    entry: ConfigEntry,
+    async_add_entities,
+) -> None:
     """Set up the IPX800 covers."""
-    controller = hass.data[DOMAIN][config_entry.entry_id][CONTROLLER]
-    devices = hass.data[DOMAIN][config_entry.entry_id][CONF_DEVICES]
-    coordinator = hass.data[DOMAIN][config_entry.entry_id][COORDINATOR]
+    controller = hass.data[DOMAIN][entry.entry_id][CONTROLLER]
+    coordinator = hass.data[DOMAIN][entry.entry_id][COORDINATOR]
+    devices = hass.data[DOMAIN][entry.entry_id][CONF_DEVICES]["cover"]
 
     entities = []
 
@@ -77,18 +83,36 @@ class X4VRCover(IpxDevice, CoverEntity):
         """Return the current cover position."""
         return 100 - int(self.coordinator.data[f"VR{self._ext_id}-{self._id}"])
 
-    async def async_open_cover(self, **kwargs):
+    async def async_open_cover(self, **kwargs) -> None:
         """Open cover."""
-        self.control.on()
+        try:
+            await self.control.on()
+            await self.coordinator.async_request_refresh()
+        except Ipx800RequestError:
+            _LOGGER.error("An error occurred while open IPX800 cover: %s", self.name)
 
-    async def async_close_cover(self, **kwargs):
+    async def async_close_cover(self, **kwargs) -> None:
         """Close cover."""
-        self.control.off()
+        try:
+            await self.control.off()
+            await self.coordinator.async_request_refresh()
+        except Ipx800RequestError:
+            _LOGGER.error("An error occurred while close IPX800 cover: %s", self.name)
 
-    async def async_stop_cover(self, **kwargs):
+    async def async_stop_cover(self, **kwargs) -> None:
         """Stop the cover."""
-        self.control.stop()
+        try:
+            await self.control.stop()
+            await self.coordinator.async_request_refresh()
+        except Ipx800RequestError:
+            _LOGGER.error("An error occurred while stop IPX800 cover: %s", self.name)
 
-    def set_cover_position(self, **kwargs):
+    async def async_set_cover_position(self, **kwargs) -> None:
         """Set the cover to a specific position."""
-        self.control.set_level(kwargs.get(ATTR_POSITION))
+        try:
+            await self.control.set_level(kwargs.get(ATTR_POSITION))
+            await self.coordinator.async_request_refresh()
+        except Ipx800RequestError:
+            _LOGGER.error(
+                "An error occurred while set IPX800 cover position: %s", self.name
+            )

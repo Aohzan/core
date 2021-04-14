@@ -8,7 +8,7 @@ from pypx800 import IPX800, Ipx800CannotConnectError, Ipx800InvalidAuthError
 import voluptuous as vol
 
 from homeassistant.components.http import HomeAssistantView
-from homeassistant.config_entries import ConfigEntry
+from homeassistant.config_entries import SOURCE_IMPORT, ConfigEntry
 from homeassistant.const import (
     CONF_API_KEY,
     CONF_DEVICE_CLASS,
@@ -78,27 +78,39 @@ GATEWAY_CONFIG = vol.Schema(
         vol.Required(CONF_NAME): cv.string,
         vol.Required(CONF_HOST): cv.string,
         vol.Optional(CONF_PORT, default=80): cv.port,
-        vol.Optional(CONF_SCAN_INTERVAL, default=10): cv.positive_int,
         vol.Required(CONF_API_KEY): cv.string,
         vol.Optional(CONF_USERNAME): cv.string,
         vol.Optional(CONF_PASSWORD): cv.string,
+        vol.Optional(CONF_SCAN_INTERVAL, default=10): cv.positive_int,
         vol.Optional(CONF_DEVICES, default=[]): vol.All(
             cv.ensure_list, [DEVICE_CONFIG_SCHEMA_ENTRY]
         ),
-    }
+    },
+    extra=vol.ALLOW_EXTRA,
 )
 
-CONFIG_SCHEMA = vol.Schema({DOMAIN: vol.All(cv.ensure_list, [GATEWAY_CONFIG])})
+CONFIG_SCHEMA = vol.Schema(
+    {DOMAIN: vol.All(cv.ensure_list, [GATEWAY_CONFIG])},
+    extra=vol.ALLOW_EXTRA,
+)
 
 
 async def async_setup(hass: HomeAssistantType, config: ConfigType) -> bool:
-    """Set up the IPX800v4 components."""
-    hass.data.setdefault(DOMAIN, {})
+    """Set up the IPX800 from config file."""
+    for gateway in config.get(DOMAIN):
+        hass.async_create_task(
+            hass.config_entries.flow.async_init(
+                DOMAIN, context={"source": SOURCE_IMPORT}, data=gateway
+            )
+        )
+
     return True
 
 
 async def async_setup_entry(hass: HomeAssistantType, entry: ConfigEntry) -> bool:
     """Set up the IPX800v4."""
+    hass.data.setdefault(DOMAIN, {})
+
     session = async_get_clientsession(hass, False)
 
     ipx = IPX800(
@@ -124,7 +136,12 @@ async def async_setup_entry(hass: HomeAssistantType, entry: ConfigEntry) -> bool
         except Ipx800CannotConnectError as err:
             raise UpdateFailed(f"Failed to communicating with API: {err}") from err
 
-    scan_interval = entry.data.get(CONF_SCAN_INTERVAL)
+    scan_interval = int(entry.data.get(CONF_SCAN_INTERVAL))
+
+    if scan_interval < 10:
+        _LOGGER.warning(
+            "A scan interval too low has been set, you probably will get errors since the IPX800 can't handle too much request at the same time"
+        )
 
     coordinator = DataUpdateCoordinator(
         hass,
@@ -144,29 +161,34 @@ async def async_setup_entry(hass: HomeAssistantType, entry: ConfigEntry) -> bool
 
     await coordinator.async_refresh()
 
+    hass.data[DOMAIN][entry.entry_id] = {
+        CONF_NAME: entry.data[CONF_NAME],
+        CONTROLLER: ipx,
+        COORDINATOR: coordinator,
+        CONF_DEVICES: {},
+        UNDO_UPDATE_LISTENER: undo_listener,
+    }
+
+    # Create the IPX800 device
     device_registry = await dr.async_get_registry(hass)
     device_registry.async_get_or_create(
         config_entry_id=entry.entry_id,
         identifiers={(DOMAIN, ipx.host)},
         manufacturer="GCE",
         model="IPX800 V4",
-        name=ipx.host,
+        name=entry.data[CONF_NAME],
     )
 
+    # Load each supported component entities from their devices
     devices = build_device_list(entry.data.get(CONF_DEVICES))
-
-    hass.data[DOMAIN][entry.entry_id] = {
-        CONTROLLER: ipx,
-        COORDINATOR: coordinator,
-        CONF_DEVICES: devices,
-        UNDO_UPDATE_LISTENER: undo_listener,
-    }
 
     for component in CONF_COMPONENT_ALLOWED:
         _LOGGER.debug("Load component %s.", component)
-        devices_by_component = filter(lambda d: d[CONF_COMPONENT] == component, devices)
+        hass.data[DOMAIN][entry.entry_id][CONF_DEVICES][component] = filter_device_list(
+            devices, component
+        )
         hass.async_create_task(
-            hass.config_entries.async_forward_entry_setup(entry, devices_by_component)
+            hass.config_entries.async_forward_entry_setup(entry, component)
         )
 
     # Provide endpoints for the IPX to call to push states
@@ -191,7 +213,7 @@ async def _async_update_listener(hass, config_entry):
     await hass.config_entries.async_reload(config_entry.entry_id)
 
 
-def build_device_list(devices_config: dict = []) -> dict:
+def build_device_list(devices_config: list) -> list:
     """Check and build device list from config."""
     _LOGGER.debug("Check and build devices configuration")
 
@@ -269,6 +291,11 @@ def build_device_list(devices_config: dict = []) -> dict:
             device_config[CONF_COMPONENT],
         )
     return devices
+
+
+def filter_device_list(devices: list, component: str) -> list:
+    """Filter device list by component."""
+    return list(filter(lambda d: d[CONF_COMPONENT] == component, devices))
 
 
 class IpxRequestView(HomeAssistantView):
@@ -354,14 +381,6 @@ class IpxDevice(CoordinatorEntity):
         return self._name
 
     @property
-    def device_info(self):
-        """Return device info."""
-        return {
-            "identifiers": {(DOMAIN, self.ipx.host)},
-            "via_device": (DOMAIN, self.ipx.host),
-        }
-
-    @property
     def unique_id(self):
         """Return an unique id."""
         return "_".join(
@@ -372,6 +391,24 @@ class IpxDevice(CoordinatorEntity):
                 re.sub("[^A-Za-z0-9_]+", "", self._name.replace(" ", "_")).lower(),
             ]
         )
+
+    @property
+    def device_info(self):
+        """Return device info."""
+        return {
+            "identifiers": {
+                (
+                    DOMAIN,
+                    re.sub(
+                        "[^A-Za-z0-9_]+", "", self._device_name.replace(" ", "_")
+                    ).lower(),
+                )
+            },
+            "name": self._device_name,
+            "manufacturer": "GCE",
+            "model": "IPX800 V4",
+            "via_device": (DOMAIN, self.ipx.host),
+        }
 
     @property
     def icon(self):

@@ -1634,7 +1634,7 @@ pyprof2calltree==1.4.5
 pyps4-2ndscreen==1.2.0
 
 # homeassistant.components.ipx800v4
-pypx800==2.1.0
+pypx800==2.1.1
 
 # homeassistant.components.qvr_pro
 pyqvrpro==0.52

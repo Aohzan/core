@@ -2,11 +2,10 @@
   "title": "GCE IPX800 V4",
   "config": {
     "step": {
-      "user": {}
-    },
-
-    "abort": {
-      "yaml_config_needed": "YAML configuration needed."
+      "user": {
+        "title": "GCE IPX800 V4",
+        "description": "Setup have to be done from configuration.yaml. See documentation: https://www.home-assistant.io/integrations/ipx800v4."
+      }
     }
   }
 }

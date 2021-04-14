@@ -3,11 +3,13 @@ import logging
 
 from pypx800 import IPX800
 
+from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import (
     DEVICE_CLASS_HUMIDITY,
     DEVICE_CLASS_ILLUMINANCE,
     DEVICE_CLASS_TEMPERATURE,
 )
+from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity import Entity
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 
@@ -27,11 +29,15 @@ _LOGGER = logging.getLogger(__name__)
 PARALLEL_UPDATES = GLOBAL_PARALLEL_UPDATES
 
 
-async def async_setup_entry(hass, config_entry, async_add_entities) -> None:
+async def async_setup_entry(
+    hass: HomeAssistant,
+    entry: ConfigEntry,
+    async_add_entities,
+) -> None:
     """Set up the IPX800 sensors."""
-    controller = hass.data[DOMAIN][config_entry.entry_id][CONTROLLER]
-    devices = hass.data[DOMAIN][config_entry.entry_id][CONF_DEVICES]
-    coordinator = hass.data[DOMAIN][config_entry.entry_id][COORDINATOR]
+    controller = hass.data[DOMAIN][entry.entry_id][CONTROLLER]
+    coordinator = hass.data[DOMAIN][entry.entry_id][COORDINATOR]
+    devices = hass.data[DOMAIN][entry.entry_id][CONF_DEVICES]["sensor"]
 
     entities = []
 

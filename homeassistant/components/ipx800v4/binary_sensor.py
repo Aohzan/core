@@ -2,6 +2,8 @@
 import logging
 
 from homeassistant.components.binary_sensor import BinarySensorEntity
+from homeassistant.config_entries import ConfigEntry
+from homeassistant.core import HomeAssistant
 
 from . import IpxDevice
 from .const import (
@@ -19,11 +21,15 @@ _LOGGER = logging.getLogger(__name__)
 PARALLEL_UPDATES = GLOBAL_PARALLEL_UPDATES
 
 
-async def async_setup_entry(hass, config_entry, async_add_entities) -> None:
+async def async_setup_entry(
+    hass: HomeAssistant,
+    entry: ConfigEntry,
+    async_add_entities,
+) -> None:
     """Set up the IPX800 binary sensors."""
-    controller = hass.data[DOMAIN][config_entry.entry_id][CONTROLLER]
-    devices = hass.data[DOMAIN][config_entry.entry_id][CONF_DEVICES]
-    coordinator = hass.data[DOMAIN][config_entry.entry_id][COORDINATOR]
+    controller = hass.data[DOMAIN][entry.entry_id][CONTROLLER]
+    coordinator = hass.data[DOMAIN][entry.entry_id][COORDINATOR]
+    devices = hass.data[DOMAIN][entry.entry_id][CONF_DEVICES]["binary_sensor"]
 
     entities = []
 
