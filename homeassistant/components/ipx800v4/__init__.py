@@ -126,7 +126,8 @@ async def async_setup_entry(hass: HomeAssistantType, entry: ConfigEntry) -> bool
     )
 
     try:
-        await ipx.global_get()
+        if not await ipx.ping():
+            raise Ipx800CannotConnectError()
     except Ipx800CannotConnectError as exception:
         _LOGGER.error(
             "Cannot connect to the IPX800 named %s, check host, port or api_key",
@@ -160,7 +161,7 @@ async def async_setup_entry(hass: HomeAssistantType, entry: ConfigEntry) -> bool
             hass,
             _LOGGER,
             cooldown=REQUEST_REFRESH_DELAY,
-            immediate=True,
+            immediate=False,
         ),
     )
 
