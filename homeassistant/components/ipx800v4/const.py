@@ -54,3 +54,9 @@ CONF_TYPE_ALLOWED = [
     TYPE_XTHL,
     TYPE_X4FP,
 ]
+
+IPX_PRESET_NONE = "Arret"
+IPX_PRESET_ECO = "Eco"
+IPX_PRESET_AWAY = "Hors Gel"
+# cSpell:ignore Confort
+IPX_PRESET_COMFORT = "Confort"

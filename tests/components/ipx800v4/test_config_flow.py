@@ -31,8 +31,8 @@ async def test_config_flow_user(hass):
     assert result2["reason"] == "yaml_only"
 
 
-async def test_import(hass):
-    """Test yaml configuration."""
+async def test_config_flow_import(hass):
+    """Test import flow."""
     result = await hass.config_entries.flow.async_init(
         DOMAIN,
         context={"source": config_entries.SOURCE_IMPORT},
