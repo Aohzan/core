@@ -2,7 +2,7 @@
   "domain": "ipx800v4",
   "name": "GCE IPX800 V4",
   "documentation": "https://www.home-assistant.io/integrations/ipx800v4",
-  "requirements": ["pypx800==2.1.2"],
+  "requirements": ["pypx800==2.2.0"],
   "dependencies": ["http"],
   "config_flow": true,
   "codeowners": ["@Aohzan"]
