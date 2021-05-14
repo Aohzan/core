@@ -1,6 +1,7 @@
 """Support for ESPHome fans."""
+from __future__ import annotations
+
 import math
-from typing import Optional
 
 from aioesphomeapi import FanDirection, FanInfo, FanSpeed, FanState
 
@@ -13,7 +14,7 @@ from homeassistant.components.fan import (
     FanEntity,
 )
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.helpers.typing import HomeAssistantType
+from homeassistant.core import HomeAssistant
 from homeassistant.util.percentage import (
     ordered_list_item_to_percentage,
     percentage_to_ordered_list_item,
@@ -32,7 +33,7 @@ ORDERED_NAMED_FAN_SPEEDS = [FanSpeed.LOW, FanSpeed.MEDIUM, FanSpeed.HIGH]
 
 
 async def async_setup_entry(
-    hass: HomeAssistantType, entry: ConfigEntry, async_add_entities
+    hass: HomeAssistant, entry: ConfigEntry, async_add_entities
 ) -> None:
     """Set up ESPHome fans based on a config entry."""
     await platform_async_setup_entry(
@@ -62,7 +63,7 @@ class EsphomeFan(EsphomeEntity, FanEntity):
         return super()._static_info
 
     @property
-    def _state(self) -> Optional[FanState]:
+    def _state(self) -> FanState | None:
         return super()._state
 
     @property
@@ -93,9 +94,9 @@ class EsphomeFan(EsphomeEntity, FanEntity):
 
     async def async_turn_on(
         self,
-        speed: Optional[str] = None,
-        percentage: Optional[int] = None,
-        preset_mode: Optional[str] = None,
+        speed: str | None = None,
+        percentage: int | None = None,
+        preset_mode: str | None = None,
         **kwargs,
     ) -> None:
         """Turn on the fan."""
@@ -121,12 +122,12 @@ class EsphomeFan(EsphomeEntity, FanEntity):
     # pylint: disable=invalid-overridden-method
 
     @esphome_state_property
-    def is_on(self) -> Optional[bool]:
+    def is_on(self) -> bool | None:
         """Return true if the entity is on."""
         return self._state.state
 
     @esphome_state_property
-    def percentage(self) -> Optional[int]:
+    def percentage(self) -> int | None:
         """Return the current speed percentage."""
         if not self._static_info.supports_speed:
             return None

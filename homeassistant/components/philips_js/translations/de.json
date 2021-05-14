@@ -13,7 +13,9 @@
             "pair": {
                 "data": {
                     "pin": "PIN-Code"
-                }
+                },
+                "description": "Gib die auf deinem Fernseher angezeigten PIN ein",
+                "title": "Paaren"
             },
             "user": {
                 "data": {

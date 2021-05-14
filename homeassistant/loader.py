@@ -7,6 +7,7 @@ documentation as possible to keep it understandable.
 from __future__ import annotations
 
 import asyncio
+from contextlib import suppress
 import functools as ft
 import importlib
 import json
@@ -22,6 +23,7 @@ from homeassistant.generated.dhcp import DHCP
 from homeassistant.generated.mqtt import MQTT
 from homeassistant.generated.ssdp import SSDP
 from homeassistant.generated.zeroconf import HOMEKIT, ZEROCONF
+from homeassistant.util.async_ import gather_with_concurrency
 
 # Typing imports that create a circular dependency
 if TYPE_CHECKING:
@@ -48,10 +50,9 @@ CUSTOM_WARNING = (
 )
 CUSTOM_WARNING_VERSION_MISSING = (
     "No 'version' key in the manifest file for "
-    "custom integration '%s'. This will not be "
-    "allowed in a future version of Home "
-    "Assistant. Please report this to the "
-    "maintainer of '%s'"
+    "custom integration '%s'. As of Home Assistant "
+    "2021.6, this integration will no longer be "
+    "loaded. Please report this to the maintainer of '%s'"
 )
 CUSTOM_WARNING_VERSION_TYPE = (
     "'%s' is not a valid version for "
@@ -81,6 +82,7 @@ class Manifest(TypedDict, total=False):
     documentation: str
     issue_tracker: str
     quality_scale: str
+    iot_class: str
     mqtt: list[str]
     ssdp: list[dict[str, str]]
     zeroconf: list[str | dict[str, str]]
@@ -103,7 +105,7 @@ def manifest_from_legacy_module(domain: str, module: ModuleType) -> Manifest:
 
 
 async def _async_get_custom_components(
-    hass: "HomeAssistant",
+    hass: HomeAssistant,
 ) -> dict[str, Integration]:
     """Return list of custom integrations."""
     if hass.config.safe_mode:
@@ -127,13 +129,14 @@ async def _async_get_custom_components(
         get_sub_directories, custom_components.__path__
     )
 
-    integrations = await asyncio.gather(
+    integrations = await gather_with_concurrency(
+        MAX_LOAD_CONCURRENTLY,
         *(
             hass.async_add_executor_job(
                 Integration.resolve_from_root, hass, custom_components, comp.name
             )
             for comp in dirs
-        )
+        ),
     )
 
     return {
@@ -144,7 +147,7 @@ async def _async_get_custom_components(
 
 
 async def async_get_custom_components(
-    hass: "HomeAssistant",
+    hass: HomeAssistant,
 ) -> dict[str, Integration]:
     """Return cached list of custom integrations."""
     reg_or_evt = hass.data.get(DATA_CUSTOM_COMPONENTS)
@@ -276,7 +279,7 @@ class Integration:
 
     @classmethod
     def resolve_from_root(
-        cls, hass: "HomeAssistant", root_module: ModuleType, domain: str
+        cls, hass: HomeAssistant, root_module: ModuleType, domain: str
     ) -> Integration | None:
         """Resolve an integration from a root module."""
         for base in root_module.__path__:  # type: ignore
@@ -300,7 +303,7 @@ class Integration:
         return None
 
     @classmethod
-    def resolve_legacy(cls, hass: "HomeAssistant", domain: str) -> Integration | None:
+    def resolve_legacy(cls, hass: HomeAssistant, domain: str) -> Integration | None:
         """Resolve legacy component.
 
         Will create a stub manifest.
@@ -319,7 +322,7 @@ class Integration:
 
     def __init__(
         self,
-        hass: "HomeAssistant",
+        hass: HomeAssistant,
         pkg_path: str,
         file_path: pathlib.Path,
         manifest: Manifest,
@@ -389,6 +392,11 @@ class Integration:
     def quality_scale(self) -> str | None:
         """Return Integration Quality Scale."""
         return self.manifest.get("quality_scale")
+
+    @property
+    def iot_class(self) -> str | None:
+        """Return the integration IoT Class."""
+        return self.manifest.get("iot_class")
 
     @property
     def mqtt(self) -> list[str] | None:
@@ -494,7 +502,7 @@ class Integration:
         return f"<Integration {self.domain}: {self.pkg_path}>"
 
 
-async def async_get_integration(hass: "HomeAssistant", domain: str) -> Integration:
+async def async_get_integration(hass: HomeAssistant, domain: str) -> Integration:
     """Get an integration."""
     cache = hass.data.get(DATA_INTEGRATIONS)
     if cache is None:
@@ -579,7 +587,7 @@ class CircularDependency(LoaderError):
 
 
 def _load_file(
-    hass: "HomeAssistant", comp_or_platform: str, base_paths: list[str]
+    hass: HomeAssistant, comp_or_platform: str, base_paths: list[str]
 ) -> ModuleType | None:
     """Try to load specified file.
 
@@ -587,10 +595,8 @@ def _load_file(
     Only returns it if also found to be valid.
     Async friendly.
     """
-    try:
+    with suppress(KeyError):
         return hass.data[DATA_COMPONENTS][comp_or_platform]  # type: ignore
-    except KeyError:
-        pass
 
     cache = hass.data.get(DATA_COMPONENTS)
     if cache is None:
@@ -640,7 +646,7 @@ def _load_file(
 class ModuleWrapper:
     """Class to wrap a Python module and auto fill in hass argument."""
 
-    def __init__(self, hass: "HomeAssistant", module: ModuleType) -> None:
+    def __init__(self, hass: HomeAssistant, module: ModuleType) -> None:
         """Initialize the module wrapper."""
         self._hass = hass
         self._module = module
@@ -704,7 +710,7 @@ def bind_hass(func: CALLABLE_T) -> CALLABLE_T:
 
 
 async def _async_component_dependencies(
-    hass: "HomeAssistant",
+    hass: HomeAssistant,
     start_domain: str,
     integration: Integration,
     loaded: set[str],
@@ -785,12 +791,12 @@ def custom_integration_warning(integration: Integration) -> None:
     _LOGGER.warning(CUSTOM_WARNING, integration.domain)
 
     if integration.manifest.get("version") is None:
-        _LOGGER.warning(
+        _LOGGER.error(
             CUSTOM_WARNING_VERSION_MISSING, integration.domain, integration.domain
         )
     else:
         if not validate_custom_integration_version(integration.manifest["version"]):
-            _LOGGER.warning(
+            _LOGGER.error(
                 CUSTOM_WARNING_VERSION_TYPE,
                 integration.manifest["version"],
                 integration.domain,
