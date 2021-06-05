@@ -73,6 +73,7 @@ FLOWS = [
     "fireservicerota",
     "flick_electric",
     "flo",
+    "flood",
     "flume",
     "flunearyou",
     "forked_daapd",
