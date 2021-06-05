@@ -85,6 +85,7 @@ FLOWS = [
     "flick_electric",
     "flipr",
     "flo",
+    "flood",
     "flume",
     "flunearyou",
     "flux_led",
