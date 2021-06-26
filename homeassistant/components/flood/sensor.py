@@ -1,9 +1,8 @@
-"""Support for the Flood."""
+"""Support for the Flood sensors."""
 import logging
 
-from homeassistant.helpers.update_coordinator import CoordinatorEntity
-
 from .const import CONTROLLER, COORDINATOR, DOMAIN
+from .entity import FloodEntity
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -11,64 +10,74 @@ _LOGGER = logging.getLogger(__name__)
 async def async_setup_entry(hass, config_entry, async_add_entities):
     """Set up the Flood platform."""
     data = hass.data[DOMAIN][config_entry.entry_id]
-    controller = data[CONTROLLER]
-    coordinator = data[COORDINATOR]
+    cont = data[CONTROLLER]
+    cdnt = data[COORDINATOR]
 
-    entities = []
+    entities = [
+        FloodSpeedEntity(
+            cont,
+            cdnt,
+            "Current Download",
+            "history",
+            "downloadSpeed",
+            "mdi:download",
+        ),
+        FloodSpeedEntity(
+            cont,
+            cdnt,
+            "Current Upload",
+            "history",
+            "uploadSpeed",
+            "mdi:upload",
+        ),
+        FloodSpeedEntity(
+            cont,
+            cdnt,
+            "Download Limit",
+            "client_settings",
+            "throttleGlobalDownSpeed",
+            "mdi:download-lock",
+        ),
+        FloodSpeedEntity(
+            cont,
+            cdnt,
+            "Upload Limit",
+            "client_settings",
+            "throttleGlobalUpSpeed",
+            "mdi:upload-lock",
+        ),
+        FloodEntity(
+            cont,
+            cdnt,
+            "Last notification",
+            "last_notification",
+            "title",
+            "mdi:comment-outline",
+            attributes=["type", "torrent"],
+        ),
+        FloodEntity(
+            cont,
+            cdnt,
+            "Torrents",
+            "torrents",
+            "count",
+            "mdi:file",
+        ),
+    ]
 
-    entities.append(FloodEntity(controller, coordinator))
-
-    if entities:
-        async_add_entities(entities, True)
+    async_add_entities(entities, True)
 
 
-class FloodEntity(CoordinatorEntity):
+class FloodSpeedEntity(FloodEntity):
     """Representation of a Flood sensor."""
 
-    def __init__(self, controller, coordinator):
-        """Initialize the sensor."""
-        super().__init__(coordinator)
-        self.controller = controller
+    @property
+    def unit_of_measurement(self) -> str:
+        """Return the icon to use in the frontend."""
+        return "kB/s"
 
     @property
-    def device_info(self):
-        """Return device information identifier."""
-        return {
-            "identifiers": {(DOMAIN, self.controller.host)},
-            "via_device": (DOMAIN, self.controller.host),
-        }
-
-    @property
-    def unique_id(self):
-        """Return an unique id."""
-        return "_".join(
-            [
-                DOMAIN,
-                self.controller.host,
-                "sensor",
-                "flood",
-            ]
-        )
-
-    @property
-    def name(self):
-        """Return the name."""
-        return "Flood"
-
-    @property
-    def state(self):
+    def state(self) -> int:
         """Return the state."""
-        return 1
-
-    @property
-    def state_attributes(self):
-        """Return the state attributes."""
-        if self.coordinator.data:
-            return {
-                "throttleGlobalDownSpeed": self.coordinator.data.get(
-                    "throttleGlobalDownSpeed"
-                ),
-                "throttleGlobalUpSpeed": self.coordinator.data.get(
-                    "throttleGlobalUpSpeed"
-                ),
-            }
+        byte_value = float(self.coordinator.data.get(self._category, {}).get(self._key))
+        return int(byte_value / 1024)

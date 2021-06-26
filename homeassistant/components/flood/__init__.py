@@ -3,7 +3,7 @@ import asyncio
 from datetime import timedelta
 import logging
 
-from pyflood import FloodApi, FloodCannotConnectError, FloodInvalidAuthError
+from .pyflood import FloodApi, FloodCannotConnectError, FloodInvalidAuthError
 
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import (
@@ -16,11 +16,11 @@ from homeassistant.const import (
 from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import ConfigEntryNotReady
 from homeassistant.helpers import device_registry as dr
-from homeassistant.helpers.aiohttp_client import async_get_clientsession
+from homeassistant.helpers.aiohttp_client import async_create_clientsession
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
+from aiohttp import CookieJar
 
 from .const import (
-    CONFIG,
     CONTROLLER,
     COORDINATOR,
     DOMAIN,
@@ -41,7 +41,9 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
     """Set up Flood from a config entry."""
     config = entry.data
 
-    session = async_get_clientsession(hass, False)
+    session = async_create_clientsession(
+        hass, verify_ssl=False, cookie_jar=CookieJar(unsafe=True)
+    )
 
     controller = FloodApi(
         config.get(CONF_HOST),
@@ -87,7 +89,6 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
     hass.data[DOMAIN][entry.entry_id] = {
         CONTROLLER: controller,
         COORDINATOR: coordinator,
-        CONFIG: config,
         UNDO_UPDATE_LISTENER: undo_listener,
     }
 
@@ -98,8 +99,6 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
         manufacturer="Jesec",
         model="Flood",
         name=controller.host,
-        sw_version=controller.version,
-        connections={(dr.CONNECTION_NETWORK_MAC, controller.mac_address)},
     )
 
     for platform in PLATFORMS:

@@ -17,7 +17,6 @@ class FloodApi:
         password: str = None,
         request_timeout: int = 10,
         session: aiohttp.client.ClientSession = None,
-        # auth_cookie_path: str = "./.flood_auth"
     ) -> None:
         """Init a Flood API."""
         self._host = host
@@ -32,7 +31,9 @@ class FloodApi:
         self._session = session
         self._close_session = False
 
-    async def _request(self, url: str, method: str, content: dict = None) -> dict:
+    async def _request(
+        self, url: str, method: str, content: dict = None, params: dict = None
+    ) -> dict:
         """Make a request to get data."""
         if self._session is None:
             jar = aiohttp.CookieJar(unsafe=True)
@@ -44,7 +45,7 @@ class FloodApi:
         try:
             with async_timeout.timeout(self._request_timeout):
                 response = await self._session.request(
-                    method=method, url=url, json=content
+                    method=method, url=url, json=content, params=params
                 )
         except asyncio.TimeoutError as exception:
             raise FloodCannotConnectError(
@@ -64,6 +65,10 @@ class FloodApi:
         else:
             raise FloodCannotConnectError("Unknown error")
 
+    @property
+    def host(self) -> str:
+        return self._host
+
     async def auth(self) -> bool:
         """Get authentication status after send credentials."""
         data = await self._request(
@@ -76,16 +81,99 @@ class FloodApi:
         else:
             return False
 
+    async def global_get(self) -> dict:
+        """Get all data."""
+        data = {}
+        data.update(
+            {
+                "client_settings": await self._request(
+                    method="GET", url=self._api_url + "client/settings"
+                )
+            }
+        )
+        data.update({"last_notification": await self.last_notification()})
+        data.update({"history": await self.history()})
+        data.update({"torrents": await self.torrents()})
+        data.update({"connected": {"status": await self.connected()}})
+        return data
+
     async def client_settings(self) -> dict:
         """Get all client settings."""
         return await self._request(method="GET", url=self._api_url + "client/settings")
+
+    async def notifications(self) -> dict:
+        """Get all notifications."""
+        return await self._request(method="GET", url=self._api_url + "notifications")
+
+    async def last_notification(self) -> str:
+        """Get last notifications."""
+        api_notifications = await self._request(
+            method="GET", url=self._api_url + "notifications"
+        )
+        notifications = api_notifications.get("notifications")
+        if not notifications:
+            return None
+        last_notification = notifications[0]
+
+        torrent_name = last_notification.get("data").get(
+            "name", "torrent name not found"
+        )
+
+        type_notification = last_notification.get("id", "notification type not found")
+        if type_notification == "notification.torrent.finished":
+            type_notification = "Finished"
+        elif type_notification == "notification.torrent.errored":
+            type_notification = "Errored"
+        elif type_notification == "notification.feed.torrent.added":
+            feed_name = last_notification.get("data").get(
+                "feedLabel", "feed name not found"
+            )
+            type_notification = f"Added from {feed_name}"
+
+        return {
+            "title": f"{type_notification}: {torrent_name}",
+            "type": last_notification.get("id", "notification type not found"),
+            "torrent": torrent_name,
+        }
 
     async def connected(self) -> bool:
         """Check if flood is connected to torrent client."""
         data = await self._request(
             method="GET", url=self._api_url + "client/connection-test"
         )
-        return bool(data.get("isConnected"))
+        return data.get("isConnected") == True
+
+    async def history(self) -> dict:
+        """Get all client settings."""
+        history = await self._request(
+            method="GET",
+            url=self._api_url + "history",
+            params={"snapshot": "FIVE_MINUTE"},
+        )
+        return {
+            "downloadSpeed": history.get("download", [])[-1],
+            "uploadSpeed": history.get("upload", [])[-1],
+        }
+
+    async def torrents(self) -> dict:
+        """Get all client settings."""
+        api_torrents = await self._request(method="GET", url=self._api_url + "torrents")
+        torrents = api_torrents.get("torrents").values()
+        # complete = [d for d in torrents if "complete" in d.get("status", [])]
+        # list(filter(lambda d: "complete" in d["status"], torrents))
+        # seeding = list(filter(lambda d: "seeding" in d["status"], torrents))
+        # downloading = list(filter(lambda d: "downloading" in d["status"], torrents))
+        # active = list(filter(lambda d: "active" in d["status"], torrents))
+        # inactive = list(filter(lambda d: "inactive" in d["status"], torrents))
+
+        return {
+            "count": len(torrents),
+            # "completed": len(complete),
+            # "downloading": len(downloading),
+            # "seeding": len(seeding),
+            # "inactive": len(inactive),
+            # "active": len(active),
+        }
 
     async def close(self) -> None:
         """Close open client session."""
