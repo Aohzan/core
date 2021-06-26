@@ -1,5 +1,5 @@
 """Config flow to configure the Flood integration."""
-from pyflood import FloodApi, FloodCannotConnectError, FloodInvalidAuthError
+from .pyflood import FloodApi, FloodCannotConnectError, FloodInvalidAuthError
 import voluptuous as vol
 
 from homeassistant import config_entries
@@ -10,7 +10,8 @@ from homeassistant.const import (
     CONF_SCAN_INTERVAL,
     CONF_USERNAME,
 )
-from homeassistant.helpers.aiohttp_client import async_get_clientsession
+from homeassistant.helpers.aiohttp_client import async_create_clientsession
+from aiohttp import CookieJar
 
 from .const import DOMAIN
 
@@ -32,10 +33,6 @@ class FloodConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     VERSION = 1
     CONNECTION_CLASS = config_entries.CONN_CLASS_LOCAL_POLL
 
-    def __init__(self):
-        """Initialize class variables."""
-        self.base_input = {}
-
     async def async_step_user(self, user_input=None):
         """Handle a flow initialized by the user."""
         errors = {}
@@ -49,7 +46,9 @@ class FloodConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         if entry:
             self._abort_if_unique_id_configured()
 
-        session = async_get_clientsession(self.hass, False)
+        session = async_create_clientsession(
+            self.hass, verify_ssl=False, cookie_jar=CookieJar(unsafe=True)
+        )
 
         controller = FloodApi(
             user_input.get(CONF_HOST),
@@ -60,7 +59,8 @@ class FloodConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         )
 
         try:
-            await controller.get_info()
+            await controller.auth()
+            await controller.connected()
         except FloodInvalidAuthError:
             errors["base"] = "invalid_auth"
             return self.async_show_form(
@@ -72,4 +72,4 @@ class FloodConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 step_id="user", data_schema=BASE_SCHEMA, errors=errors
             )
 
-        return await self.async_step_user()
+        return self.async_create_entry(title=user_input.get(CONF_HOST), data=user_input)

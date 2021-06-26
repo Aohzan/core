@@ -1,8 +1,7 @@
-"""Constant for the eco-devices integration."""
-DOMAIN = "ecodevices"
+"""Constant for the flood integration."""
+DOMAIN = "flood"
 
 CONTROLLER = "controller"
 COORDINATOR = "coordinator"
-CONFIG = "config"
-PLATFORMS = ["sensor"]
+PLATFORMS = ["sensor", "binary_sensor"]
 UNDO_UPDATE_LISTENER = "undo_update_listener"
