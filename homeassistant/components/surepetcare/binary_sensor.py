@@ -51,6 +51,8 @@ async def async_setup_entry(
 class SurePetcareBinarySensor(SurePetcareEntity, BinarySensorEntity):
     """A binary sensor implementation for Sure Petcare Entities."""
 
+    _attr_should_poll = False
+
     def __init__(
         self,
         surepetcare_id: int,

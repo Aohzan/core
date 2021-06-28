@@ -496,6 +496,17 @@ async def test_hue_events(hass, mock_bridge):
         "event": 3002,
         "last_updated": "2019-12-28T22:58:03",
     }
+    mock_bridge.mock_sensor_responses.append(new_sensor_response)
+
+    # Force updates to run again
+    async_fire_time_changed(
+        hass, dt_util.utcnow() + sensor_base.SensorManager.SCAN_INTERVAL
+    )
+    await hass.async_block_till_done()
+
+    assert len(mock_bridge.mock_requests) == 4
+    assert len(hass.states.async_all()) == 7
+    assert len(events) == 2
 
     # Fire old event, it should be ignored
     new_sensor_response = dict(new_sensor_response)

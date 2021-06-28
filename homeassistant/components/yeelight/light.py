@@ -521,6 +521,11 @@ class YeelightGenericLight(YeelightEntity, LightEntity):
         return (red, green, blue)
 
     @property
+    def rgb_color(self) -> tuple:
+        """Return the color property."""
+        return self._rgb
+
+    @property
     def effect(self):
         """Return the current effect."""
         return self._effect if self.device.is_color_flow_enabled else None

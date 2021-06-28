@@ -4,8 +4,6 @@ from __future__ import annotations
 import logging
 from typing import Any, cast
 
-import pyatmo
-
 from homeassistant.components.light import LightEntity
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant, callback

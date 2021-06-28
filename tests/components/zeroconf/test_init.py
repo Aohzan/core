@@ -682,6 +682,9 @@ async def test_removed_ignored(hass, mock_async_zeroconf):
     assert mock_service_info.mock_calls[0][1][0] == "_service.added.local."
     assert mock_service_info.mock_calls[1][1][0] == "_service.updated.local."
 
+    pprint.pprint(mock_service_info.mock_calls[0][1])
+    assert mock_service_info.mock_calls[0][1][0] == "_service.added.local."
+    assert mock_service_info.mock_calls[1][1][0] == "_service.updated.local."
 
 _ADAPTER_WITH_DEFAULT_ENABLED = [
     {

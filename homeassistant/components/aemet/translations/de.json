@@ -27,5 +27,14 @@
                 }
             }
         }
+    },
+    "options": {
+        "step": {
+            "init": {
+                "data": {
+                    "station_updates": "Sammeln von Daten von AEMET-Wetterstationen"
+                }
+            }
+        }
     }
 }

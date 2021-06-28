@@ -787,8 +787,16 @@ async def test_autodetect_websocket(hass: HomeAssistant, remote: Mock, remotews:
         }
         remotews.return_value = remote
 
+async def test_import_legacy_without_name(hass: HomeAssistant, remote: Mock):
+    """Test importing from yaml without a name."""
+    with patch(
+        "homeassistant.components.samsungtv.config_flow.socket.gethostbyname",
+        return_value="fake_host",
+    ):
         result = await hass.config_entries.flow.async_init(
-            DOMAIN, context={"source": config_entries.SOURCE_USER}, data=MOCK_USER_DATA
+            DOMAIN,
+            context={"source": config_entries.SOURCE_IMPORT},
+            data=MOCK_IMPORT_DATA_WITHOUT_NAME,
         )
         assert result["type"] == "create_entry"
         assert result["data"][CONF_METHOD] == "websocket"

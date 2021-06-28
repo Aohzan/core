@@ -87,6 +87,10 @@ class ISYSensorEntity(ISYNodeEntity, SensorEntity):
         if uom == UOM_INDEX and hasattr(self._node, "formatted"):
             return self._node.formatted
 
+        # Check if this is an index type and get formatted value
+        if uom == UOM_INDEX and hasattr(self._node, "formatted"):
+            return self._node.formatted
+
         # Handle ISY precision and rounding
         value = convert_isy_value_to_hass(value, uom, self._node.prec)
 

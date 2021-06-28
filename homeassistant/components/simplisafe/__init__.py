@@ -151,6 +151,9 @@ def _async_standardize_config_entry(
     if CONF_PASSWORD not in config_entry.data:
         raise ConfigEntryAuthFailed("Config schema change requires re-authentication")
 
+    if CONF_PASSWORD not in config_entry.data:
+        raise ConfigEntryAuthFailed("Config schema change requires re-authentication")
+
     entry_updates = {}
     if not config_entry.unique_id:
         # If the config entry doesn't already have a unique ID, set one:

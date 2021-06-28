@@ -28,5 +28,12 @@
                 "title": "\u00c9rz\u00e9kel\u0151 be\u00e1ll\u00edt\u00e1sa"
             }
         }
+    },
+    "options": {
+        "step": {
+            "init": {
+                "title": "\u00c9rz\u00e9kel\u0151 be\u00e1ll\u00edt\u00e1sa"
+            }
+        }
     }
 }

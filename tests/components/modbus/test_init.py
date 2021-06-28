@@ -66,6 +66,10 @@ from homeassistant.components.modbus.validators import (
     number_validator,
     struct_validator,
 )
+from homeassistant.components.modbus.validators import (
+    number_validator,
+    sensor_schema_validator,
+)
 from homeassistant.components.sensor import DOMAIN as SENSOR_DOMAIN
 from homeassistant.const import (
     CONF_ADDRESS,
@@ -406,6 +410,10 @@ async def test_duplicate_entity_validator(do_config):
 async def test_config_modbus(hass, caplog, mock_modbus_with_pymodbus):
     """Run configuration test for modbus."""
 
+VALUE = "value"
+FUNC = "func"
+DATA = "data"
+SERVICE = "service"
 
 VALUE = "value"
 FUNC = "func"

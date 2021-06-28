@@ -22,6 +22,7 @@ from homeassistant.const import ATTR_AREA_ID, ATTR_DEVICE_ID, ATTR_ENTITY_ID
 from homeassistant.core import HomeAssistant, ServiceCall, callback
 from homeassistant.helpers import device_registry as dr, entity_registry as er
 import homeassistant.helpers.config_validation as cv
+from homeassistant.helpers.device_registry import DeviceRegistry
 from homeassistant.helpers.dispatcher import async_dispatcher_send
 
 from . import const
@@ -57,6 +58,14 @@ def broadcast_command(val: dict[str, Any]) -> dict[str, Any]:
         "Either `broadcast` must be set to True or multiple devices/entities must be "
         "specified"
     )
+
+VALUE_SCHEMA = vol.Any(
+    bool,
+    vol.Coerce(int),
+    vol.Coerce(float),
+    BITMASK_SCHEMA,
+    cv.string,
+)
 
 
 class ZWaveServices:

@@ -39,6 +39,7 @@ from .const import (
     CONF_AVAILABILITY_TEMPLATE,
     CONF_OBJECT_ID,
     CONF_PICTURE,
+    CONF_STATE_CLASS,
     CONF_TRIGGER,
 )
 from .template_entity import TemplateEntity

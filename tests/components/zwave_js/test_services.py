@@ -553,6 +553,36 @@ async def test_bulk_set_config_parameters(hass, client, multisensor_6, integrati
 
     client.async_send_command_no_wait.reset_mock()
 
+    # Test using hex values for config parameter values
+    await hass.services.async_call(
+        DOMAIN,
+        SERVICE_BULK_SET_PARTIAL_CONFIG_PARAMETERS,
+        {
+            ATTR_ENTITY_ID: AIR_TEMPERATURE_SENSOR,
+            ATTR_CONFIG_PARAMETER: 102,
+            ATTR_CONFIG_VALUE: {
+                1: "0x1",
+                16: "0x1",
+                32: "0x1",
+                64: "0x1",
+                128: "0x1",
+            },
+        },
+        blocking=True,
+    )
+
+    assert len(client.async_send_command_no_wait.call_args_list) == 1
+    args = client.async_send_command_no_wait.call_args[0][0]
+    assert args["command"] == "node.set_value"
+    assert args["nodeId"] == 52
+    assert args["valueId"] == {
+        "commandClass": 112,
+        "property": 102,
+    }
+    assert args["value"] == 241
+
+    client.async_send_command_no_wait.reset_mock()
+
     await hass.services.async_call(
         DOMAIN,
         SERVICE_BULK_SET_PARTIAL_CONFIG_PARAMETERS,

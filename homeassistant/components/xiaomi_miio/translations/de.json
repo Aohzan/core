@@ -94,5 +94,19 @@
                 "title": "Xiaomi Miio"
             }
         }
+    },
+    "options": {
+        "error": {
+            "cloud_credentials_incomplete": "Cloud-Anmeldeinformationen unvollst\u00e4ndig, bitte Benutzernamen, Passwort und Land eingeben"
+        },
+        "step": {
+            "init": {
+                "data": {
+                    "cloud_subdevices": "Cloud verwenden, um verbundene Subdevices zu erhalten"
+                },
+                "description": "Optionale Einstellungen angeben",
+                "title": "Xiaomi Miio"
+            }
+        }
     }
 }

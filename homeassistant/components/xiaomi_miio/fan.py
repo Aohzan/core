@@ -455,6 +455,21 @@ class XiaomiAirPurifier(XiaomiGenericAirPurifier):
         """Hold operation mode class."""
         return AirpurifierOperationMode
 
+        return None
+
+    @property
+    def percentage(self):
+        """Return the current percentage based speed."""
+        if self._state:
+            mode = AirpurifierOperationMode(self._state_attrs[ATTR_MODE])
+            if mode in self.REVERSE_SPEED_MODE_MAPPING:
+                return ranged_value_to_percentage(
+                    (1, self._speed_count), self.REVERSE_SPEED_MODE_MAPPING[mode]
+                )
+
+        return None
+
+    # the speed attribute is deprecated, support will end with release 2021.7
     @property
     def percentage(self):
         """Return the current percentage based speed."""
@@ -527,6 +542,34 @@ class XiaomiAirPurifier(XiaomiGenericAirPurifier):
 class XiaomiAirPurifierMiot(XiaomiAirPurifier):
     """Representation of a Xiaomi Air Purifier (MiOT protocol)."""
 
+    PRESET_MODE_MAPPING = {
+        "Auto": AirpurifierMiotOperationMode.Auto,
+        "Silent": AirpurifierMiotOperationMode.Silent,
+        "Favorite": AirpurifierMiotOperationMode.Favorite,
+        "Fan": AirpurifierMiotOperationMode.Fan,
+    }
+
+    @property
+    def percentage(self):
+        """Return the current percentage based speed."""
+        if self._state:
+            fan_level = self._state_attrs[ATTR_FAN_LEVEL]
+            return ranged_value_to_percentage((1, 3), fan_level)
+
+        return None
+
+    @property
+    def preset_mode(self):
+        """Get the active preset mode."""
+        if self._state:
+            preset_mode = AirpurifierMiotOperationMode(
+                self._state_attrs[ATTR_MODE]
+            ).name
+            return preset_mode if preset_mode in self._preset_modes else None
+
+        return None
+
+    # the speed attribute is deprecated, support will end with release 2021.7
     @property
     def operation_mode_class(self):
         """Hold operation mode class."""
@@ -644,6 +687,9 @@ class XiaomiAirFresh(XiaomiGenericAirPurifier):
         """Hold operation mode class."""
         return AirfreshOperationMode
 
+        return None
+
+    # the speed attribute is deprecated, support will end with release 2021.7
     @property
     def percentage(self):
         """Return the current percentage based speed."""
@@ -751,6 +797,14 @@ class XiaomiGenericFan(XiaomiGenericDevice):
         """Get the list of available preset modes."""
         return [mode.name for mode in self.operation_mode_class]
 
+    SPEEDS = [
+        AirhumidifierMiotOperationMode.Low,
+        AirhumidifierMiotOperationMode.Mid,
+        AirhumidifierMiotOperationMode.High,
+    ]
+
+    # the speed attribute is deprecated, support will end with release 2021.7
+    # it is added here for compatibility
     @property
     def percentage(self):
         """Return the current speed as a percentage."""

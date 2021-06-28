@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import pytest
 
+from homeassistant.components import ssdp
 from homeassistant.components.upnp.const import (
     CONFIG_ENTRY_ST,
     CONFIG_ENTRY_UDN,

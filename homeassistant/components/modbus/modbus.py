@@ -57,6 +57,8 @@ from .const import (
     CONF_RETRIES,
     CONF_RETRY_ON_EMPTY,
     CONF_STOPBITS,
+    CONF_TCP,
+    CONF_UDP,
     DEFAULT_HUB,
     MODBUS_DOMAIN as DOMAIN,
     PLATFORMS,
@@ -72,8 +74,11 @@ from .const import (
     UDP,
 )
 
-_LOGGER = logging.getLogger(__name__)
+ENTRY_FUNC = "func"
+ENTRY_ATTR = "attr"
+ENTRY_NAME = "name"
 
+_LOGGER = logging.getLogger(__name__)
 
 ConfEntry = namedtuple("ConfEntry", "call_type attr func_name")
 RunEntry = namedtuple("RunEntry", "attr func")

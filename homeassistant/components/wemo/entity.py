@@ -57,6 +57,12 @@ class WemoEntity(CoordinatorEntity):
             return self._name_suffix.lower()
         return self._unique_id_suffix
 
+    def __init__(self, device: DeviceWrapper) -> None:
+        """Initialize WemoSubscriptionEntity."""
+        super().__init__(device.wemo)
+        self._device_id = device.device_id
+        self._device_info = device.device_info
+
     @property
     def unique_id(self) -> str:
         """Return the id of this WeMo device."""

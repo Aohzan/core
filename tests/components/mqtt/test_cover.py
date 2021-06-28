@@ -2663,6 +2663,10 @@ async def test_position_via_position_topic_template_json_value(hass, mqtt_mock, 
         "Template variable warning: 'dict object' has no attribute 'Var1' when rendering"
     ) in caplog.text
 
+    current_cover_position_position = hass.states.get("cover.test").attributes[
+        ATTR_CURRENT_POSITION
+    ]
+    assert current_cover_position_position == 0
 
 async def test_position_template_with_entity_id(hass, mqtt_mock):
     """Test position by updating status via position template."""

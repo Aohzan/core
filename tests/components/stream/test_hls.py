@@ -32,6 +32,7 @@ FAKE_PAYLOAD = b"fake-payload"
 SEGMENT_DURATION = 10
 TEST_TIMEOUT = 5.0  # Lower than 9s home assistant timeout
 MAX_ABORT_SEGMENTS = 20  # Abort test to avoid looping forever
+FAKE_TIME = datetime.utcnow()
 
 
 class HlsClient:
@@ -94,6 +95,10 @@ def make_playlist(
         f"#EXT-X-TARGETDURATION:{SEGMENT_DURATION}",
         f"#EXT-X-MEDIA-SEQUENCE:{sequence}",
         f"#EXT-X-DISCONTINUITY-SEQUENCE:{discontinuity_sequence}",
+        "#EXT-X-PROGRAM-DATE-TIME:"
+        + FAKE_TIME.strftime("%Y-%m-%dT%H:%M:%S.%f")[:-3]
+        + "Z",
+        f"#EXT-X-START:TIME-OFFSET=-{1.5*SEGMENT_DURATION:.3f}",
     ]
     if hint:
         response.extend(

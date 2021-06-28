@@ -423,6 +423,7 @@ class TibberRtDataCoordinator(update_coordinator.DataUpdateCoordinator):
         if not (live_measurement := self.get_live_measurement()):
             return
 
+        timestamp = dt_util.parse_datetime(live_measurement.pop("timestamp"))
         new_entities = []
         for sensor_description in RT_SENSORS:
             if sensor_description.key in self._added_sensors:

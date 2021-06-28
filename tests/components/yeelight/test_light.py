@@ -1004,6 +1004,59 @@ async def test_device_types(hass: HomeAssistant, caplog):
     )
     assert "Light reported unknown color mode: 4" in caplog.text
 
+    # Color - color mode RGB but no color
+    mocked_bulb.last_properties["color_mode"] = "1"  # RGB
+    mocked_bulb.last_properties["rgb"] = None
+    model_specs = _MODEL_SPECS["color"]
+    await _async_test(
+        BulbType.Color,
+        "color",
+        {
+            "effect_list": YEELIGHT_COLOR_EFFECT_LIST,
+            "supported_features": SUPPORT_YEELIGHT,
+            "min_mireds": color_temperature_kelvin_to_mired(
+                model_specs["color_temp"]["max"]
+            ),
+            "max_mireds": color_temperature_kelvin_to_mired(
+                model_specs["color_temp"]["min"]
+            ),
+            "brightness": current_brightness,
+            "color_mode": "rgb",
+            "supported_color_modes": ["color_temp", "hs", "rgb"],
+        },
+        {
+            "supported_features": 0,
+            "color_mode": "onoff",
+            "supported_color_modes": ["onoff"],
+        },
+    )
+
+    # Color - unsupported color_mode
+    mocked_bulb.last_properties["color_mode"] = 4  # Unsupported
+    model_specs = _MODEL_SPECS["color"]
+    await _async_test(
+        BulbType.Color,
+        "color",
+        {
+            "effect_list": YEELIGHT_COLOR_EFFECT_LIST,
+            "supported_features": SUPPORT_YEELIGHT,
+            "min_mireds": color_temperature_kelvin_to_mired(
+                model_specs["color_temp"]["max"]
+            ),
+            "max_mireds": color_temperature_kelvin_to_mired(
+                model_specs["color_temp"]["min"]
+            ),
+            "color_mode": "unknown",
+            "supported_color_modes": ["color_temp", "hs", "rgb"],
+        },
+        {
+            "supported_features": 0,
+            "color_mode": "onoff",
+            "supported_color_modes": ["onoff"],
+        },
+    )
+    assert "Light reported unknown color mode: 4" in caplog.text
+
     # WhiteTemp
     model_specs = _MODEL_SPECS["ceiling1"]
     await _async_test(

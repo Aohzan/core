@@ -13,6 +13,8 @@ from homeassistant.exceptions import HomeAssistantError
 UID_PREFIX = "RINCON_"
 UID_POSTFIX = "01400"
 
+from homeassistant.exceptions import HomeAssistantError
+
 _LOGGER = logging.getLogger(__name__)
 
 

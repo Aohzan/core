@@ -180,7 +180,10 @@ class SqueezeboxConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             # password required
             error = await self._validate_input(discovery_info)
             if error:
-                await self._async_handle_discovery_without_unique_id()
+                if MAC_ADDRESS in discovery_info:
+                    await self.async_set_unique_id(discovery_info[MAC_ADDRESS])
+                else:
+                    await self._async_handle_discovery_without_unique_id()
 
         # update schema with suggested values from discovery
         self.data_schema = _base_schema(discovery_info)

@@ -12,6 +12,7 @@ from homeassistant.components.climate.const import (
     SUPPORT_TARGET_TEMPERATURE,
 )
 from homeassistant.const import (
+    CONF_COUNT,
     CONF_NAME,
     CONF_TEMPERATURE_UNIT,
     PRECISION_TENTHS,
@@ -34,6 +35,10 @@ from .const import (
     CONF_MAX_TEMP,
     CONF_MIN_TEMP,
     CONF_STEP,
+    CONF_SWAP,
+    CONF_SWAP_BYTE,
+    CONF_SWAP_WORD,
+    CONF_SWAP_WORD_BYTE,
     CONF_TARGET_TEMP,
     DATA_TYPE_INT16,
     DATA_TYPE_INT32,

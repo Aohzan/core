@@ -95,6 +95,7 @@ SENSOR_TYPES: Final[tuple[FritzSensorEntityDescription, ...]] = (
         native_value=lambda device: device.energy / 1000 if device.energy else 0.0,
     ),
 )
+from .model import SensorExtraAttributes
 
 
 async def async_setup_entry(

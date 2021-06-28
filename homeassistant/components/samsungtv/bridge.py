@@ -260,6 +260,11 @@ class SamsungTVLegacyBridge(SamsungTVBridge):
         LOGGER.debug("Stopping SamsungTVLegacyBridge")
         self.close_remote()
 
+    def stop(self):
+        """Stop Bridge."""
+        LOGGER.debug("Stopping SamsungTVLegacyBridge")
+        self.close_remote()
+
 
 class SamsungTVWSBridge(SamsungTVBridge):
     """The Bridge for WebSocket TVs."""

@@ -269,6 +269,22 @@ class KNXClimate(KnxEntity, ClimateEntity):
             )
         return None
 
+    @property
+    def hvac_action(self) -> str | None:
+        """Return the current running hvac operation if supported.
+
+        Need to be one of CURRENT_HVAC_*.
+        """
+        if self._device.supports_on_off and not self._device.is_on:
+            return CURRENT_HVAC_OFF
+        if self._device.is_active is False:
+            return CURRENT_HVAC_IDLE
+        if self._device.mode is not None and self._device.mode.supports_controller_mode:
+            return CURRENT_HVAC_ACTIONS.get(
+                self._device.mode.controller_mode.value, CURRENT_HVAC_IDLE
+            )
+        return None
+
     async def async_set_hvac_mode(self, hvac_mode: str) -> None:
         """Set operation mode."""
         if self._device.supports_on_off and hvac_mode == HVAC_MODE_OFF:

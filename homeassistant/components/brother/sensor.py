@@ -14,8 +14,11 @@ from homeassistant.helpers.update_coordinator import CoordinatorEntity
 from . import BrotherDataUpdateCoordinator
 from .const import (
     ATTR_COUNTER,
+    ATTR_ENABLED,
+    ATTR_LABEL,
     ATTR_MANUFACTURER,
     ATTR_REMAINING_PAGES,
+    ATTR_UNIT,
     ATTR_UPTIME,
     ATTRS_MAP,
     DATA_CONFIG_ENTRY,

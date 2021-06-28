@@ -63,10 +63,12 @@ class DemoLock(LockEntity):
         """Return true if lock is jammed."""
         return self._state == STATE_JAMMED
 
-    @property
-    def is_locked(self):
-        """Return true if lock is locked."""
-        return self._state == STATE_LOCKED
+    def __init__(self, name: str, state: str, openable: bool = False) -> None:
+        """Initialize the lock."""
+        self._attr_name = name
+        self._attr_is_locked = state == STATE_LOCKED
+        if openable:
+            self._attr_supported_features = SUPPORT_OPEN
 
     async def async_lock(self, **kwargs):
         """Lock the device."""

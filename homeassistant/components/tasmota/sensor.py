@@ -57,6 +57,8 @@ from .const import DATA_REMOVE_DISCOVER_COMPONENT
 from .discovery import TASMOTA_DISCOVERY_ENTITY_NEW
 from .mixins import TasmotaAvailability, TasmotaDiscoveryUpdate
 
+_LOGGER = logging.getLogger(__name__)
+
 DEVICE_CLASS = "device_class"
 STATE_CLASS = "state_class"
 ICON = "icon"

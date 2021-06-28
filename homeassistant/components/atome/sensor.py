@@ -221,6 +221,8 @@ class AtomeData:
 class AtomeSensor(SensorEntity):
     """Representation of a sensor entity for Atome."""
 
+    _attr_device_class = DEVICE_CLASS_POWER
+
     def __init__(self, data, name, sensor_type):
         """Initialize the sensor."""
         self._attr_name = name

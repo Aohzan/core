@@ -16,7 +16,7 @@ from homeassistant.core import CALLBACK_TYPE, HomeAssistant, callback
 from homeassistant.helpers.event import async_call_later
 from homeassistant.util.decorator import Registry
 
-from .const import ATTR_STREAMS, DOMAIN
+from .const import ATTR_STREAMS, DOMAIN, TARGET_SEGMENT_DURATION
 
 if TYPE_CHECKING:
     from . import Stream
@@ -43,7 +43,6 @@ class Part:
     has_keyframe: bool = attr.ib()
     # video data (moof+mdat)
     data: bytes = attr.ib()
-
 
 @attr.s(slots=True)
 class Segment:

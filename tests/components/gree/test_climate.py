@@ -414,6 +414,8 @@ async def test_send_target_temperature(hass, discovery, device, units, temperatu
     # additional tests outside this component.
     hass.config.units.temperature_unit = TEMP_CELSIUS
 
+    # Reset config temperature_unit back to CELSIUS, required for additional tests outside this component.
+    hass.config.units.temperature_unit = TEMP_CELSIUS
 
 @pytest.mark.parametrize(
     "units,temperature", [(TEMP_CELSIUS, 25), (TEMP_FAHRENHEIT, 74)]

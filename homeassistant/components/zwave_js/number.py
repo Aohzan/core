@@ -60,6 +60,11 @@ class ZwaveNumberEntity(ZWaveBaseEntity, NumberEntity):
             include_value_name=True, alternate_value_name=info.platform_hint
         )
 
+        # Entity class attributes
+        self._attr_name = self.generate_name(
+            include_value_name=True, alternate_value_name=info.platform_hint
+        )
+
     @property
     def min_value(self) -> float:
         """Return the minimum value."""

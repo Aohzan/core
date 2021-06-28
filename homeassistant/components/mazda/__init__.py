@@ -151,6 +151,8 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
             hass.data[DOMAIN][entry.entry_id][DATA_VEHICLES] = vehicles
 
+            hass.data[DOMAIN][entry.entry_id][DATA_VEHICLES] = vehicles
+
             return vehicles
         except MazdaAuthenticationException as ex:
             raise ConfigEntryAuthFailed("Not authenticated with Mazda API") from ex

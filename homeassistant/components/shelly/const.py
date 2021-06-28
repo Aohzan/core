@@ -123,6 +123,23 @@ SHBLB_1_RGB_EFFECTS: Final = {
     6: "Red/Green Change",
 }
 
+STANDARD_RGB_EFFECTS = {
+    0: "Off",
+    1: "Meteor Shower",
+    2: "Gradual Change",
+    3: "Flash",
+}
+
+SHBLB_1_RGB_EFFECTS = {
+    0: "Off",
+    1: "Meteor Shower",
+    2: "Gradual Change",
+    3: "Flash",
+    4: "Breath",
+    5: "On/Off Gradual",
+    6: "Red/Green Change",
+}
+
 # Kelvin value for colorTemp
 KELVIN_MAX_VALUE: Final = 6500
 KELVIN_MIN_VALUE_WHITE: Final = 2700

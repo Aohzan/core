@@ -238,6 +238,10 @@ class DeconzTemperature(DeconzDevice, SensorEntity):
     Extra temperature sensor on certain Xiaomi devices.
     """
 
+    _attr_device_class = DEVICE_CLASS_TEMPERATURE
+    _attr_state_class = STATE_CLASS_MEASUREMENT
+    _attr_unit_of_measurement = TEMP_CELSIUS
+
     TYPE = DOMAIN
 
     def __init__(self, device, gateway):
@@ -267,6 +271,10 @@ class DeconzTemperature(DeconzDevice, SensorEntity):
 
 class DeconzBattery(DeconzDevice, SensorEntity):
     """Battery class for when a device is only represented as an event."""
+
+    _attr_device_class = DEVICE_CLASS_BATTERY
+    _attr_state_class = STATE_CLASS_MEASUREMENT
+    _attr_unit_of_measurement = PERCENTAGE
 
     TYPE = DOMAIN
 

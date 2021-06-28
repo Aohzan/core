@@ -623,6 +623,46 @@ SENSOR_PROCESS_DATA = [
     ),
     (
         "scb:statistic:EnergyFlow",
+        "Statistic:EnergyPv3:Day",
+        "Energy PV3 Day",
+        {
+            ATTR_UNIT_OF_MEASUREMENT: ENERGY_KILO_WATT_HOUR,
+            ATTR_DEVICE_CLASS: DEVICE_CLASS_ENERGY,
+        },
+        "format_energy",
+    ),
+    (
+        "scb:statistic:EnergyFlow",
+        "Statistic:EnergyPv3:Month",
+        "Energy PV3 Month",
+        {
+            ATTR_UNIT_OF_MEASUREMENT: ENERGY_KILO_WATT_HOUR,
+            ATTR_DEVICE_CLASS: DEVICE_CLASS_ENERGY,
+        },
+        "format_energy",
+    ),
+    (
+        "scb:statistic:EnergyFlow",
+        "Statistic:EnergyPv3:Year",
+        "Energy PV3 Year",
+        {
+            ATTR_UNIT_OF_MEASUREMENT: ENERGY_KILO_WATT_HOUR,
+            ATTR_DEVICE_CLASS: DEVICE_CLASS_ENERGY,
+        },
+        "format_energy",
+    ),
+    (
+        "scb:statistic:EnergyFlow",
+        "Statistic:EnergyPv3:Total",
+        "Energy PV3 Total",
+        {
+            ATTR_UNIT_OF_MEASUREMENT: ENERGY_KILO_WATT_HOUR,
+            ATTR_DEVICE_CLASS: DEVICE_CLASS_ENERGY,
+        },
+        "format_energy",
+    ),
+    (
+        "scb:statistic:EnergyFlow",
         "Statistic:Yield:Day",
         "Energy Yield Day",
         {

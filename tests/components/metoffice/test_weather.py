@@ -9,6 +9,7 @@ from homeassistant.util import utcnow
 
 from . import NewDateTime
 from .const import (
+    DATETIME_FORMAT,
     METOFFICE_CONFIG_KINGSLYNN,
     METOFFICE_CONFIG_WAVERTREE,
     WAVERTREE_SENSOR_RESULTS,
@@ -168,6 +169,41 @@ async def test_one_weather_site_running(hass, requests_mock, legacy_patchable_ti
     assert weather.attributes.get("forecast")[7]["temperature"] == 13
     assert weather.attributes.get("forecast")[7]["wind_speed"] == 13
     assert weather.attributes.get("forecast")[7]["wind_bearing"] == "SE"
+
+    # Forecasts added - just pick out 1 entry to check
+    assert len(entity.attributes.get("forecast")) == 35
+
+    assert (
+        entity.attributes.get("forecast")[26]["datetime"].strftime(DATETIME_FORMAT)
+        == "2020-04-28 21:00:00+0000"
+    )
+    assert entity.attributes.get("forecast")[26]["condition"] == "cloudy"
+    assert entity.attributes.get("forecast")[26]["temperature"] == 10
+    assert entity.attributes.get("forecast")[26]["wind_speed"] == 4
+    assert entity.attributes.get("forecast")[26]["wind_bearing"] == "NNE"
+
+    # Wavertree daily weather platform expected results
+    entity = hass.states.get("weather.met_office_wavertree_daily")
+    assert entity
+
+    assert entity.state == "sunny"
+    assert entity.attributes.get("temperature") == 19
+    assert entity.attributes.get("wind_speed") == 9
+    assert entity.attributes.get("wind_bearing") == "SSE"
+    assert entity.attributes.get("visibility") == "Good - 10-20"
+    assert entity.attributes.get("humidity") == 50
+
+    # Also has Forecasts added - again, just pick out 1 entry to check
+    assert len(entity.attributes.get("forecast")) == 8
+
+    assert (
+        entity.attributes.get("forecast")[7]["datetime"].strftime(DATETIME_FORMAT)
+        == "2020-04-29 12:00:00+0000"
+    )
+    assert entity.attributes.get("forecast")[7]["condition"] == "rainy"
+    assert entity.attributes.get("forecast")[7]["temperature"] == 13
+    assert entity.attributes.get("forecast")[7]["wind_speed"] == 13
+    assert entity.attributes.get("forecast")[7]["wind_bearing"] == "SE"
 
 
 @patch(

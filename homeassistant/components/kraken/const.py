@@ -26,6 +26,20 @@ class KrakenResponseEntry(TypedDict):
 KrakenResponse = Dict[str, KrakenResponseEntry]
 
 
+from __future__ import annotations
+
+from typing import Dict, TypedDict
+
+KrakenResponse = Dict[str, Dict[str, float]]
+
+
+class SensorType(TypedDict):
+    """SensorType class."""
+
+    name: str
+    enabled_by_default: bool
+
+
 DEFAULT_SCAN_INTERVAL = 60
 DEFAULT_TRACKED_ASSET_PAIR = "XBT/USD"
 DISPATCH_CONFIG_UPDATED = "kraken_config_updated"
