@@ -9,7 +9,8 @@
           "port": "Port",
           "scan_interval": "Seconds between updates",
           "username": "Username",
-          "password": "Password"
+          "password": "Password",
+          "max_speed_limit": "Max speed limit (kB/s)"
         }
       }
     },

@@ -18,6 +18,7 @@ class FloodEntity(CoordinatorEntity):
         key: str,
         icon: str = None,
         attributes: dict = None,
+        max_speed_limit: int = 0,
     ):
         """Initialize the entity."""
         super().__init__(coordinator)
@@ -27,6 +28,7 @@ class FloodEntity(CoordinatorEntity):
         self._key = key
         self._icon = icon
         self._attributes = attributes
+        self._max_speed_limit = max_speed_limit
 
     @property
     def device_info(self):
@@ -56,23 +58,3 @@ class FloodEntity(CoordinatorEntity):
     def icon(self):
         """Return the icon to use in the frontend."""
         return self._icon
-
-    @property
-    def state(self):
-        """Return the state."""
-        return self.coordinator.data.get(self._category, {}).get(self._key)
-
-    @property
-    def state_attributes(self):
-        """Return the state attributes."""
-        if self._attributes and self.coordinator.data.get(self._category, {}):
-            attributes = {}
-            for attribute in self._attributes:
-                attributes.update(
-                    {
-                        attribute: self.coordinator.data.get(self._category, {}).get(
-                            attribute
-                        )
-                    }
-                )
-            return attributes

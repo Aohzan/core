@@ -9,7 +9,8 @@
           "port": "[%key:common::config_flow::data::port%]",
           "scan_interval": "Seconds between updates",
           "username": "[%key:common::config_flow::data::username%]",
-          "password": "[%key:common::config_flow::data::password%]"
+          "password": "[%key:common::config_flow::data::password%]",
+          "max_speed_limit": "Max speed limit (kB/s)"
         }
       }
     },

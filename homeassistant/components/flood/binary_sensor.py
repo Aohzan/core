@@ -27,3 +27,9 @@ class FloodConnectedEntity(FloodEntity):
     def device_class(self):
         """Return the icon to use in the frontend."""
         return "connectivity"
+
+    @property
+    def state(self):
+        """Return the state."""
+        if self.coordinator.data.get(self._category):
+            return self.coordinator.data[self._category].get(self._key)
