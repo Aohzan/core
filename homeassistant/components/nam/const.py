@@ -4,12 +4,18 @@ from __future__ import annotations
 from datetime import timedelta
 from typing import Final
 
+from homeassistant.components.sensor import ATTR_STATE_CLASS, STATE_CLASS_MEASUREMENT
 from homeassistant.const import (
+    ATTR_DEVICE_CLASS,
+    ATTR_ICON,
     CONCENTRATION_MICROGRAMS_PER_CUBIC_METER,
+    CONCENTRATION_PARTS_PER_MILLION,
+    DEVICE_CLASS_CO2,
     DEVICE_CLASS_HUMIDITY,
     DEVICE_CLASS_PRESSURE,
     DEVICE_CLASS_SIGNAL_STRENGTH,
     DEVICE_CLASS_TEMPERATURE,
+    DEVICE_CLASS_TIMESTAMP,
     PERCENTAGE,
     PRESSURE_HPA,
     SIGNAL_STRENGTH_DECIBELS_MILLIWATT,
@@ -18,113 +24,207 @@ from homeassistant.const import (
 
 from .model import SensorDescription
 
+SUFFIX_P0: Final = "_p0"
+SUFFIX_P1: Final = "_p1"
+SUFFIX_P2: Final = "_p2"
+SUFFIX_P4: Final = "_p4"
+
+ATTR_BME280_HUMIDITY: Final = "bme280_humidity"
+ATTR_BME280_PRESSURE: Final = "bme280_pressure"
+ATTR_BME280_TEMPERATURE: Final = "bme280_temperature"
+ATTR_BMP280_PRESSURE: Final = "bmp280_pressure"
+ATTR_BMP280_TEMPERATURE: Final = "bmp280_temperature"
+ATTR_DHT22_HUMIDITY: Final = "dht22_humidity"
+ATTR_DHT22_TEMPERATURE: Final = "dht22_temperature"
+ATTR_HECA_HUMIDITY: Final = "heca_humidity"
+ATTR_HECA_TEMPERATURE: Final = "heca_temperature"
+ATTR_MHZ14A_CARBON_DIOXIDE: Final = "mhz14a_carbon_dioxide"
+ATTR_SDS011: Final = "sds011"
+ATTR_SDS011_P1: Final = f"{ATTR_SDS011}{SUFFIX_P1}"
+ATTR_SDS011_P2: Final = f"{ATTR_SDS011}{SUFFIX_P2}"
+ATTR_SHT3X_HUMIDITY: Final = "sht3x_humidity"
+ATTR_SHT3X_TEMPERATURE: Final = "sht3x_temperature"
+ATTR_SIGNAL_STRENGTH: Final = "signal"
+ATTR_SPS30: Final = "sps30"
+ATTR_SPS30_P0: Final = f"{ATTR_SPS30}{SUFFIX_P0}"
+ATTR_SPS30_P1: Final = f"{ATTR_SPS30}{SUFFIX_P1}"
+ATTR_SPS30_P2: Final = f"{ATTR_SPS30}{SUFFIX_P2}"
+ATTR_SPS30_P4: Final = f"{ATTR_SPS30}{SUFFIX_P4}"
+ATTR_UPTIME: Final = "uptime"
+
+ATTR_ENABLED: Final = "enabled"
+ATTR_LABEL: Final = "label"
+ATTR_UNIT: Final = "unit"
+
 DEFAULT_NAME: Final = "Nettigo Air Monitor"
 DEFAULT_UPDATE_INTERVAL: Final = timedelta(minutes=6)
 DOMAIN: Final = "nam"
 MANUFACTURER: Final = "Nettigo"
 
-SUFFIX_P1: Final = "_p1"
-SUFFIX_P2: Final = "_p2"
-
-AIR_QUALITY_SENSORS: Final[dict[str, str]] = {"sds": "SDS011", "sps30": "SPS30"}
+MIGRATION_SENSORS: Final = [
+    ("temperature", ATTR_DHT22_TEMPERATURE),
+    ("humidity", ATTR_DHT22_HUMIDITY),
+]
 
 SENSORS: Final[dict[str, SensorDescription]] = {
-    "bme280_humidity": {
-        "label": f"{DEFAULT_NAME} BME280 Humidity",
-        "unit": PERCENTAGE,
-        "device_class": DEVICE_CLASS_HUMIDITY,
-        "icon": None,
-        "enabled": True,
+    ATTR_BME280_HUMIDITY: {
+        ATTR_LABEL: f"{DEFAULT_NAME} BME280 Humidity",
+        ATTR_UNIT: PERCENTAGE,
+        ATTR_DEVICE_CLASS: DEVICE_CLASS_HUMIDITY,
+        ATTR_ICON: None,
+        ATTR_ENABLED: True,
+        ATTR_STATE_CLASS: STATE_CLASS_MEASUREMENT,
     },
-    "bme280_pressure": {
-        "label": f"{DEFAULT_NAME} BME280 Pressure",
-        "unit": PRESSURE_HPA,
-        "device_class": DEVICE_CLASS_PRESSURE,
-        "icon": None,
-        "enabled": True,
+    ATTR_BME280_PRESSURE: {
+        ATTR_LABEL: f"{DEFAULT_NAME} BME280 Pressure",
+        ATTR_UNIT: PRESSURE_HPA,
+        ATTR_DEVICE_CLASS: DEVICE_CLASS_PRESSURE,
+        ATTR_ICON: None,
+        ATTR_ENABLED: True,
+        ATTR_STATE_CLASS: STATE_CLASS_MEASUREMENT,
     },
-    "bme280_temperature": {
-        "label": f"{DEFAULT_NAME} BME280 Temperature",
-        "unit": TEMP_CELSIUS,
-        "device_class": DEVICE_CLASS_TEMPERATURE,
-        "icon": None,
-        "enabled": True,
+    ATTR_BME280_TEMPERATURE: {
+        ATTR_LABEL: f"{DEFAULT_NAME} BME280 Temperature",
+        ATTR_UNIT: TEMP_CELSIUS,
+        ATTR_DEVICE_CLASS: DEVICE_CLASS_TEMPERATURE,
+        ATTR_ICON: None,
+        ATTR_ENABLED: True,
+        ATTR_STATE_CLASS: STATE_CLASS_MEASUREMENT,
     },
-    "bmp280_pressure": {
-        "label": f"{DEFAULT_NAME} BMP280 Pressure",
-        "unit": PRESSURE_HPA,
-        "device_class": DEVICE_CLASS_PRESSURE,
-        "icon": None,
-        "enabled": True,
+    ATTR_BMP280_PRESSURE: {
+        ATTR_LABEL: f"{DEFAULT_NAME} BMP280 Pressure",
+        ATTR_UNIT: PRESSURE_HPA,
+        ATTR_DEVICE_CLASS: DEVICE_CLASS_PRESSURE,
+        ATTR_ICON: None,
+        ATTR_ENABLED: True,
+        ATTR_STATE_CLASS: STATE_CLASS_MEASUREMENT,
     },
-    "bmp280_temperature": {
-        "label": f"{DEFAULT_NAME} BMP280 Temperature",
-        "unit": TEMP_CELSIUS,
-        "device_class": DEVICE_CLASS_TEMPERATURE,
-        "icon": None,
-        "enabled": True,
+    ATTR_BMP280_TEMPERATURE: {
+        ATTR_LABEL: f"{DEFAULT_NAME} BMP280 Temperature",
+        ATTR_UNIT: TEMP_CELSIUS,
+        ATTR_DEVICE_CLASS: DEVICE_CLASS_TEMPERATURE,
+        ATTR_ICON: None,
+        ATTR_ENABLED: True,
+        ATTR_STATE_CLASS: STATE_CLASS_MEASUREMENT,
     },
-    "heca_humidity": {
-        "label": f"{DEFAULT_NAME} HECA Humidity",
-        "unit": PERCENTAGE,
-        "device_class": DEVICE_CLASS_HUMIDITY,
-        "icon": None,
-        "enabled": True,
+    ATTR_HECA_HUMIDITY: {
+        ATTR_LABEL: f"{DEFAULT_NAME} HECA Humidity",
+        ATTR_UNIT: PERCENTAGE,
+        ATTR_DEVICE_CLASS: DEVICE_CLASS_HUMIDITY,
+        ATTR_ICON: None,
+        ATTR_ENABLED: True,
+        ATTR_STATE_CLASS: STATE_CLASS_MEASUREMENT,
     },
-    "heca_temperature": {
-        "label": f"{DEFAULT_NAME} HECA Temperature",
-        "unit": TEMP_CELSIUS,
-        "device_class": DEVICE_CLASS_TEMPERATURE,
-        "icon": None,
-        "enabled": True,
+    ATTR_HECA_TEMPERATURE: {
+        ATTR_LABEL: f"{DEFAULT_NAME} HECA Temperature",
+        ATTR_UNIT: TEMP_CELSIUS,
+        ATTR_DEVICE_CLASS: DEVICE_CLASS_TEMPERATURE,
+        ATTR_ICON: None,
+        ATTR_ENABLED: True,
+        ATTR_STATE_CLASS: STATE_CLASS_MEASUREMENT,
     },
-    "sht3x_humidity": {
-        "label": f"{DEFAULT_NAME} SHT3X Humidity",
-        "unit": PERCENTAGE,
-        "device_class": DEVICE_CLASS_HUMIDITY,
-        "icon": None,
-        "enabled": True,
+    ATTR_MHZ14A_CARBON_DIOXIDE: {
+        ATTR_LABEL: f"{DEFAULT_NAME} MH-Z14A Carbon Dioxide",
+        ATTR_UNIT: CONCENTRATION_PARTS_PER_MILLION,
+        ATTR_DEVICE_CLASS: DEVICE_CLASS_CO2,
+        ATTR_ICON: None,
+        ATTR_ENABLED: True,
+        ATTR_STATE_CLASS: STATE_CLASS_MEASUREMENT,
     },
-    "sht3x_temperature": {
-        "label": f"{DEFAULT_NAME} SHT3X Temperature",
-        "unit": TEMP_CELSIUS,
-        "device_class": DEVICE_CLASS_TEMPERATURE,
-        "icon": None,
-        "enabled": True,
+    ATTR_SDS011_P1: {
+        ATTR_LABEL: f"{DEFAULT_NAME} SDS011 Particulate Matter 10",
+        ATTR_UNIT: CONCENTRATION_MICROGRAMS_PER_CUBIC_METER,
+        ATTR_DEVICE_CLASS: None,
+        ATTR_ICON: "mdi:blur",
+        ATTR_ENABLED: True,
+        ATTR_STATE_CLASS: STATE_CLASS_MEASUREMENT,
     },
-    "sps30_p0": {
-        "label": f"{DEFAULT_NAME} SPS30 Particulate Matter 1.0",
-        "unit": CONCENTRATION_MICROGRAMS_PER_CUBIC_METER,
-        "device_class": None,
-        "icon": "mdi:blur",
-        "enabled": True,
+    ATTR_SDS011_P2: {
+        ATTR_LABEL: f"{DEFAULT_NAME} SDS011 Particulate Matter 2.5",
+        ATTR_UNIT: CONCENTRATION_MICROGRAMS_PER_CUBIC_METER,
+        ATTR_DEVICE_CLASS: None,
+        ATTR_ICON: "mdi:blur",
+        ATTR_ENABLED: True,
+        ATTR_STATE_CLASS: STATE_CLASS_MEASUREMENT,
     },
-    "sps30_p4": {
-        "label": f"{DEFAULT_NAME} SPS30 Particulate Matter 4.0",
-        "unit": CONCENTRATION_MICROGRAMS_PER_CUBIC_METER,
-        "device_class": None,
-        "icon": "mdi:blur",
-        "enabled": True,
+    ATTR_SHT3X_HUMIDITY: {
+        ATTR_LABEL: f"{DEFAULT_NAME} SHT3X Humidity",
+        ATTR_UNIT: PERCENTAGE,
+        ATTR_DEVICE_CLASS: DEVICE_CLASS_HUMIDITY,
+        ATTR_ICON: None,
+        ATTR_ENABLED: True,
+        ATTR_STATE_CLASS: STATE_CLASS_MEASUREMENT,
     },
-    "humidity": {
-        "label": f"{DEFAULT_NAME} DHT22 Humidity",
-        "unit": PERCENTAGE,
-        "device_class": DEVICE_CLASS_HUMIDITY,
-        "icon": None,
-        "enabled": True,
+    ATTR_SHT3X_TEMPERATURE: {
+        ATTR_LABEL: f"{DEFAULT_NAME} SHT3X Temperature",
+        ATTR_UNIT: TEMP_CELSIUS,
+        ATTR_DEVICE_CLASS: DEVICE_CLASS_TEMPERATURE,
+        ATTR_ICON: None,
+        ATTR_ENABLED: True,
+        ATTR_STATE_CLASS: STATE_CLASS_MEASUREMENT,
     },
-    "signal": {
-        "label": f"{DEFAULT_NAME} Signal Strength",
-        "unit": SIGNAL_STRENGTH_DECIBELS_MILLIWATT,
-        "device_class": DEVICE_CLASS_SIGNAL_STRENGTH,
-        "icon": None,
-        "enabled": False,
+    ATTR_SPS30_P0: {
+        ATTR_LABEL: f"{DEFAULT_NAME} SPS30 Particulate Matter 1.0",
+        ATTR_UNIT: CONCENTRATION_MICROGRAMS_PER_CUBIC_METER,
+        ATTR_DEVICE_CLASS: None,
+        ATTR_ICON: "mdi:blur",
+        ATTR_ENABLED: True,
+        ATTR_STATE_CLASS: STATE_CLASS_MEASUREMENT,
     },
-    "temperature": {
-        "label": f"{DEFAULT_NAME} DHT22 Temperature",
-        "unit": TEMP_CELSIUS,
-        "device_class": DEVICE_CLASS_TEMPERATURE,
-        "icon": None,
-        "enabled": True,
+    ATTR_SPS30_P1: {
+        ATTR_LABEL: f"{DEFAULT_NAME} SPS30 Particulate Matter 10",
+        ATTR_UNIT: CONCENTRATION_MICROGRAMS_PER_CUBIC_METER,
+        ATTR_DEVICE_CLASS: None,
+        ATTR_ICON: "mdi:blur",
+        ATTR_ENABLED: True,
+        ATTR_STATE_CLASS: STATE_CLASS_MEASUREMENT,
+    },
+    ATTR_SPS30_P2: {
+        ATTR_LABEL: f"{DEFAULT_NAME} SPS30 Particulate Matter 2.5",
+        ATTR_UNIT: CONCENTRATION_MICROGRAMS_PER_CUBIC_METER,
+        ATTR_DEVICE_CLASS: None,
+        ATTR_ICON: "mdi:blur",
+        ATTR_ENABLED: True,
+        ATTR_STATE_CLASS: STATE_CLASS_MEASUREMENT,
+    },
+    ATTR_SPS30_P4: {
+        ATTR_LABEL: f"{DEFAULT_NAME} SPS30 Particulate Matter 4.0",
+        ATTR_UNIT: CONCENTRATION_MICROGRAMS_PER_CUBIC_METER,
+        ATTR_DEVICE_CLASS: None,
+        ATTR_ICON: "mdi:blur",
+        ATTR_ENABLED: True,
+        ATTR_STATE_CLASS: STATE_CLASS_MEASUREMENT,
+    },
+    ATTR_DHT22_HUMIDITY: {
+        ATTR_LABEL: f"{DEFAULT_NAME} DHT22 Humidity",
+        ATTR_UNIT: PERCENTAGE,
+        ATTR_DEVICE_CLASS: DEVICE_CLASS_HUMIDITY,
+        ATTR_ICON: None,
+        ATTR_ENABLED: True,
+        ATTR_STATE_CLASS: STATE_CLASS_MEASUREMENT,
+    },
+    ATTR_DHT22_TEMPERATURE: {
+        ATTR_LABEL: f"{DEFAULT_NAME} DHT22 Temperature",
+        ATTR_UNIT: TEMP_CELSIUS,
+        ATTR_DEVICE_CLASS: DEVICE_CLASS_TEMPERATURE,
+        ATTR_ICON: None,
+        ATTR_ENABLED: True,
+        ATTR_STATE_CLASS: STATE_CLASS_MEASUREMENT,
+    },
+    ATTR_SIGNAL_STRENGTH: {
+        ATTR_LABEL: f"{DEFAULT_NAME} Signal Strength",
+        ATTR_UNIT: SIGNAL_STRENGTH_DECIBELS_MILLIWATT,
+        ATTR_DEVICE_CLASS: DEVICE_CLASS_SIGNAL_STRENGTH,
+        ATTR_ICON: None,
+        ATTR_ENABLED: False,
+        ATTR_STATE_CLASS: STATE_CLASS_MEASUREMENT,
+    },
+    ATTR_UPTIME: {
+        ATTR_LABEL: f"{DEFAULT_NAME} Uptime",
+        ATTR_UNIT: None,
+        ATTR_DEVICE_CLASS: DEVICE_CLASS_TIMESTAMP,
+        ATTR_ICON: None,
+        ATTR_ENABLED: False,
+        ATTR_STATE_CLASS: None,
     },
 }
