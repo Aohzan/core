@@ -30,22 +30,6 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
             "uploadSpeed",
             "mdi:upload",
         ),
-        FloodSpeedEntity(
-            cont,
-            cdnt,
-            "Download Limit",
-            "client_settings",
-            "throttleGlobalDownSpeed",
-            "mdi:download-lock",
-        ),
-        FloodSpeedEntity(
-            cont,
-            cdnt,
-            "Upload Limit",
-            "client_settings",
-            "throttleGlobalUpSpeed",
-            "mdi:upload-lock",
-        ),
         FloodEntity(
             cont,
             cdnt,
@@ -81,3 +65,18 @@ class FloodSpeedEntity(FloodEntity):
         """Return the state."""
         byte_value = float(self.coordinator.data.get(self._category, {}).get(self._key))
         return int(byte_value / 1024)
+
+    @property
+    def state_attributes(self):
+        """Return the state attributes."""
+        if self._attributes and self.coordinator.data.get(self._category, {}):
+            attributes = {}
+            for attribute in self._attributes:
+                attributes.update(
+                    {
+                        attribute: self.coordinator.data.get(self._category, {}).get(
+                            attribute
+                        )
+                    }
+                )
+            return attributes

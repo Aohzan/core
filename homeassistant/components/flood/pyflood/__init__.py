@@ -69,6 +69,27 @@ class FloodApi:
     def host(self) -> str:
         return self._host
 
+    @property
+    async def connected(self) -> bool:
+        """Check if flood is connected to torrent client."""
+        data = await self._request(
+            method="GET", url=self._api_url + "client/connection-test"
+        )
+        return data.get("isConnected") == True
+
+    @property
+    async def history(self) -> dict:
+        """Get all client settings."""
+        history = await self._request(
+            method="GET",
+            url=self._api_url + "history",
+            params={"snapshot": "FIVE_MINUTE"},
+        )
+        return {
+            "downloadSpeed": history.get("download", [])[-1],
+            "uploadSpeed": history.get("upload", [])[-1],
+        }
+
     async def auth(self) -> bool:
         """Get authentication status after send credentials."""
         data = await self._request(
@@ -92,9 +113,9 @@ class FloodApi:
             }
         )
         data.update({"last_notification": await self.last_notification()})
-        data.update({"history": await self.history()})
+        data.update({"history": await self.history})
         data.update({"torrents": await self.torrents()})
-        data.update({"connected": {"status": await self.connected()}})
+        data.update({"connected": {"status": await self.connected}})
         return data
 
     async def client_settings(self) -> dict:
@@ -136,25 +157,6 @@ class FloodApi:
             "torrent": torrent_name,
         }
 
-    async def connected(self) -> bool:
-        """Check if flood is connected to torrent client."""
-        data = await self._request(
-            method="GET", url=self._api_url + "client/connection-test"
-        )
-        return data.get("isConnected") == True
-
-    async def history(self) -> dict:
-        """Get all client settings."""
-        history = await self._request(
-            method="GET",
-            url=self._api_url + "history",
-            params={"snapshot": "FIVE_MINUTE"},
-        )
-        return {
-            "downloadSpeed": history.get("download", [])[-1],
-            "uploadSpeed": history.get("upload", [])[-1],
-        }
-
     async def torrents(self) -> dict:
         """Get all client settings."""
         api_torrents = await self._request(method="GET", url=self._api_url + "torrents")
@@ -174,6 +176,22 @@ class FloodApi:
             # "inactive": len(inactive),
             # "active": len(active),
         }
+
+    async def set_download_limit(self, speed: int) -> None:
+        """Set download speed limit in kB/s"""
+        await self._request(
+            method="PATCH",
+            url=self._api_url + "client/settings",
+            content={"throttleGlobalDownSpeed": speed * 1024},
+        )
+
+    async def set_upload_limit(self, speed: int) -> None:
+        """Set upload speed limit in kB/s"""
+        await self._request(
+            method="PATCH",
+            url=self._api_url + "client/settings",
+            content={"throttleGlobalUpSpeed": speed * 1024},
+        )
 
     async def close(self) -> None:
         """Close open client session."""

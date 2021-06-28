@@ -1,5 +1,5 @@
 """Config flow to configure the Flood integration."""
-from .pyflood import FloodApi, FloodCannotConnectError, FloodInvalidAuthError
+from aiohttp import CookieJar
 import voluptuous as vol
 
 from homeassistant import config_entries
@@ -11,17 +11,18 @@ from homeassistant.const import (
     CONF_USERNAME,
 )
 from homeassistant.helpers.aiohttp_client import async_create_clientsession
-from aiohttp import CookieJar
 
-from .const import DOMAIN
+from .const import CONF_MAX_SPEED_LIMIT, DOMAIN
+from .pyflood import FloodApi, FloodCannotConnectError, FloodInvalidAuthError
 
 BASE_SCHEMA = vol.Schema(
     {
         vol.Required(CONF_HOST, default="192.168.1.243"): str,
-        vol.Optional(CONF_PORT, default=80): int,
+        vol.Required(CONF_PORT, default=80): int,
         vol.Required(CONF_SCAN_INTERVAL, default=30): int,
         vol.Optional(CONF_USERNAME, default="matthieu"): str,
         vol.Optional(CONF_PASSWORD, default="7tp57Mu9UKrnEVLwzZ2Y"): str,
+        vol.Required(CONF_MAX_SPEED_LIMIT, default=2000): int,
     }
 )
 
@@ -60,7 +61,7 @@ class FloodConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 
         try:
             await controller.auth()
-            await controller.connected()
+            await controller.connected
         except FloodInvalidAuthError:
             errors["base"] = "invalid_auth"
             return self.async_show_form(

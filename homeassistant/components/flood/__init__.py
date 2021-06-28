@@ -3,7 +3,7 @@ import asyncio
 from datetime import timedelta
 import logging
 
-from .pyflood import FloodApi, FloodCannotConnectError, FloodInvalidAuthError
+from aiohttp import CookieJar
 
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import (
@@ -18,15 +18,16 @@ from homeassistant.exceptions import ConfigEntryNotReady
 from homeassistant.helpers import device_registry as dr
 from homeassistant.helpers.aiohttp_client import async_create_clientsession
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
-from aiohttp import CookieJar
 
 from .const import (
     CONTROLLER,
     COORDINATOR,
+    DEFAULT_SCAN_INTERVAL,
     DOMAIN,
     PLATFORMS,
     UNDO_UPDATE_LISTENER,
 )
+from .pyflood import FloodApi, FloodCannotConnectError, FloodInvalidAuthError
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -69,7 +70,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
         except FloodCannotConnectError as err:
             raise UpdateFailed(f"Failed to communicating with API: {err}") from err
 
-    scan_interval = config.get(CONF_SCAN_INTERVAL, 30)
+    scan_interval = config.get(CONF_SCAN_INTERVAL, DEFAULT_SCAN_INTERVAL)
 
     coordinator = DataUpdateCoordinator(
         hass,
