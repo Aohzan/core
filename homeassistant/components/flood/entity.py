@@ -1,5 +1,4 @@
 """Support for the generic Flood entity."""
-import logging
 
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
@@ -14,8 +13,8 @@ class FloodEntity(CoordinatorEntity):
         controller,
         coordinator,
         name: str,
-        category: str,
-        key: str,
+        category: str = None,
+        key: str = None,
         icon: str = None,
         attributes: dict = None,
         max_speed_limit: int = 0,

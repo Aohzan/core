@@ -1,11 +1,10 @@
-"""Support for the Flood select"""
+"""Support for the Flood select."""
 
 from homeassistant.components.select import SelectEntity
+from homeassistant.const import DATA_RATE_KILOBYTES_PER_SECOND
 
 from .const import CONTROLLER, COORDINATOR, DOMAIN
 from .entity import FloodEntity
-
-_LOGGER = logging.getLogger(__name__)
 
 
 async def async_setup_entry(hass, config_entry, async_add_entities):
@@ -42,17 +41,34 @@ class FloodSpeedLimitEntity(FloodEntity, SelectEntity):
     @property
     def unit_of_measurement(self) -> str:
         """Return the icon to use in the frontend."""
-        return "kB/s"
+        return DATA_RATE_KILOBYTES_PER_SECOND
 
     @property
-    def current_option(self) -> int:
+    def current_option(self):
         """Return the state."""
         byte_value = float(self.coordinator.data.get(self._category, {}).get(self._key))
-        return int(byte_value / 1024)
+        return round(byte_value / 1024)
 
     @property
-    def options(self) -> list:
-        return self.coordinator.data.get("test")
+    def options(self):
+        """Return list of speed limit set in Flood settings."""
+        byte_value = float(self.coordinator.data.get(self._category, {}).get(self._key))
+        current = round(byte_value / 1024)
+
+        options = []
+        if self.coordinator.data.get("settings"):
+            limits = self.coordinator.data["settings"].get("speedLimits", {})
+            if self._key == "throttleGlobalDownSpeed":
+                options = [round(number / 1024) for number in limits.get("download")]
+            elif self._key == "throttleGlobalUpSpeed":
+                options = [round(number / 1024) for number in limits.get("upload")]
+
+        if current not in options:
+            options.append(current)
+
+        options.sort()
+
+        return options
 
     async def async_select_option(self, option: str) -> None:
         """Update the current value."""

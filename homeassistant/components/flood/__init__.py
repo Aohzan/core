@@ -47,10 +47,10 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
     )
 
     controller = FloodApi(
-        config.get(CONF_HOST),
-        config.get(CONF_PORT),
-        config.get(CONF_USERNAME),
-        config.get(CONF_PASSWORD),
+        config[CONF_HOST],
+        config[CONF_PORT],
+        config[CONF_USERNAME],
+        config[CONF_PASSWORD],
         session=session,
     )
 
@@ -106,6 +106,17 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
         hass.async_create_task(
             hass.config_entries.async_forward_entry_setup(entry, platform)
         )
+
+    async def stop_all_torrents(call) -> None:
+        """Stop all torrents."""
+        await controller.stop_all()
+
+    async def start_all_torrents(call) -> None:
+        """Start all torrents."""
+        await controller.start_all()
+
+    hass.services.async_register(DOMAIN, "stop_all_torrents", stop_all_torrents)
+    hass.services.async_register(DOMAIN, "start_all_torrents", start_all_torrents)
 
     return True
 
