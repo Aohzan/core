@@ -21,6 +21,16 @@
                 },
                 "title": "Configure ONVIF device"
             },
+            "configure": {
+                "data": {
+                    "host": "Host",
+                    "name": "Name",
+                    "password": "Password",
+                    "port": "Port",
+                    "username": "Username"
+                },
+                "title": "Configure ONVIF device"
+            },
             "configure_profile": {
                 "data": {
                     "include": "Create camera entity"
@@ -33,6 +43,12 @@
                     "host": "Select discovered ONVIF device"
                 },
                 "title": "Select ONVIF device"
+            },
+            "user": {
+                "data": {
+                    "auto": "Search automatically"
+                },
+                "title": "Configure ONVIF device"
             },
             "user": {
                 "data": {

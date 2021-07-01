@@ -83,6 +83,7 @@ FLOWS = [
     "forked_daapd",
     "foscam",
     "freebox",
+    "freedompro",
     "fritz",
     "fritzbox",
     "fritzbox_callmonitor",
