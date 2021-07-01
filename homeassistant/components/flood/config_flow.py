@@ -12,7 +12,7 @@ from homeassistant.const import (
 )
 from homeassistant.helpers.aiohttp_client import async_create_clientsession
 
-from .const import CONF_MAX_SPEED_LIMIT, DOMAIN
+from .const import DOMAIN
 from .pyflood import FloodApi, FloodCannotConnectError, FloodInvalidAuthError
 
 BASE_SCHEMA = vol.Schema(
@@ -22,7 +22,6 @@ BASE_SCHEMA = vol.Schema(
         vol.Required(CONF_SCAN_INTERVAL, default=30): int,
         vol.Optional(CONF_USERNAME, default="matthieu"): str,
         vol.Optional(CONF_PASSWORD, default="7tp57Mu9UKrnEVLwzZ2Y"): str,
-        vol.Required(CONF_MAX_SPEED_LIMIT, default=2000): int,
     }
 )
 
