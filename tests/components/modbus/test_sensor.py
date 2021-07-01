@@ -43,7 +43,8 @@ from .conftest import TEST_ENTITY_NAME, ReadResult
 
 ENTITY_ID = f"{SENSOR_DOMAIN}.{TEST_ENTITY_NAME}"
 
-from tests.common import mock_restore_cache
+SENSOR_NAME = "test_sensor"
+ENTITY_ID = f"{SENSOR_DOMAIN}.{SENSOR_NAME}"
 
 
 @pytest.mark.parametrize(

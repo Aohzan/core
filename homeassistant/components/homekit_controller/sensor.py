@@ -377,6 +377,8 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
             return False
         if description.probe and not description.probe(char):
             return False
+        if "probe" in kwargs and not kwargs["probe"](char):
+            return False
         info = {"aid": char.service.accessory.aid, "iid": char.service.iid}
         async_add_entities([SimpleSensor(conn, info, char, description)], True)
 

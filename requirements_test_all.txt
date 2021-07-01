@@ -396,6 +396,9 @@ freebox-api==0.0.10
 # homeassistant.components.fritzbox_callmonitor
 fritzconnection==1.7.0
 
+# homeassistant.components.fritz
+fritzprofiles==0.6.1
+
 # homeassistant.components.google_translate
 gTTS==2.2.3
 
@@ -616,6 +619,9 @@ nessclient==0.9.15
 
 # homeassistant.components.discovery
 netdisco==3.0.0
+
+# homeassistant.components.nmap_tracker
+netmap==0.7.0.2
 
 # homeassistant.components.nmap_tracker
 netmap==0.7.0.2
@@ -1107,9 +1113,6 @@ python-miio==0.5.8
 
 # homeassistant.components.nest
 python-nest==4.1.0
-
-# homeassistant.components.nmap_tracker
-python-nmap==0.6.4
 
 # homeassistant.components.ozw
 python-openzwave-mqtt[mqtt-client]==1.4.0

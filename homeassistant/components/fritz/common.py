@@ -6,7 +6,7 @@ from dataclasses import dataclass, field
 from datetime import datetime, timedelta
 import logging
 from types import MappingProxyType
-from typing import Any, TypedDict
+from typing import Any, Callable, TypedDict
 
 from fritzconnection import FritzConnection
 from fritzconnection.core.exceptions import (
@@ -16,6 +16,7 @@ from fritzconnection.core.exceptions import (
 )
 from fritzconnection.lib.fritzhosts import FritzHosts
 from fritzconnection.lib.fritzstatus import FritzStatus
+from fritzprofiles import FritzProfileSwitch, get_all_profiles
 
 from homeassistant.components.device_tracker.const import (
     CONF_CONSIDER_HOME,
@@ -114,6 +115,7 @@ class FritzBoxTools:
         self._unique_id: str | None = None
         self.connection: FritzConnection = None
         self.fritz_hosts: FritzHosts = None
+        self.fritz_profiles: dict[str, FritzProfileSwitch] = {}
         self.fritz_status: FritzStatus = None
         self.hass = hass
         self.host = host
@@ -154,6 +156,13 @@ class FritzBoxTools:
         self._current_firmware = info.get("NewSoftwareVersion")
 
         self._update_available, self._latest_firmware = self._update_device_info()
+
+        self.fritz_profiles = {
+            profile: FritzProfileSwitch(
+                "http://" + self.host, self.username, self.password, profile
+            )
+            for profile in get_all_profiles(self.host, self.username, self.password)
+        }
 
     async def async_start(self, options: MappingProxyType[str, Any]) -> None:
         """Start FritzHosts connection."""

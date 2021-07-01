@@ -35,6 +35,7 @@ from homeassistant.core import CALLBACK_TYPE, callback
 from homeassistant.exceptions import PlatformNotReady
 import homeassistant.helpers.config_validation as cv
 from homeassistant.helpers.event import async_call_later
+from homeassistant.util import dt as dt_util
 
 _LOGGER = logging.getLogger(__name__)
 

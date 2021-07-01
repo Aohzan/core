@@ -218,7 +218,6 @@ async def test_restore_state_cover(hass, mock_test_state, mock_modbus):
     test_state = mock_test_state[0].state
     assert hass.states.get(ENTITY_ID).state == test_state
 
-
 @pytest.mark.parametrize(
     "do_config",
     [

@@ -45,6 +45,9 @@ class MotionBatterySensor(CoordinatorEntity, SensorEntity):
     _attr_device_class = DEVICE_CLASS_BATTERY
     _attr_native_unit_of_measurement = PERCENTAGE
 
+    _attr_device_class = DEVICE_CLASS_BATTERY
+    _attr_unit_of_measurement = PERCENTAGE
+
     def __init__(self, coordinator, blind):
         """Initialize the Motion Battery Sensor."""
         super().__init__(coordinator)

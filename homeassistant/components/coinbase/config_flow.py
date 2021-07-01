@@ -125,6 +125,7 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 
     async def async_step_import(self, config):
         """Handle import of Coinbase config from YAML."""
+
         cleaned_data = {
             CONF_API_KEY: config[CONF_API_KEY],
             CONF_API_TOKEN: config[CONF_YAML_API_TOKEN],

@@ -38,5 +38,14 @@
                 }
             }
         }
+    },
+    "options": {
+        "step": {
+            "init": {
+                "data": {
+                    "allow_notify": "Zezw\u00f3l na korzystanie z us\u0142ugi powiadamiania o danych."
+                }
+            }
+        }
     }
 }

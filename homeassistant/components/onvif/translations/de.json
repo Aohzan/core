@@ -28,6 +28,16 @@
                 },
                 "title": "Konfiguriere das ONVIF-Ger\u00e4t"
             },
+            "configure": {
+                "data": {
+                    "host": "Host",
+                    "name": "Name",
+                    "password": "Passwort",
+                    "port": "Port",
+                    "username": "Benutzername"
+                },
+                "title": "Konfigurieren Sie das ONVIF-Ger\u00e4t"
+            },
             "configure_profile": {
                 "data": {
                     "include": "Kameraentit\u00e4t erstellen"

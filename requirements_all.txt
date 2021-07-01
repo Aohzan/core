@@ -673,6 +673,9 @@ freesms==0.2.0
 # homeassistant.components.fritzbox_callmonitor
 fritzconnection==1.7.0
 
+# homeassistant.components.fritz
+fritzprofiles==0.6.1
+
 # homeassistant.components.google_translate
 gTTS==2.2.3
 
@@ -1045,6 +1048,9 @@ netdata==0.2.0
 
 # homeassistant.components.discovery
 netdisco==3.0.0
+
+# homeassistant.components.nmap_tracker
+netmap==0.7.0.2
 
 # homeassistant.components.nmap_tracker
 netmap==0.7.0.2

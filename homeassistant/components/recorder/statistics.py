@@ -101,6 +101,11 @@ QUERY_STATISTIC_META_ID = [
     StatisticsMeta.statistic_id,
 ]
 
+QUERY_STATISTIC_META = [
+    StatisticsMeta.statistic_id,
+    StatisticsMeta.unit_of_measurement,
+]
+
 STATISTICS_BAKERY = "recorder_statistics_bakery"
 STATISTICS_META_BAKERY = "recorder_statistics_meta_bakery"
 STATISTICS_SHORT_TERM_BAKERY = "recorder_statistics_short_term_bakery"

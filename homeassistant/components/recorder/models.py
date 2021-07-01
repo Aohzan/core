@@ -348,6 +348,28 @@ class StatisticsMeta(Base):  # type: ignore
         )
 
 
+class StatisticsMeta(Base):  # type: ignore
+    """Statistics meta data."""
+
+    __table_args__ = {
+        "mysql_default_charset": "utf8mb4",
+        "mysql_collate": "utf8mb4_unicode_ci",
+    }
+    __tablename__ = TABLE_STATISTICS_META
+    statistic_id = Column(String(255), primary_key=True)
+    source = Column(String(32))
+    unit_of_measurement = Column(String(255))
+
+    @staticmethod
+    def from_meta(source, statistic_id, unit_of_measurement):
+        """Create object from meta data."""
+        return StatisticsMeta(
+            source=source,
+            statistic_id=statistic_id,
+            unit_of_measurement=unit_of_measurement,
+        )
+
+
 class RecorderRuns(Base):  # type: ignore
     """Representation of recorder run."""
 

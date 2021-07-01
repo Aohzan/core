@@ -479,6 +479,9 @@ def _compile_statistics(  # noqa: C901
             "has_sum": "sum" in wanted_statistics[entity_id],
         }
 
+        # Set meta data
+        result[entity_id]["meta"] = {"unit_of_measurement": unit}
+
         # Make calculations
         stat: StatisticData = {"start": start}
         if "max" in wanted_statistics[entity_id]:
