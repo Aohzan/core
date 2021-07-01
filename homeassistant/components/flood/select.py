@@ -47,7 +47,7 @@ class FloodSpeedLimitEntity(FloodEntity, SelectEntity):
     def current_option(self):
         """Return the state."""
         byte_value = float(self.coordinator.data.get(self._category, {}).get(self._key))
-        return round(byte_value / 1024)
+        return str(round(byte_value / 1024))
 
     @property
     def options(self):
@@ -68,7 +68,7 @@ class FloodSpeedLimitEntity(FloodEntity, SelectEntity):
 
         options.sort()
 
-        return options
+        return [str(i) for i in options]
 
     async def async_select_option(self, option: str) -> None:
         """Update the current value."""
@@ -77,4 +77,4 @@ class FloodSpeedLimitEntity(FloodEntity, SelectEntity):
             await self._controller.set_download_limit(speed)
         elif self._key == "throttleGlobalUpSpeed":
             await self._controller.set_upload_limit(speed)
-        self.coordinator.async_request_refresh()
+        await self.coordinator.async_request_refresh()
