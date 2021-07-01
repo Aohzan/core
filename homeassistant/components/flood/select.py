@@ -77,3 +77,4 @@ class FloodSpeedLimitEntity(FloodEntity, SelectEntity):
             await self._controller.set_download_limit(speed)
         elif self._key == "throttleGlobalUpSpeed":
             await self._controller.set_upload_limit(speed)
+        self.coordinator.async_request_refresh()
