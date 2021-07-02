@@ -1,14 +1,8 @@
 """Test Zeroconf component setup process."""
-from unittest.mock import patch
+from unittest.mock import call, patch
 
-from zeroconf import (
-    BadTypeInNameException,
-    Error as ZeroconfError,
-    InterfaceChoice,
-    IPVersion,
-    ServiceInfo,
-    ServiceStateChange,
-)
+from zeroconf import InterfaceChoice, IPVersion, ServiceStateChange
+from zeroconf.asyncio import AsyncServiceInfo
 
 from homeassistant.components import zeroconf
 from homeassistant.components.zeroconf import CONF_DEFAULT_INTERFACE, CONF_IPV6
@@ -53,7 +47,7 @@ _ROUTE_LOOPBACK = (
 )
 
 
-def service_update_mock(zeroconf, services, handlers, *, limit_service=None):
+def service_update_mock(ipv6, zeroconf, services, handlers, *, limit_service=None):
     """Call service update handler."""
     for service in services:
         if limit_service is not None and service != limit_service:
@@ -63,7 +57,7 @@ def service_update_mock(zeroconf, services, handlers, *, limit_service=None):
 
 def get_service_info_mock(service_type, name):
     """Return service info for get_service_info."""
-    return ServiceInfo(
+    return AsyncServiceInfo(
         service_type,
         name,
         addresses=[b"\n\x00\x00\x14"],
@@ -77,7 +71,7 @@ def get_service_info_mock(service_type, name):
 
 def get_service_info_mock_without_an_address(service_type, name):
     """Return service info for get_service_info without any addresses."""
-    return ServiceInfo(
+    return AsyncServiceInfo(
         service_type,
         name,
         addresses=[],
@@ -93,7 +87,7 @@ def get_homekit_info_mock(model, pairing_status):
     """Return homekit info for get_service_info for an homekit device."""
 
     def mock_homekit_info(service_type, name):
-        return ServiceInfo(
+        return AsyncServiceInfo(
             service_type,
             name,
             addresses=[b"\n\x00\x00\x14"],
@@ -111,7 +105,7 @@ def get_zeroconf_info_mock(macaddress):
     """Return info for get_service_info for an zeroconf device."""
 
     def mock_zc_info(service_type, name):
-        return ServiceInfo(
+        return AsyncServiceInfo(
             service_type,
             name,
             addresses=[b"\n\x00\x00\x14"],
@@ -129,7 +123,7 @@ def get_zeroconf_info_mock_manufacturer(manufacturer):
     """Return info for get_service_info for an zeroconf device."""
 
     def mock_zc_info(service_type, name):
-        return ServiceInfo(
+        return AsyncServiceInfo(
             service_type,
             name,
             addresses=[b"\n\x00\x00\x14"],
@@ -143,14 +137,16 @@ def get_zeroconf_info_mock_manufacturer(manufacturer):
     return mock_zc_info
 
 
-async def test_setup(hass, mock_zeroconf):
+async def test_setup(hass, mock_async_zeroconf):
     """Test configured options for a device are loaded via config entry."""
     with patch.object(
         hass.config_entries.flow, "async_init"
     ) as mock_config_flow, patch.object(
-        zeroconf, "HaServiceBrowser", side_effect=service_update_mock
-    ) as mock_service_browser:
-        mock_zeroconf.get_service_info.side_effect = get_service_info_mock
+        zeroconf, "HaAsyncServiceBrowser", side_effect=service_update_mock
+    ) as mock_service_browser, patch(
+        "homeassistant.components.zeroconf.AsyncServiceInfo",
+        side_effect=get_service_info_mock,
+    ):
         assert await async_setup_component(hass, zeroconf.DOMAIN, {zeroconf.DOMAIN: {}})
         hass.bus.async_fire(EVENT_HOMEASSISTANT_STARTED)
         await hass.async_block_till_done()
@@ -167,13 +163,15 @@ async def test_setup(hass, mock_zeroconf):
 
     # Test instance is set.
     assert "zeroconf" in hass.data
-    assert await hass.components.zeroconf.async_get_instance() is mock_zeroconf
+    assert (
+        await hass.components.zeroconf.async_get_async_instance() is mock_async_zeroconf
+    )
 
 
-async def test_setup_with_overly_long_url_and_name(hass, mock_zeroconf, caplog):
+async def test_setup_with_overly_long_url_and_name(hass, mock_async_zeroconf, caplog):
     """Test we still setup with long urls and names."""
     with patch.object(hass.config_entries.flow, "async_init"), patch.object(
-        zeroconf, "HaServiceBrowser", side_effect=service_update_mock
+        zeroconf, "HaAsyncServiceBrowser", side_effect=service_update_mock
     ), patch(
         "homeassistant.components.zeroconf.get_url",
         return_value="https://this.url.is.way.too.long/very/deep/path/that/will/make/us/go/over/the/maximum/string/length/and/would/cause/zeroconf/to/fail/to/startup/because/the/key/and/value/can/only/be/255/bytes/and/this/string/is/a/bit/longer/than/the/maximum/length/that/we/allow/for/a/value",
@@ -181,8 +179,9 @@ async def test_setup_with_overly_long_url_and_name(hass, mock_zeroconf, caplog):
         hass.config,
         "location_name",
         "\u00dcBER \u00dcber German Umlaut long string long string long string long string long string long string long string long string long string long string long string long string long string long string long string long string long string long string long string long string long string long string long string long string long string long string long string long string long string long string long string long string long string long string long string long string long string long string long string long string long string long string long string long string long string long string long string long string long string long string",
+    ), patch(
+        "homeassistant.components.zeroconf.AsyncServiceInfo.request",
     ):
-        mock_zeroconf.get_service_info.side_effect = get_service_info_mock
         assert await async_setup_component(hass, zeroconf.DOMAIN, {zeroconf.DOMAIN: {}})
         hass.bus.async_fire(EVENT_HOMEASSISTANT_START)
         await hass.async_block_till_done()
@@ -191,95 +190,91 @@ async def test_setup_with_overly_long_url_and_name(hass, mock_zeroconf, caplog):
     assert "German Umlaut" in caplog.text
 
 
-async def test_setup_with_default_interface(hass, mock_zeroconf):
+async def test_setup_with_default_interface(hass, mock_async_zeroconf):
     """Test default interface config."""
     with patch.object(hass.config_entries.flow, "async_init"), patch.object(
-        zeroconf, "HaServiceBrowser", side_effect=service_update_mock
+        zeroconf, "HaAsyncServiceBrowser", side_effect=service_update_mock
+    ), patch(
+        "homeassistant.components.zeroconf.AsyncServiceInfo",
+        side_effect=get_service_info_mock,
     ):
-        mock_zeroconf.get_service_info.side_effect = get_service_info_mock
         assert await async_setup_component(
             hass, zeroconf.DOMAIN, {zeroconf.DOMAIN: {CONF_DEFAULT_INTERFACE: True}}
         )
         hass.bus.async_fire(EVENT_HOMEASSISTANT_STARTED)
         await hass.async_block_till_done()
 
-    assert mock_zeroconf.called_with(interface_choice=InterfaceChoice.Default)
+    assert mock_async_zeroconf.called_with(interface_choice=InterfaceChoice.Default)
 
 
-async def test_setup_without_default_interface(hass, mock_zeroconf):
+async def test_setup_without_default_interface(hass, mock_async_zeroconf):
     """Test without default interface config."""
     with patch.object(hass.config_entries.flow, "async_init"), patch.object(
-        zeroconf, "HaServiceBrowser", side_effect=service_update_mock
+        zeroconf, "HaAsyncServiceBrowser", side_effect=service_update_mock
+    ), patch(
+        "homeassistant.components.zeroconf.AsyncServiceInfo",
+        side_effect=get_service_info_mock,
     ):
-        mock_zeroconf.get_service_info.side_effect = get_service_info_mock
         assert await async_setup_component(
             hass, zeroconf.DOMAIN, {zeroconf.DOMAIN: {CONF_DEFAULT_INTERFACE: False}}
         )
 
-    assert mock_zeroconf.called_with()
+    assert mock_async_zeroconf.called_with()
 
 
-async def test_setup_without_ipv6(hass, mock_zeroconf):
+async def test_setup_without_ipv6(hass, mock_async_zeroconf):
     """Test without ipv6."""
     with patch.object(hass.config_entries.flow, "async_init"), patch.object(
-        zeroconf, "HaServiceBrowser", side_effect=service_update_mock
+        zeroconf, "HaAsyncServiceBrowser", side_effect=service_update_mock
+    ), patch(
+        "homeassistant.components.zeroconf.AsyncServiceInfo",
+        side_effect=get_service_info_mock,
     ):
-        mock_zeroconf.get_service_info.side_effect = get_service_info_mock
         assert await async_setup_component(
             hass, zeroconf.DOMAIN, {zeroconf.DOMAIN: {CONF_IPV6: False}}
         )
         hass.bus.async_fire(EVENT_HOMEASSISTANT_STARTED)
         await hass.async_block_till_done()
 
-    assert mock_zeroconf.called_with(ip_version=IPVersion.V4Only)
+    assert mock_async_zeroconf.called_with(ip_version=IPVersion.V4Only)
 
 
-async def test_setup_with_ipv6(hass, mock_zeroconf):
+async def test_setup_with_ipv6(hass, mock_async_zeroconf):
     """Test without ipv6."""
     with patch.object(hass.config_entries.flow, "async_init"), patch.object(
-        zeroconf, "HaServiceBrowser", side_effect=service_update_mock
+        zeroconf, "HaAsyncServiceBrowser", side_effect=service_update_mock
+    ), patch(
+        "homeassistant.components.zeroconf.AsyncServiceInfo",
+        side_effect=get_service_info_mock,
     ):
-        mock_zeroconf.get_service_info.side_effect = get_service_info_mock
         assert await async_setup_component(
             hass, zeroconf.DOMAIN, {zeroconf.DOMAIN: {CONF_IPV6: True}}
         )
         hass.bus.async_fire(EVENT_HOMEASSISTANT_STARTED)
         await hass.async_block_till_done()
 
-    assert mock_zeroconf.called_with()
+    assert mock_async_zeroconf.called_with()
 
 
-async def test_setup_with_ipv6_default(hass, mock_zeroconf):
+async def test_setup_with_ipv6_default(hass, mock_async_zeroconf):
     """Test without ipv6 as default."""
     with patch.object(hass.config_entries.flow, "async_init"), patch.object(
-        zeroconf, "HaServiceBrowser", side_effect=service_update_mock
+        zeroconf, "HaAsyncServiceBrowser", side_effect=service_update_mock
+    ), patch(
+        "homeassistant.components.zeroconf.AsyncServiceInfo",
+        side_effect=get_service_info_mock,
     ):
-        mock_zeroconf.get_service_info.side_effect = get_service_info_mock
         assert await async_setup_component(hass, zeroconf.DOMAIN, {zeroconf.DOMAIN: {}})
         hass.bus.async_fire(EVENT_HOMEASSISTANT_STARTED)
         await hass.async_block_till_done()
 
-    assert mock_zeroconf.called_with()
+    assert mock_async_zeroconf.called_with()
 
 
-async def test_service_with_invalid_name(hass, mock_zeroconf, caplog):
-    """Test we do not crash on service with an invalid name."""
-    with patch.object(
-        zeroconf, "HaServiceBrowser", side_effect=service_update_mock
-    ) as mock_service_browser:
-        mock_zeroconf.get_service_info.side_effect = BadTypeInNameException
-        assert await async_setup_component(hass, zeroconf.DOMAIN, {zeroconf.DOMAIN: {}})
-        hass.bus.async_fire(EVENT_HOMEASSISTANT_STARTED)
-        await hass.async_block_till_done()
-
-    assert len(mock_service_browser.mock_calls) == 1
-    assert "Failed to get info for device" in caplog.text
-
-
-async def test_zeroconf_match_macaddress(hass, mock_zeroconf):
+async def test_zeroconf_match_macaddress(hass, mock_async_zeroconf):
     """Test configured options for a device are loaded via config entry."""
 
-    def http_only_service_update_mock(zeroconf, services, handlers):
+    def http_only_service_update_mock(ipv6, zeroconf, services, handlers):
         """Call service update handler."""
         handlers[0](
             zeroconf,
@@ -299,11 +294,11 @@ async def test_zeroconf_match_macaddress(hass, mock_zeroconf):
     ), patch.object(
         hass.config_entries.flow, "async_init"
     ) as mock_config_flow, patch.object(
-        zeroconf, "HaServiceBrowser", side_effect=http_only_service_update_mock
-    ) as mock_service_browser:
-        mock_zeroconf.get_service_info.side_effect = get_zeroconf_info_mock(
-            "FFAADDCC11DD"
-        )
+        zeroconf, "HaAsyncServiceBrowser", side_effect=http_only_service_update_mock
+    ) as mock_service_browser, patch(
+        "homeassistant.components.zeroconf.AsyncServiceInfo",
+        side_effect=get_zeroconf_info_mock("FFAADDCC11DD"),
+    ):
         assert await async_setup_component(hass, zeroconf.DOMAIN, {zeroconf.DOMAIN: {}})
         hass.bus.async_fire(EVENT_HOMEASSISTANT_STARTED)
         await hass.async_block_till_done()
@@ -313,10 +308,10 @@ async def test_zeroconf_match_macaddress(hass, mock_zeroconf):
     assert mock_config_flow.mock_calls[0][1][0] == "shelly"
 
 
-async def test_zeroconf_match_manufacturer(hass, mock_zeroconf):
+async def test_zeroconf_match_manufacturer(hass, mock_async_zeroconf):
     """Test configured options for a device are loaded via config entry."""
 
-    def http_only_service_update_mock(zeroconf, services, handlers):
+    def http_only_service_update_mock(ipv6, zeroconf, services, handlers):
         """Call service update handler."""
         handlers[0](
             zeroconf,
@@ -332,11 +327,11 @@ async def test_zeroconf_match_manufacturer(hass, mock_zeroconf):
     ), patch.object(
         hass.config_entries.flow, "async_init"
     ) as mock_config_flow, patch.object(
-        zeroconf, "HaServiceBrowser", side_effect=http_only_service_update_mock
-    ) as mock_service_browser:
-        mock_zeroconf.get_service_info.side_effect = (
-            get_zeroconf_info_mock_manufacturer("Samsung Electronics")
-        )
+        zeroconf, "HaAsyncServiceBrowser", side_effect=http_only_service_update_mock
+    ) as mock_service_browser, patch(
+        "homeassistant.components.zeroconf.AsyncServiceInfo",
+        side_effect=get_zeroconf_info_mock_manufacturer("Samsung Electronics"),
+    ):
         assert await async_setup_component(hass, zeroconf.DOMAIN, {zeroconf.DOMAIN: {}})
         hass.bus.async_fire(EVENT_HOMEASSISTANT_STARTED)
         await hass.async_block_till_done()
@@ -346,10 +341,42 @@ async def test_zeroconf_match_manufacturer(hass, mock_zeroconf):
     assert mock_config_flow.mock_calls[0][1][0] == "samsungtv"
 
 
-async def test_zeroconf_no_match(hass, mock_zeroconf):
+async def test_zeroconf_match_manufacturer_not_present(hass, mock_async_zeroconf):
+    """Test matchers reject when a property is missing."""
+
+    def http_only_service_update_mock(ipv6, zeroconf, services, handlers):
+        """Call service update handler."""
+        handlers[0](
+            zeroconf,
+            "_airplay._tcp.local.",
+            "s1000._airplay._tcp.local.",
+            ServiceStateChange.Added,
+        )
+
+    with patch.dict(
+        zc_gen.ZEROCONF,
+        {"_airplay._tcp.local.": [{"domain": "samsungtv", "manufacturer": "samsung*"}]},
+        clear=True,
+    ), patch.object(
+        hass.config_entries.flow, "async_init"
+    ) as mock_config_flow, patch.object(
+        zeroconf, "HaAsyncServiceBrowser", side_effect=http_only_service_update_mock
+    ) as mock_service_browser, patch(
+        "homeassistant.components.zeroconf.AsyncServiceInfo",
+        side_effect=get_zeroconf_info_mock("aabbccddeeff"),
+    ):
+        assert await async_setup_component(hass, zeroconf.DOMAIN, {zeroconf.DOMAIN: {}})
+        hass.bus.async_fire(EVENT_HOMEASSISTANT_STARTED)
+        await hass.async_block_till_done()
+
+    assert len(mock_service_browser.mock_calls) == 1
+    assert len(mock_config_flow.mock_calls) == 0
+
+
+async def test_zeroconf_no_match(hass, mock_async_zeroconf):
     """Test configured options for a device are loaded via config entry."""
 
-    def http_only_service_update_mock(zeroconf, services, handlers):
+    def http_only_service_update_mock(ipv6, zeroconf, services, handlers):
         """Call service update handler."""
         handlers[0](
             zeroconf,
@@ -365,11 +392,11 @@ async def test_zeroconf_no_match(hass, mock_zeroconf):
     ), patch.object(
         hass.config_entries.flow, "async_init"
     ) as mock_config_flow, patch.object(
-        zeroconf, "HaServiceBrowser", side_effect=http_only_service_update_mock
-    ) as mock_service_browser:
-        mock_zeroconf.get_service_info.side_effect = get_zeroconf_info_mock(
-            "FFAADDCC11DD"
-        )
+        zeroconf, "HaAsyncServiceBrowser", side_effect=http_only_service_update_mock
+    ) as mock_service_browser, patch(
+        "homeassistant.components.zeroconf.AsyncServiceInfo",
+        side_effect=get_zeroconf_info_mock("FFAADDCC11DD"),
+    ):
         assert await async_setup_component(hass, zeroconf.DOMAIN, {zeroconf.DOMAIN: {}})
         hass.bus.async_fire(EVENT_HOMEASSISTANT_STARTED)
         await hass.async_block_till_done()
@@ -378,10 +405,10 @@ async def test_zeroconf_no_match(hass, mock_zeroconf):
     assert len(mock_config_flow.mock_calls) == 0
 
 
-async def test_zeroconf_no_match_manufacturer(hass, mock_zeroconf):
+async def test_zeroconf_no_match_manufacturer(hass, mock_async_zeroconf):
     """Test configured options for a device are loaded via config entry."""
 
-    def http_only_service_update_mock(zeroconf, services, handlers):
+    def http_only_service_update_mock(ipv6, zeroconf, services, handlers):
         """Call service update handler."""
         handlers[0](
             zeroconf,
@@ -397,11 +424,11 @@ async def test_zeroconf_no_match_manufacturer(hass, mock_zeroconf):
     ), patch.object(
         hass.config_entries.flow, "async_init"
     ) as mock_config_flow, patch.object(
-        zeroconf, "HaServiceBrowser", side_effect=http_only_service_update_mock
-    ) as mock_service_browser:
-        mock_zeroconf.get_service_info.side_effect = (
-            get_zeroconf_info_mock_manufacturer("Not Samsung Electronics")
-        )
+        zeroconf, "HaAsyncServiceBrowser", side_effect=http_only_service_update_mock
+    ) as mock_service_browser, patch(
+        "homeassistant.components.zeroconf.AsyncServiceInfo",
+        side_effect=get_zeroconf_info_mock_manufacturer("Not Samsung Electronics"),
+    ):
         assert await async_setup_component(hass, zeroconf.DOMAIN, {zeroconf.DOMAIN: {}})
         hass.bus.async_fire(EVENT_HOMEASSISTANT_STARTED)
         await hass.async_block_till_done()
@@ -410,7 +437,7 @@ async def test_zeroconf_no_match_manufacturer(hass, mock_zeroconf):
     assert len(mock_config_flow.mock_calls) == 0
 
 
-async def test_homekit_match_partial_space(hass, mock_zeroconf):
+async def test_homekit_match_partial_space(hass, mock_async_zeroconf):
     """Test configured options for a device are loaded via config entry."""
     with patch.dict(
         zc_gen.ZEROCONF,
@@ -420,14 +447,14 @@ async def test_homekit_match_partial_space(hass, mock_zeroconf):
         hass.config_entries.flow, "async_init"
     ) as mock_config_flow, patch.object(
         zeroconf,
-        "HaServiceBrowser",
+        "HaAsyncServiceBrowser",
         side_effect=lambda *args, **kwargs: service_update_mock(
             *args, **kwargs, limit_service="_hap._tcp.local."
         ),
-    ) as mock_service_browser:
-        mock_zeroconf.get_service_info.side_effect = get_homekit_info_mock(
-            "LIFX bulb", HOMEKIT_STATUS_UNPAIRED
-        )
+    ) as mock_service_browser, patch(
+        "homeassistant.components.zeroconf.AsyncServiceInfo",
+        side_effect=get_homekit_info_mock("LIFX bulb", HOMEKIT_STATUS_UNPAIRED),
+    ):
         assert await async_setup_component(hass, zeroconf.DOMAIN, {zeroconf.DOMAIN: {}})
         hass.bus.async_fire(EVENT_HOMEASSISTANT_STARTED)
         await hass.async_block_till_done()
@@ -437,7 +464,7 @@ async def test_homekit_match_partial_space(hass, mock_zeroconf):
     assert mock_config_flow.mock_calls[0][1][0] == "lifx"
 
 
-async def test_homekit_match_partial_dash(hass, mock_zeroconf):
+async def test_homekit_match_partial_dash(hass, mock_async_zeroconf):
     """Test configured options for a device are loaded via config entry."""
     with patch.dict(
         zc_gen.ZEROCONF,
@@ -447,14 +474,14 @@ async def test_homekit_match_partial_dash(hass, mock_zeroconf):
         hass.config_entries.flow, "async_init"
     ) as mock_config_flow, patch.object(
         zeroconf,
-        "HaServiceBrowser",
+        "HaAsyncServiceBrowser",
         side_effect=lambda *args, **kwargs: service_update_mock(
             *args, **kwargs, limit_service="_hap._udp.local."
         ),
-    ) as mock_service_browser:
-        mock_zeroconf.get_service_info.side_effect = get_homekit_info_mock(
-            "Rachio-fa46ba", HOMEKIT_STATUS_UNPAIRED
-        )
+    ) as mock_service_browser, patch(
+        "homeassistant.components.zeroconf.AsyncServiceInfo",
+        side_effect=get_homekit_info_mock("Rachio-fa46ba", HOMEKIT_STATUS_UNPAIRED),
+    ):
         assert await async_setup_component(hass, zeroconf.DOMAIN, {zeroconf.DOMAIN: {}})
         hass.bus.async_fire(EVENT_HOMEASSISTANT_STARTED)
         await hass.async_block_till_done()
@@ -464,7 +491,34 @@ async def test_homekit_match_partial_dash(hass, mock_zeroconf):
     assert mock_config_flow.mock_calls[0][1][0] == "rachio"
 
 
-async def test_homekit_match_full(hass, mock_zeroconf):
+async def test_homekit_match_partial_fnmatch(hass, mock_async_zeroconf):
+    """Test matching homekit devices with fnmatch."""
+    with patch.dict(
+        zc_gen.ZEROCONF,
+        {"_hap._tcp.local.": [{"domain": "homekit_controller"}]},
+        clear=True,
+    ), patch.dict(zc_gen.HOMEKIT, {"YLDP*": "yeelight"}, clear=True,), patch.object(
+        hass.config_entries.flow, "async_init"
+    ) as mock_config_flow, patch.object(
+        zeroconf,
+        "HaAsyncServiceBrowser",
+        side_effect=lambda *args, **kwargs: service_update_mock(
+            *args, **kwargs, limit_service="_hap._tcp.local."
+        ),
+    ) as mock_service_browser, patch(
+        "homeassistant.components.zeroconf.AsyncServiceInfo",
+        side_effect=get_homekit_info_mock("YLDP13YL", HOMEKIT_STATUS_UNPAIRED),
+    ):
+        assert await async_setup_component(hass, zeroconf.DOMAIN, {zeroconf.DOMAIN: {}})
+        hass.bus.async_fire(EVENT_HOMEASSISTANT_STARTED)
+        await hass.async_block_till_done()
+
+    assert len(mock_service_browser.mock_calls) == 1
+    assert len(mock_config_flow.mock_calls) == 1
+    assert mock_config_flow.mock_calls[0][1][0] == "yeelight"
+
+
+async def test_homekit_match_full(hass, mock_async_zeroconf):
     """Test configured options for a device are loaded via config entry."""
     with patch.dict(
         zc_gen.ZEROCONF,
@@ -474,14 +528,14 @@ async def test_homekit_match_full(hass, mock_zeroconf):
         hass.config_entries.flow, "async_init"
     ) as mock_config_flow, patch.object(
         zeroconf,
-        "HaServiceBrowser",
+        "HaAsyncServiceBrowser",
         side_effect=lambda *args, **kwargs: service_update_mock(
             *args, **kwargs, limit_service="_hap._udp.local."
         ),
-    ) as mock_service_browser:
-        mock_zeroconf.get_service_info.side_effect = get_homekit_info_mock(
-            "BSB002", HOMEKIT_STATUS_UNPAIRED
-        )
+    ) as mock_service_browser, patch(
+        "homeassistant.components.zeroconf.AsyncServiceInfo",
+        side_effect=get_homekit_info_mock("BSB002", HOMEKIT_STATUS_UNPAIRED),
+    ):
         assert await async_setup_component(hass, zeroconf.DOMAIN, {zeroconf.DOMAIN: {}})
         hass.bus.async_fire(EVENT_HOMEASSISTANT_STARTED)
         await hass.async_block_till_done()
@@ -491,7 +545,7 @@ async def test_homekit_match_full(hass, mock_zeroconf):
     assert mock_config_flow.mock_calls[0][1][0] == "hue"
 
 
-async def test_homekit_already_paired(hass, mock_zeroconf):
+async def test_homekit_already_paired(hass, mock_async_zeroconf):
     """Test that an already paired device is sent to homekit_controller."""
     with patch.dict(
         zc_gen.ZEROCONF,
@@ -501,14 +555,14 @@ async def test_homekit_already_paired(hass, mock_zeroconf):
         hass.config_entries.flow, "async_init"
     ) as mock_config_flow, patch.object(
         zeroconf,
-        "HaServiceBrowser",
+        "HaAsyncServiceBrowser",
         side_effect=lambda *args, **kwargs: service_update_mock(
             *args, **kwargs, limit_service="_hap._tcp.local."
         ),
-    ) as mock_service_browser:
-        mock_zeroconf.get_service_info.side_effect = get_homekit_info_mock(
-            "tado", HOMEKIT_STATUS_PAIRED
-        )
+    ) as mock_service_browser, patch(
+        "homeassistant.components.zeroconf.AsyncServiceInfo",
+        side_effect=get_homekit_info_mock("tado", HOMEKIT_STATUS_PAIRED),
+    ):
         assert await async_setup_component(hass, zeroconf.DOMAIN, {zeroconf.DOMAIN: {}})
         hass.bus.async_fire(EVENT_HOMEASSISTANT_STARTED)
         await hass.async_block_till_done()
@@ -519,7 +573,7 @@ async def test_homekit_already_paired(hass, mock_zeroconf):
     assert mock_config_flow.mock_calls[1][1][0] == "homekit_controller"
 
 
-async def test_homekit_invalid_paring_status(hass, mock_zeroconf):
+async def test_homekit_invalid_paring_status(hass, mock_async_zeroconf):
     """Test that missing paring data is not sent to homekit_controller."""
     with patch.dict(
         zc_gen.ZEROCONF,
@@ -529,14 +583,14 @@ async def test_homekit_invalid_paring_status(hass, mock_zeroconf):
         hass.config_entries.flow, "async_init"
     ) as mock_config_flow, patch.object(
         zeroconf,
-        "HaServiceBrowser",
+        "HaAsyncServiceBrowser",
         side_effect=lambda *args, **kwargs: service_update_mock(
             *args, **kwargs, limit_service="_hap._tcp.local."
         ),
-    ) as mock_service_browser:
-        mock_zeroconf.get_service_info.side_effect = get_homekit_info_mock(
-            "tado", b"invalid"
-        )
+    ) as mock_service_browser, patch(
+        "homeassistant.components.zeroconf.AsyncServiceInfo",
+        side_effect=get_homekit_info_mock("tado", b"invalid"),
+    ):
         assert await async_setup_component(hass, zeroconf.DOMAIN, {zeroconf.DOMAIN: {}})
         hass.bus.async_fire(EVENT_HOMEASSISTANT_STARTED)
         await hass.async_block_till_done()
@@ -546,7 +600,7 @@ async def test_homekit_invalid_paring_status(hass, mock_zeroconf):
     assert mock_config_flow.mock_calls[0][1][0] == "tado"
 
 
-async def test_homekit_not_paired(hass, mock_zeroconf):
+async def test_homekit_not_paired(hass, mock_async_zeroconf):
     """Test that an not paired device is sent to homekit_controller."""
     with patch.dict(
         zc_gen.ZEROCONF,
@@ -555,11 +609,13 @@ async def test_homekit_not_paired(hass, mock_zeroconf):
     ), patch.object(
         hass.config_entries.flow, "async_init"
     ) as mock_config_flow, patch.object(
-        zeroconf, "HaServiceBrowser", side_effect=service_update_mock
-    ) as mock_service_browser:
-        mock_zeroconf.get_service_info.side_effect = get_homekit_info_mock(
+        zeroconf, "HaAsyncServiceBrowser", side_effect=service_update_mock
+    ) as mock_service_browser, patch(
+        "homeassistant.components.zeroconf.AsyncServiceInfo",
+        side_effect=get_homekit_info_mock(
             "this_will_not_match_any_integration", HOMEKIT_STATUS_UNPAIRED
-        )
+        ),
+    ):
         assert await async_setup_component(hass, zeroconf.DOMAIN, {zeroconf.DOMAIN: {}})
         hass.bus.async_fire(EVENT_HOMEASSISTANT_STARTED)
         await hass.async_block_till_done()
@@ -593,101 +649,145 @@ async def test_info_from_service_with_addresses(hass):
     assert info is None
 
 
-async def test_get_instance(hass, mock_zeroconf):
+async def test_get_instance(hass, mock_async_zeroconf):
     """Test we get an instance."""
     assert await async_setup_component(hass, zeroconf.DOMAIN, {zeroconf.DOMAIN: {}})
-    assert await hass.components.zeroconf.async_get_instance() is mock_zeroconf
+    assert (
+        await hass.components.zeroconf.async_get_async_instance() is mock_async_zeroconf
+    )
     hass.bus.async_fire(EVENT_HOMEASSISTANT_STOP)
     await hass.async_block_till_done()
-    assert len(mock_zeroconf.ha_close.mock_calls) == 1
+    assert len(mock_async_zeroconf.ha_async_close.mock_calls) == 1
 
 
-async def test_removed_ignored(hass, mock_zeroconf):
+async def test_removed_ignored(hass, mock_async_zeroconf):
     """Test we remove it when a zeroconf entry is removed."""
-    mock_zeroconf.get_service_info.side_effect = ZeroconfError
 
-    def service_update_mock(zeroconf, services, handlers):
+    def service_update_mock(ipv6, zeroconf, services, handlers):
         """Call service update handler."""
         handlers[0](
-            zeroconf, "_service.added", "name._service.added", ServiceStateChange.Added
+            zeroconf,
+            "_service.added.local.",
+            "name._service.added.local.",
+            ServiceStateChange.Added,
         )
         handlers[0](
             zeroconf,
-            "_service.updated",
-            "name._service.updated",
+            "_service.updated.local.",
+            "name._service.updated.local.",
             ServiceStateChange.Updated,
         )
         handlers[0](
             zeroconf,
-            "_service.removed",
-            "name._service.removed",
+            "_service.removed.local.",
+            "name._service.removed.local.",
             ServiceStateChange.Removed,
         )
 
-    with patch.object(zeroconf, "HaServiceBrowser", side_effect=service_update_mock):
+    with patch.object(
+        zeroconf, "HaAsyncServiceBrowser", side_effect=service_update_mock
+    ), patch(
+        "homeassistant.components.zeroconf.AsyncServiceInfo",
+        side_effect=get_service_info_mock,
+    ) as mock_service_info:
         assert await async_setup_component(hass, zeroconf.DOMAIN, {zeroconf.DOMAIN: {}})
         hass.bus.async_fire(EVENT_HOMEASSISTANT_STARTED)
         await hass.async_block_till_done()
 
-    assert len(mock_zeroconf.get_service_info.mock_calls) == 2
-    assert mock_zeroconf.get_service_info.mock_calls[0][1][0] == "_service.added"
-    assert mock_zeroconf.get_service_info.mock_calls[1][1][0] == "_service.updated"
+    assert len(mock_service_info.mock_calls) == 2
+    import pprint
+
+    pprint.pprint(mock_service_info.mock_calls[0][1])
+    assert mock_service_info.mock_calls[0][1][0] == "_service.added.local."
+    assert mock_service_info.mock_calls[1][1][0] == "_service.updated.local."
 
 
-async def test_async_detect_interfaces_setting_non_loopback_route(hass, mock_zeroconf):
+_ADAPTER_WITH_DEFAULT_ENABLED = [
+    {
+        "auto": True,
+        "default": True,
+        "enabled": True,
+        "ipv4": [{"address": "192.168.1.5", "network_prefix": 23}],
+        "ipv6": [],
+        "name": "eth1",
+    }
+]
+
+
+async def test_async_detect_interfaces_setting_non_loopback_route(
+    hass, mock_async_zeroconf
+):
     """Test without default interface config and the route returns a non-loopback address."""
-    with patch.object(hass.config_entries.flow, "async_init"), patch.object(
-        zeroconf, "HaServiceBrowser", side_effect=service_update_mock
+    with patch("homeassistant.components.zeroconf.HaZeroconf") as mock_zc, patch.object(
+        hass.config_entries.flow, "async_init"
+    ), patch.object(
+        zeroconf, "HaAsyncServiceBrowser", side_effect=service_update_mock
     ), patch(
-        "homeassistant.components.zeroconf.IPRoute.route",
-        return_value=_ROUTE_NO_LOOPBACK,
+        "homeassistant.components.zeroconf.network.async_get_adapters",
+        return_value=_ADAPTER_WITH_DEFAULT_ENABLED,
+    ), patch(
+        "homeassistant.components.zeroconf.AsyncServiceInfo",
+        side_effect=get_service_info_mock,
     ):
-        mock_zeroconf.get_service_info.side_effect = get_service_info_mock
         assert await async_setup_component(hass, zeroconf.DOMAIN, {zeroconf.DOMAIN: {}})
         hass.bus.async_fire(EVENT_HOMEASSISTANT_STARTED)
         await hass.async_block_till_done()
 
-    assert mock_zeroconf.called_with(interface_choice=InterfaceChoice.Default)
+    assert mock_zc.mock_calls[0] == call(
+        interfaces=InterfaceChoice.Default, ip_version=IPVersion.V4Only
+    )
 
 
-async def test_async_detect_interfaces_setting_loopback_route(hass, mock_zeroconf):
-    """Test without default interface config and the route returns a loopback address."""
-    with patch.object(hass.config_entries.flow, "async_init"), patch.object(
-        zeroconf, "HaServiceBrowser", side_effect=service_update_mock
-    ), patch(
-        "homeassistant.components.zeroconf.IPRoute.route", return_value=_ROUTE_LOOPBACK
-    ):
-        mock_zeroconf.get_service_info.side_effect = get_service_info_mock
-        assert await async_setup_component(hass, zeroconf.DOMAIN, {zeroconf.DOMAIN: {}})
-        hass.bus.async_fire(EVENT_HOMEASSISTANT_STARTED)
-        await hass.async_block_till_done()
+_ADAPTERS_WITH_MANUAL_CONFIG = [
+    {
+        "auto": True,
+        "default": False,
+        "enabled": True,
+        "ipv4": [],
+        "ipv6": [
+            {
+                "address": "2001:db8::",
+                "network_prefix": 8,
+                "flowinfo": 1,
+                "scope_id": 1,
+            }
+        ],
+        "name": "eth0",
+    },
+    {
+        "auto": True,
+        "default": False,
+        "enabled": True,
+        "ipv4": [{"address": "192.168.1.5", "network_prefix": 23}],
+        "ipv6": [],
+        "name": "eth1",
+    },
+    {
+        "auto": False,
+        "default": False,
+        "enabled": False,
+        "ipv4": [{"address": "169.254.3.2", "network_prefix": 16}],
+        "ipv6": [],
+        "name": "vtun0",
+    },
+]
 
-    assert mock_zeroconf.called_with(interface_choice=InterfaceChoice.All)
 
-
-async def test_async_detect_interfaces_setting_empty_route(hass, mock_zeroconf):
+async def test_async_detect_interfaces_setting_empty_route(hass, mock_async_zeroconf):
     """Test without default interface config and the route returns nothing."""
-    with patch.object(hass.config_entries.flow, "async_init"), patch.object(
-        zeroconf, "HaServiceBrowser", side_effect=service_update_mock
-    ), patch("homeassistant.components.zeroconf.IPRoute.route", return_value=[]):
-        mock_zeroconf.get_service_info.side_effect = get_service_info_mock
-        assert await async_setup_component(hass, zeroconf.DOMAIN, {zeroconf.DOMAIN: {}})
-        hass.bus.async_fire(EVENT_HOMEASSISTANT_STARTED)
-        await hass.async_block_till_done()
-
-    assert mock_zeroconf.called_with(interface_choice=InterfaceChoice.All)
-
-
-async def test_async_detect_interfaces_setting_exception(hass, mock_zeroconf):
-    """Test without default interface config and the route throws an exception."""
-    with patch.object(hass.config_entries.flow, "async_init"), patch.object(
-        zeroconf, "HaServiceBrowser", side_effect=service_update_mock
+    with patch("homeassistant.components.zeroconf.HaZeroconf") as mock_zc, patch.object(
+        hass.config_entries.flow, "async_init"
+    ), patch.object(
+        zeroconf, "HaAsyncServiceBrowser", side_effect=service_update_mock
     ), patch(
-        "homeassistant.components.zeroconf.IPRoute.route", side_effect=AttributeError
+        "homeassistant.components.zeroconf.network.async_get_adapters",
+        return_value=_ADAPTERS_WITH_MANUAL_CONFIG,
+    ), patch(
+        "homeassistant.components.zeroconf.AsyncServiceInfo",
+        side_effect=get_service_info_mock,
     ):
-        mock_zeroconf.get_service_info.side_effect = get_service_info_mock
         assert await async_setup_component(hass, zeroconf.DOMAIN, {zeroconf.DOMAIN: {}})
         hass.bus.async_fire(EVENT_HOMEASSISTANT_STARTED)
         await hass.async_block_till_done()
 
-    assert mock_zeroconf.called_with(interface_choice=InterfaceChoice.All)
+    assert mock_zc.mock_calls[0] == call(interfaces=[1, "192.168.1.5"])

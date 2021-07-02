@@ -45,7 +45,7 @@ ORPHANED_DEVICE_KEEP_SECONDS = 86400 * 30
 
 
 class _DeviceIndex(NamedTuple):
-    identifiers: dict[tuple[str, ...], str]
+    identifiers: dict[tuple[str, str], str]
     connections: dict[tuple[str, str], str]
 
 
@@ -135,7 +135,7 @@ def format_mac(mac: str) -> str:
 
 def _async_get_device_id_from_index(
     devices_index: _DeviceIndex,
-    identifiers: set[tuple[str, ...]],
+    identifiers: set[tuple[str, str]],
     connections: set[tuple[str, str]] | None,
 ) -> str | None:
     """Check if device has previously been registered."""

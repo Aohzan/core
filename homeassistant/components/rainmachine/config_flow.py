@@ -22,9 +22,8 @@ DATA_SCHEMA = vol.Schema(
 
 
 def get_client_controller(client):
-    """Enumerate controllers to find the first mac."""
-    for controller in client.controllers.values():
-        return controller
+    """Return the first local controller."""
+    return next(iter(client.controllers.values()))
 
 
 async def async_get_controller(hass, ip_address, password, port, ssl):
@@ -54,14 +53,6 @@ class RainMachineFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
         """Define the config flow to handle options."""
         return RainMachineOptionsFlowHandler(config_entry)
 
-    @callback
-    def _async_abort_ip_address_configured(self, ip_address):
-        """Abort if we already have an entry for the ip."""
-        # IP already configured
-        for entry in self._async_current_entries(include_ignore=False):
-            if ip_address == entry.data[CONF_IP_ADDRESS]:
-                raise AbortFlow("already_configured")
-
     async def async_step_homekit(self, discovery_info):
         """Handle a flow initialized by homekit discovery."""
         return await self.async_step_zeroconf(discovery_info)
@@ -70,7 +61,7 @@ class RainMachineFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
         """Handle discovery via zeroconf."""
         ip_address = discovery_info["host"]
 
-        self._async_abort_ip_address_configured(ip_address)
+        self._async_abort_entries_match({CONF_IP_ADDRESS: ip_address})
         # Handle IP change
         for entry in self._async_current_entries(include_ignore=False):
             # Try our existing credentials to check for ip change
@@ -110,7 +101,9 @@ class RainMachineFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
         """Handle the start of the config flow."""
         errors = {}
         if user_input:
-            self._async_abort_ip_address_configured(user_input[CONF_IP_ADDRESS])
+            self._async_abort_entries_match(
+                {CONF_IP_ADDRESS: user_input[CONF_IP_ADDRESS]}
+            )
             controller = await async_get_controller(
                 self.hass,
                 user_input[CONF_IP_ADDRESS],
