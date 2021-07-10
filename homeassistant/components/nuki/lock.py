@@ -66,6 +66,14 @@ async def async_setup_entry(hass, entry, async_add_entities):
         "set_continuous_mode",
     )
 
+    platform.async_register_entity_service(
+        "set_continuous_mode",
+        {
+            vol.Required(ATTR_ENABLE): cv.boolean,
+        },
+        "set_continuous_mode",
+    )
+
 
 class NukiDeviceEntity(NukiEntity, LockEntity, ABC):
     """Representation of a Nuki device."""

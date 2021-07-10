@@ -171,12 +171,6 @@ async def async_setup(hass: HomeAssistant, config: dict) -> bool:
     discovery = ZeroconfDiscovery(hass, zeroconf, zeroconf_types, homekit_models, ipv6)
     await discovery.async_setup()
 
-    zeroconf_types, homekit_models = await asyncio.gather(
-        async_get_zeroconf(hass), async_get_homekit(hass)
-    )
-    discovery = ZeroconfDiscovery(hass, zeroconf, zeroconf_types, homekit_models)
-    await discovery.async_setup()
-
     async def _async_zeroconf_hass_start(_event: Event) -> None:
         """Expose Home Assistant on zeroconf when it starts.
 

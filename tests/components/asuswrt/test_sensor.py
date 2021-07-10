@@ -62,24 +62,6 @@ def mock_devices_fixture():
     }
 
 
-SENSOR_NAMES = [
-    "Devices Connected",
-    "Download Speed",
-    "Download",
-    "Upload Speed",
-    "Upload",
-]
-
-
-@pytest.fixture(name="mock_devices")
-def mock_devices_fixture():
-    """Mock a list of devices."""
-    return {
-        "a1:b1:c1:d1:e1:f1": Device("a1:b1:c1:d1:e1:f1", "192.168.1.2", "Test"),
-        "a2:b2:c2:d2:e2:f2": Device("a2:b2:c2:d2:e2:f2", "192.168.1.3", "TestTwo"),
-    }
-
-
 @pytest.fixture(name="connect")
 def mock_controller_connect(mock_devices):
     """Mock a successful connection."""

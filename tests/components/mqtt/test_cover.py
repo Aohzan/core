@@ -2668,7 +2668,6 @@ async def test_position_via_position_topic_template_json_value(hass, mqtt_mock, 
     ]
     assert current_cover_position_position == 0
 
-
 async def test_position_template_with_entity_id(hass, mqtt_mock):
     """Test position by updating status via position template."""
     assert await async_setup_component(

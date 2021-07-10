@@ -162,9 +162,6 @@ class OnvifFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
         def conf(name, default=None):
             return self.onvif_config.get(name, default)
 
-        def conf(name, default=None):
-            return self.onvif_config.get(name, default)
-
         # Username and Password are optional and default empty
         # due to some cameras not allowing you to change ONVIF user settings.
         # See https://github.com/home-assistant/core/issues/39182

@@ -850,10 +850,6 @@ class EsphomeBaseEntity(Entity):
         return self._entry_data.api_version
 
     @property
-    def _api_version(self) -> APIVersion:
-        return self._entry_data.api_version
-
-    @property
     def _static_info(self) -> EntityInfo:
         # Check if value is in info database. Use a single lookup.
         info = self._entry_data.info[self._component_key].get(self._key)

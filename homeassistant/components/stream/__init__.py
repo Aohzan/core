@@ -265,6 +265,10 @@ class Stream:
     ) -> None:
         """Make a .mp4 recording from a provided stream."""
 
+        # Keep import here so that we can import stream integration without installing reqs
+        # pylint: disable=import-outside-toplevel
+        from .recorder import RecorderOutput
+
         # Check for file access
         if not self.hass.config.is_allowed_path(video_path):
             raise HomeAssistantError(f"Can't write {video_path}, no access to path!")
