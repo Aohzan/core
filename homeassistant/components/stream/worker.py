@@ -5,6 +5,7 @@ from collections import defaultdict, deque
 from collections.abc import Callable, Generator, Iterator, Mapping
 import datetime
 from io import BytesIO
+import itertools
 import logging
 from threading import Event
 from typing import Any, cast
@@ -435,6 +436,9 @@ def stream_worker(
     # Mux the first keyframe, then proceed through the rest of the packets
     segment_buffer.mux_packet(first_keyframe)
 
+    # Rewind the stream and iterate over the initial set of packets again
+    # filtering out any packets with timestamp ordering issues.
+    packets = itertools.chain(initial_packets, container_packets)
     while not quit_event.is_set():
         try:
             packet = next(container_packets)

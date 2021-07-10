@@ -985,6 +985,13 @@ def test_compile_hourly_sum_statistics_total_increasing_small_dip(
     }
     assert "Error while processing event StatisticsTask" not in caplog.text
 
+    four, eight, states = record_energy_states(
+        hass, zero, "sensor.test1", attributes, seq
+    )
+    hist = history.get_significant_states(
+        hass, zero - timedelta.resolution, eight + timedelta.resolution
+    )
+    assert dict(states)["sensor.test1"] == dict(hist)["sensor.test1"]
 
 def test_compile_hourly_energy_statistics_unsupported(hass_recorder, caplog):
     """Test compiling hourly statistics."""

@@ -480,7 +480,11 @@ def _compile_statistics(  # noqa: C901
         }
 
         # Set meta data
-        result[entity_id]["meta"] = {"unit_of_measurement": unit}
+        result[entity_id]["meta"] = {
+            "unit_of_measurement": unit,
+            "has_mean": "mean" in wanted_statistics,
+            "has_sum": "sum" in wanted_statistics,
+        }
 
         # Make calculations
         stat: StatisticData = {"start": start}

@@ -102,6 +102,7 @@ QUERY_STATISTIC_META_ID = [
 ]
 
 QUERY_STATISTIC_META = [
+    StatisticsMeta.id,
     StatisticsMeta.statistic_id,
     StatisticsMeta.unit_of_measurement,
 ]
@@ -314,6 +315,33 @@ def compile_hourly_statistics(
     # Insert compiled hourly statistics in the database
     for metadata_id, stat in summary.items():
         session.add(Statistics.from_stats(metadata_id, stat))
+
+
+def _get_metadata_ids(hass, session, statistic_ids):
+    """Resolve metadata_id for a list of statistic_ids."""
+    baked_query = hass.data[STATISTICS_META_BAKERY](
+        lambda session: session.query(*QUERY_STATISTIC_META)
+    )
+    baked_query += lambda q: q.filter(
+        StatisticsMeta.statistic_id.in_(bindparam("statistic_ids"))
+    )
+    result = execute(baked_query(session).params(statistic_ids=statistic_ids))
+
+    return [id for id, _, _ in result]
+
+
+def _get_or_add_metadata_id(hass, session, statistic_id, metadata):
+    """Get metadata_id for a statistic_id, add if it doesn't exist."""
+    metadata_id = _get_metadata_ids(hass, session, [statistic_id])
+    if not metadata_id:
+        unit = metadata["unit_of_measurement"]
+        has_mean = metadata["has_mean"]
+        has_sum = metadata["has_sum"]
+        session.add(
+            StatisticsMeta.from_meta(DOMAIN, statistic_id, unit, has_mean, has_sum)
+        )
+        metadata_id = _get_metadata_ids(hass, session, [statistic_id])
+    return metadata_id[0]
 
 
 @retryable_database_job("statistics")

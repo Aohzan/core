@@ -4,7 +4,7 @@ from __future__ import annotations
 from collections import deque
 from collections.abc import Callable
 from functools import wraps
-from typing import Any
+from typing import Any, Callable
 
 from homeassistant.core import HomeAssistant
 

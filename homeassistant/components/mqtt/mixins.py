@@ -5,6 +5,7 @@ from abc import abstractmethod
 from collections.abc import Callable
 import json
 import logging
+from typing import Callable
 
 import voluptuous as vol
 

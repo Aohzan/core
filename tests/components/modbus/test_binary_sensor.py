@@ -24,8 +24,6 @@ from .conftest import ReadResult, base_test, prepare_service_update
 SENSOR_NAME = "test_binary_sensor"
 ENTITY_ID = f"{SENSOR_DOMAIN}.{SENSOR_NAME}"
 
-from tests.common import mock_restore_cache
-
 
 @pytest.mark.parametrize(
     "do_config",

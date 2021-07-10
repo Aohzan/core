@@ -419,6 +419,24 @@ async def test_light(hass, client, bulb_6_multi_color, integration):
 
     client.async_send_command.reset_mock()
 
+    # Test turning on with color temp and transition
+    await hass.services.async_call(
+        "light",
+        "turn_on",
+        {
+            "entity_id": BULB_6_MULTI_COLOR_LIGHT_ENTITY,
+            ATTR_COLOR_TEMP: 170,
+            ATTR_TRANSITION: 35,
+        },
+        blocking=True,
+    )
+
+    assert len(client.async_send_command.call_args_list) == 6
+    args = client.async_send_command.call_args_list[5][0][0]
+    assert args["options"]["transitionDuration"] == "35s"
+
+    client.async_send_command.reset_mock()
+
     # Test turning off
     await hass.services.async_call(
         "light",

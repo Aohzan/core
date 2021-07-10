@@ -61,6 +61,8 @@ MULTI_COLOR_MAP = {
     ColorComponent.PURPLE: COLOR_SWITCH_COMBINED_PURPLE,
 }
 
+TRANSITION_DURATION = "transitionDuration"
+
 
 async def async_setup_entry(
     hass: HomeAssistant,
