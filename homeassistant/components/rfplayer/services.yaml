@@ -1,0 +1,9 @@
+send_command:
+  description: Send device command through RFPlayer.
+  fields:
+    command:
+      description: The command to be sent.
+      example: "on"
+    device_id:
+      description: RFPlayer device ID.
+      example: x2d_01234567890
