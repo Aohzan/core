@@ -3,10 +3,8 @@
 from enum import Enum
 import json
 import logging
-import pprint
 import re
-import time
-from typing import Any, Callable, DefaultDict, Dict, Generator, cast
+from typing import Any, Callable, Dict, Generator, cast
 
 log = logging.getLogger(__name__)
 
@@ -71,10 +69,12 @@ class PacketHeader(Enum):
 
 
 def valid_packet(packet: str) -> bool:
+    """Return True if packet is valid."""
     return bool(packet_header_re.match(packet))
 
 
 def decode_packet(packet: str) -> PacketType:
+    """Decode packet."""
     data = cast(PacketType, {"node": PacketHeader("20").name})
 
     if packet.startswith("ZIA--"):
@@ -134,10 +134,13 @@ def encode_packet(packet: PacketType) -> str:
     elif packet["protocol"] == "qrfdebug":
         return "10;QRFDEBUG=%s;" % packet["command"]
     else:
-        return SWITCH_COMMAND_TEMPLATE.format(node=PacketHeader.master.value, **packet)
+        return packet
+    # else:
+    #     return SWITCH_COMMAND_TEMPLATE.format(node=PacketHeader.master.value, **packet)
 
 
 def serialize_packet_id(packet: PacketType) -> str:
+    """Serialize packet id."""
     return PACKET_ID_SEP.join(
         filter(
             None,
@@ -151,9 +154,10 @@ def serialize_packet_id(packet: PacketType) -> str:
 
 
 def deserialize_packet_id(packet_id: str) -> Dict[str, str]:
+    """Deserialize packet id."""
     log.debug("AAAAA")
     if packet_id == "rfplayer":
-        return {"protocol": UNKNOWN}
+        return {"protocol": "unknown"}
 
     if packet_id == "ZIA":
         return {"protocol": "ZIA++"}
@@ -178,7 +182,7 @@ def deserialize_packet_id(packet_id: str) -> Dict[str, str]:
 
 
 def packet_events(packet: PacketType) -> Generator[PacketType, None, None]:
-
+    """Packet events."""
     field_abbrev = {
         v: k
         for k, v in sorted(
