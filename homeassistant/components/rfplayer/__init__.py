@@ -4,7 +4,6 @@ from collections import defaultdict
 import logging
 
 import async_timeout
-from .rfplayer.rfpprotocol import create_rfplayer_connection
 from serial import SerialException
 import voluptuous as vol
 
@@ -25,6 +24,8 @@ from homeassistant.helpers.dispatcher import (
 )
 from homeassistant.helpers.entity import Entity
 from homeassistant.helpers.restore_state import RestoreEntity
+
+from .rfplayer.rfpprotocol import create_rfplayer_connection
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -118,6 +119,7 @@ async def async_setup(hass, config):
     """Set up the Rfplayer component."""
     # Allow entities to register themselves by device_id to be looked up when
     # new rfplayer events arrive to be handled
+    _LOGGER.debug("setup")
     hass.data[DATA_ENTITY_LOOKUP] = {
         EVENT_KEY_COMMAND: defaultdict(list),
         EVENT_KEY_SENSOR: defaultdict(list),
@@ -167,11 +169,13 @@ async def async_setup(hass, config):
         if is_group_event:
             entity_ids = hass.data[DATA_ENTITY_GROUP_LOOKUP][event_type].get(
                 event_id, []
-            ) 
+            )
         else:
             entity_ids = hass.data[DATA_ENTITY_LOOKUP][event_type][event_id]
 
-        _LOGGER.debug("entity_ids: %s, type: %s,event_id: %s", entity_ids,event_type,event_id)
+        _LOGGER.debug(
+            "entity_ids: %s, type: %s,event_id: %s", entity_ids, event_type, event_id
+        )
         if entity_ids:
             # Propagate event to every entity matching the device id
             for entity in entity_ids:
@@ -255,7 +259,9 @@ async def async_setup(hass, config):
         async_dispatcher_send(hass, SIGNAL_AVAILABILITY, True)
 
         # Bind protocol to command class to allow entities to send commands
-        RfplayerCommand.set_rfplayer_protocol(protocol, config[DOMAIN][CONF_WAIT_FOR_ACK])
+        RfplayerCommand.set_rfplayer_protocol(
+            protocol, config[DOMAIN][CONF_WAIT_FOR_ACK]
+        )
 
         # handle shutdown of Rfplayer asyncio transport
         hass.bus.async_listen_once(
@@ -513,7 +519,9 @@ class RfplayerCommand(RfplayerDevice):
 
     async def _async_send_command(self, cmd, repetitions):
         """Send a command for device to Rfplayer gateway."""
-        _LOGGER.debug("Sending command: %s to Rfplayer device: %s", cmd, self._device_id)
+        _LOGGER.debug(
+            "Sending command: %s to Rfplayer device: %s", cmd, self._device_id
+        )
 
         if not self.is_connected():
             raise HomeAssistantError("Cannot send command, not connected!")

@@ -25,9 +25,6 @@ import logging
 import sys
 from typing import Dict, Optional, Sequence, Type  # noqa: unused-import
 
-# import pkg_resources
-# from docopt import docopt
-
 from rfpprotocol import (  # noqa: unused-import
     CommandSerialization,
     EventHandling,
@@ -36,6 +33,10 @@ from rfpprotocol import (  # noqa: unused-import
     RfplayerProtocol,
     create_rfplayer_connection,
 )
+
+# import pkg_resources
+# from docopt import docopt
+
 
 PROTOCOLS = {
     "command": RfplayerProtocol,
@@ -61,14 +62,15 @@ def main(
     if not loop:
         loop = asyncio.get_event_loop()
 
-    command = ALL_COMMANDS
+    command_test = None # "on"
+    command = next((c for c in ALL_COMMANDS if command_test is True), None)
     protocol_type = PROTOCOLS["command"]
 
     conn = create_rfplayer_connection(
         protocol=protocol_type,
         host="",
-        port="",
-        baud="",
+        port="/dev/ttyUSB0",
+        baud=115200,
         event_callback=event1_callback,
         loop=loop,
         ignore=([],),

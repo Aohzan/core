@@ -2,10 +2,10 @@
 
 import asyncio
 import concurrent
-import logging
 from datetime import timedelta
 from fnmatch import fnmatchcase
 from functools import partial
+import logging
 from typing import (
     TYPE_CHECKING,
     Any,
@@ -50,7 +50,7 @@ class ProtocolBase(asyncio.Protocol):
         self,
         loop: Optional[asyncio.AbstractEventLoop] = None,
         disconnect_callback: Optional[Callable[[Optional[Exception]], None]] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> None:
         """Initialize class."""
         if loop:
@@ -131,7 +131,7 @@ class PacketHandling(ProtocolBase):
         self,
         *args: Any,
         packet_callback: Optional[Callable[[PacketType], None]] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> None:
         """Add packethandling specific initialization.
 
@@ -198,7 +198,7 @@ class CommandSerialization(PacketHandling):
         self,
         *args: Any,
         packet_callback: Optional[Callable[[PacketType], None]] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> None:
         """Add packethandling specific initialization."""
         log.debug("CommandSerialization")
@@ -259,7 +259,7 @@ class EventHandling(PacketHandling):
         *args: Any,
         event_callback: Optional[Callable[[PacketType], None]] = None,
         ignore: Optional[Sequence[str]] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> None:
         """Add eventhandling specific initialization."""
         super().__init__(*args, **kwargs)
@@ -341,6 +341,7 @@ class EventHandling(PacketHandling):
 class RfplayerProtocol(CommandSerialization, EventHandling):
     """Combine preferred abstractions that form complete Rflink interface."""
 
+
 @overload
 def create_rfplayer_connection(
     port: int,
@@ -404,4 +405,3 @@ def create_rfplayer_connection(
         conn = create_serial_connection(loop, protocol_factory, port, baud)
 
     return conn  # type: ignore
-    
