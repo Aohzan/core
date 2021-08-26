@@ -1744,3 +1744,4 @@ build.json @home-assistant/supervisor
 
 # Remove codeowners from files
 /homeassistant/components/*/translations/
+

@@ -287,6 +287,7 @@ FLOWS = {
         "iotty",
         "ipma",
         "ipp",
+        "ipx800v4",
         "iqvia",
         "iron_os",
         "iskra",
@@ -704,3 +705,4 @@ FLOWS = {
         "zwave_me",
     ],
 }
+
