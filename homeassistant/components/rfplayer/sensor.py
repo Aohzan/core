@@ -71,7 +71,7 @@ def devices_from_config(domain_config):
     """Parse configuration and add Rfplayer sensor devices."""
     devices = []
     for device_id, config in domain_config[CONF_DEVICES].items():
-        _LOGGER.debug("devices_from_config: %s",str(device_id))
+        _LOGGER.debug("devices_from_config: %s", str(device_id))
         if ATTR_UNIT_OF_MEASUREMENT not in config:
             config[ATTR_UNIT_OF_MEASUREMENT] = lookup_unit_for_sensor_type(
                 config[CONF_SENSOR_TYPE]
@@ -112,8 +112,12 @@ class RfplayerSensor(RfplayerDevice):
         """Handle sensor specific args and super init."""
         self._sensor_type = sensor_type
         self._unit_of_measurement = unit_of_measurement
-        _LOGGER.debug("RfplayerSensor id:%s,sensor_type:%s,unit_of_measurement:%s",
-                       device_id,sensor_type,unit_of_measurement)
+        _LOGGER.debug(
+            "RfplayerSensor id:%s,sensor_type:%s,unit_of_measurement:%s",
+            device_id,
+            sensor_type,
+            unit_of_measurement,
+        )
         super().__init__(device_id, initial_event=initial_event, **kwargs)
 
     def _handle_event(self, event):
