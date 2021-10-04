@@ -55,6 +55,7 @@ from .const import (
     REQUEST_REFRESH_DELAY,
     TYPE_RELAY,
     TYPE_X4VR,
+    TYPE_X4VR_BSO,
     TYPE_XPWM,
     TYPE_XPWM_RGB,
     TYPE_XPWM_RGBW,
@@ -272,7 +273,7 @@ def build_device_list(devices_config: list) -> list:
             continue
 
         # Check if X4VR have extension id set
-        if device_config[CONF_TYPE] == TYPE_X4VR and CONF_EXT_ID not in device_config:
+        if (device_config[CONF_TYPE] == TYPE_X4VR or device_config[CONF_TYPE] == TYPE_X4VR_BSO) and CONF_EXT_ID not in device_config:
             _LOGGER.error(
                 "Device %s skipped: %s must have %s set.",
                 device_config[CONF_NAME],
