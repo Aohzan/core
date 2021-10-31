@@ -147,7 +147,7 @@ async def async_setup_entry(hass: HomeAssistantType, entry: ConfigEntry) -> bool
         try:
             return await ipx.global_get()
         except Ipx800InvalidAuthError as err:
-            raise UpdateFailed("Authentication error on Eco-Devices") from err
+            raise UpdateFailed("Authentication error on IPX800") from err
         except Ipx800CannotConnectError as err:
             raise UpdateFailed(f"Failed to communicating with API: {err}") from err
 
