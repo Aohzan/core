@@ -25,7 +25,7 @@ from homeassistant.helpers.entity import Entity
 from homeassistant.helpers.restore_state import RestoreEntity
 
 from .const import DOMAIN, PLATFORMS
-from .rfplayer.rfpprotocol import create_rfplayer_connection
+from .rflib.rfpprotocol import create_rfplayer_connection
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -64,6 +64,7 @@ SERVICE_SEND_COMMAND = "send_command"
 
 SIGNAL_AVAILABILITY = "rfplayer_device_available"
 SIGNAL_HANDLE_EVENT = "rfplayer_handle_event_{}"
+SIGNAL_EVENT = "rfplayer_event"
 
 TMP_ENTITY = "tmp.{}"
 
@@ -102,9 +103,21 @@ async def async_setup_entry(hass, entry):
     async def async_send_command(call):
         """Send Rfplayer command."""
         _LOGGER.debug("Rfplayer command for %s", str(call.data))
-        await RfplayerCommand.send_command(
-            call.data.get(CONF_DEVICE_ID), call.data.get(CONF_COMMAND)
-        )
+        if not (
+            await RfplayerCommand.send_command(
+                call.data.get(CONF_DEVICE_ID), call.data.get(CONF_COMMAND)
+            )
+        ):
+            _LOGGER.error("Failed Rfplayer command for %s", str(call.data))
+        else:
+            async_dispatcher_send(
+                hass,
+                SIGNAL_EVENT,
+                {
+                    EVENT_KEY_ID: call.data.get(CONF_DEVICE_ID),
+                    EVENT_KEY_COMMAND: call.data.get(CONF_COMMAND),
+                },
+            )
 
     hass.services.async_register(
         DOMAIN, SERVICE_SEND_COMMAND, async_send_command, schema=SEND_COMMAND_SCHEMA
@@ -140,9 +153,7 @@ async def async_setup_entry(hass, entry):
         else:
             entity_ids = hass.data[DATA_ENTITY_LOOKUP][event_type][event_id]
 
-        _LOGGER.debug(
-            "entity_ids: %s, type: %s,event_id: %s", entity_ids, event_type, event_id
-        )
+        _LOGGER.debug("entity_ids: %s", entity_ids)
         if entity_ids:
             # Propagate event to every entity matching the device id
             for entity in entity_ids:
@@ -195,12 +206,10 @@ async def async_setup_entry(hass, entry):
 
         except (
             SerialException,
-            ConnectionRefusedError,
-            TimeoutError,
             OSError,
             asyncio.TimeoutError,
         ) as exc:
-            reconnect_interval = config.get(CONF_RECONNECT_INTERVAL)
+            reconnect_interval = config.get(CONF_RECONNECT_INTERVAL, 30)
             _LOGGER.exception(
                 "Error connecting to Rfplayer, reconnecting in %s", reconnect_interval
             )
@@ -225,6 +234,7 @@ async def async_setup_entry(hass, entry):
         _LOGGER.info("Connected to Rfplayer")
 
     hass.async_create_task(connect())
+    async_dispatcher_connect(hass, SIGNAL_EVENT, event_callback)
 
     for platform in PLATFORMS:
         hass.async_create_task(

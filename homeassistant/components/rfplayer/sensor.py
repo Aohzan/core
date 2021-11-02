@@ -15,7 +15,7 @@ from . import (
     RfplayerDevice,
 )
 from .const import CONF_AUTOMATIC_ADD
-from .rfplayer.rfpparser import PACKET_FIELDS, UNITS
+from .rflib.rfpparser import PACKET_FIELDS, UNITS
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -51,6 +51,7 @@ async def async_setup_entry(hass, entry, async_add_entities):
             initial_event=event,
         )
         # Add device entity
+        _LOGGER.debug("Add sensor entity %s", device_id)
         async_add_entities([device])
 
     if config[CONF_AUTOMATIC_ADD]:

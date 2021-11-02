@@ -92,10 +92,7 @@ class ProtocolBase(asyncio.Protocol):
         """Encode and put packet string onto write buffer."""
         data = bytes(packet + "\n\r", "utf-8")
         log.debug("writing data: %s", repr(data))
-        if type(self.transport) is asyncio.WriteTransport:
-            self.transport.write(data)
-        else:
-            log.error("Not in writable mode.")
+        self.transport.write(data)
 
     def connection_lost(self, exc: Optional[Exception]) -> None:
         """Log when connection is closed, if needed call callback."""
