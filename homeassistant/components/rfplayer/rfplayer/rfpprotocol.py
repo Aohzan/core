@@ -2,22 +2,20 @@
 
 import asyncio
 import concurrent
-import logging
 from datetime import timedelta
 from fnmatch import fnmatchcase
 from functools import partial
+import logging
 from typing import (
-    TYPE_CHECKING,
     Any,
     Callable,
+    Coroutine,
     Generator,
     Optional,
     Sequence,
     Tuple,
     Type,
-    Union,
     cast,
-    overload,
 )
 
 from serial_asyncio import create_serial_connection
@@ -25,14 +23,10 @@ from serial_asyncio import create_serial_connection
 from .rfpparser import (
     PacketType,
     decode_packet,
-    deserialize_packet_id,
     encode_packet,
     packet_events,
     valid_packet,
 )
-
-from typing import Coroutine
-
 
 log = logging.getLogger(__name__)
 
@@ -98,7 +92,10 @@ class ProtocolBase(asyncio.Protocol):
         """Encode and put packet string onto write buffer."""
         data = bytes(packet + "\n\r", "utf-8")
         log.debug("writing data: %s", repr(data))
-        self.transport.write(data)
+        if type(self.transport) is asyncio.WriteTransport:
+            self.transport.write(data)
+        else:
+            log.error("Not in writable mode.")
 
     def connection_lost(self, exc: Optional[Exception]) -> None:
         """Log when connection is closed, if needed call callback."""

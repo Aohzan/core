@@ -1,11 +1,13 @@
 """Config flow to configure the rfplayer integration."""
+import os
+
+import serial
 import voluptuous as vol
 
 from homeassistant import config_entries, exceptions
 from homeassistant.const import CONF_DEVICE
-import serial
-import os
-from .const import DOMAIN
+
+from .const import CONF_AUTOMATIC_ADD, DOMAIN
 
 
 @config_entries.HANDLERS.register(DOMAIN)
@@ -15,6 +17,7 @@ class RfPlayerConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     VERSION = 1
 
     async def async_step_user(self, user_input=None):
+        """Config flow started from UI."""
         errors = {}
 
         if user_input is not None:
@@ -24,14 +27,15 @@ class RfPlayerConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             )
 
             try:
-                # TODO test
+                # TODO test connection
                 # data = await self.async_validate_rfx(device=dev_path)
-                data = {CONF_DEVICE: dev_path}
+                truc = dev_path
+                print(truc)
             except CannotConnect:
                 errors["base"] = "cannot_connect"
 
             if not errors:
-                return self.async_create_entry(title=DOMAIN, data=data)
+                return self.async_create_entry(title=DOMAIN, data=user_input)
 
         ports = await self.hass.async_add_executor_job(serial.tools.list_ports.comports)
         list_of_ports = {}
@@ -43,7 +47,12 @@ class RfPlayerConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             )
         # list_of_ports[CONF_MANUAL_PATH] = CONF_MANUAL_PATH
 
-        schema = vol.Schema({vol.Required(CONF_DEVICE): vol.In(list_of_ports)})
+        schema = vol.Schema(
+            {
+                vol.Required(CONF_DEVICE): vol.In(list_of_ports),
+                vol.Required(CONF_AUTOMATIC_ADD, default=True): bool,
+            }
+        )
         return self.async_show_form(
             step_id="user",
             data_schema=schema,

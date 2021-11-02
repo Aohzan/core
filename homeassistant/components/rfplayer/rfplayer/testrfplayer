@@ -25,9 +25,8 @@ import logging
 import sys
 from typing import Dict, Optional, Sequence, Type  # noqa: unused-import
 
-import pkg_resources
 from docopt import docopt
-
+import pkg_resources
 from rfpprotocol import (  # noqa: unused-import
     CommandSerialization,
     EventHandling,
@@ -46,6 +45,7 @@ PROTOCOLS = {
 ALL_COMMANDS = ["on", "off", "allon", "alloff", "up", "down", "stop", "pair"]
 
 import pprint
+
 
 def event1_callback(event):
     pprint.pprint(event)

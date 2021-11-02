@@ -1,8 +1,9 @@
 {
   "domain": "rfplayer",
-  "name": "RFPlayer",
-  "documentation": "",
+  "name": "GCE RFPlayer",
+  "documentation": "https://github.com/gce-electronics/HA_RFPlayer",
   "dependencies": [],
-  "codeowners": [],
-  "requirements": []
+  "codeowners": ["@Aohzan"],
+  "requirements": ["pyserial==3.5", "pyserial-asyncio==0.5"],
+  "iot_class": "assumed_state"
 }

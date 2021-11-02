@@ -4,15 +4,13 @@ from collections import defaultdict
 import logging
 
 import async_timeout
-from .rfplayer.rfpprotocol import create_rfplayer_connection
 from serial import SerialException
 import voluptuous as vol
 
 from homeassistant.const import (
     ATTR_ENTITY_ID,
     CONF_COMMAND,
-    CONF_HOST,
-    CONF_PORT,
+    CONF_DEVICE,
     EVENT_HOMEASSISTANT_STOP,
     STATE_ON,
 )
@@ -26,6 +24,9 @@ from homeassistant.helpers.dispatcher import (
 from homeassistant.helpers.entity import Entity
 from homeassistant.helpers.restore_state import RestoreEntity
 
+from .const import DOMAIN, PLATFORMS
+from .rfplayer.rfpprotocol import create_rfplayer_connection
+
 _LOGGER = logging.getLogger(__name__)
 
 ATTR_EVENT = "event"
@@ -38,7 +39,6 @@ CONF_NOGROUP_ALIASES = "nogroup_aliases"
 CONF_DEVICE_DEFAULTS = "device_defaults"
 CONF_DEVICE_ID = "device_id"
 CONF_DEVICES = "devices"
-CONF_AUTOMATIC_ADD = "automatic_add"
 CONF_FIRE_EVENT = "fire_event"
 CONF_IGNORE_DEVICES = "ignore_devices"
 CONF_RECONNECT_INTERVAL = "reconnect_interval"
@@ -60,42 +60,12 @@ EVENT_KEY_UNIT = "unit"
 
 RFPLAYER_GROUP_COMMANDS = ["allon", "alloff"]
 
-DOMAIN = "rfplayer"
-
 SERVICE_SEND_COMMAND = "send_command"
 
 SIGNAL_AVAILABILITY = "rfplayer_device_available"
 SIGNAL_HANDLE_EVENT = "rfplayer_handle_event_{}"
 
 TMP_ENTITY = "tmp.{}"
-
-DEVICE_DEFAULTS_SCHEMA = vol.Schema(
-    {
-        vol.Optional(CONF_FIRE_EVENT, default=False): cv.boolean,
-        vol.Optional(
-            CONF_SIGNAL_REPETITIONS, default=DEFAULT_SIGNAL_REPETITIONS
-        ): vol.Coerce(int),
-    }
-)
-
-CONFIG_SCHEMA = vol.Schema(
-    {
-        DOMAIN: vol.Schema(
-            {
-                vol.Required(CONF_PORT): vol.Any(cv.port, cv.string),
-                vol.Optional(CONF_HOST): cv.string,
-                vol.Optional(CONF_WAIT_FOR_ACK, default=True): cv.boolean,
-                vol.Optional(
-                    CONF_RECONNECT_INTERVAL, default=DEFAULT_RECONNECT_INTERVAL
-                ): int,
-                vol.Optional(CONF_IGNORE_DEVICES, default=[]): vol.All(
-                    cv.ensure_list, [cv.string]
-                ),
-            }
-        )
-    },
-    extra=vol.ALLOW_EXTRA,
-)
 
 SEND_COMMAND_SCHEMA = vol.Schema(
     {vol.Required(CONF_DEVICE_ID): cv.string, vol.Required(CONF_COMMAND): cv.string}
@@ -114,8 +84,10 @@ def identify_event_type(event):
     return "unknown"
 
 
-async def async_setup(hass, config):
-    """Set up the Rfplayer component."""
+async def async_setup_entry(hass, entry):
+    """Set up GE RFPlayer from a config entry."""
+    config = entry.data
+
     # Allow entities to register themselves by device_id to be looked up when
     # new rfplayer events arrive to be handled
     hass.data[DATA_ENTITY_LOOKUP] = {
@@ -203,23 +175,18 @@ async def async_setup(hass, config):
 
         # If HA is not stopping, initiate new connection
         if hass.state != CoreState.stopping:
-            _LOGGER.warning("disconnected from Rfplayer, reconnecting")
+            _LOGGER.warning("Disconnected from Rfplayer, reconnecting")
             hass.async_create_task(connect())
 
     async def connect():
         """Set up connection and hook it into HA for reconnect/shutdown."""
         _LOGGER.info("Initiating Rfplayer connection")
-
-        # Rfplayer create_rfplayer_connection decides based on the value of host
-        # (string or None) if serial or tcp mode should be used
-
-        # Initiate serial/tcp connection to Rfplayer gateway
         connection = create_rfplayer_connection(
-            port=config[DOMAIN][CONF_PORT],
+            port=config[CONF_DEVICE],
             event_callback=event_callback,
             disconnect_callback=reconnect,
             loop=hass.loop,
-            ignore=config[DOMAIN][CONF_IGNORE_DEVICES],
+            ignore=config.get(CONF_IGNORE_DEVICES),
         )
 
         try:
@@ -233,7 +200,7 @@ async def async_setup(hass, config):
             OSError,
             asyncio.TimeoutError,
         ) as exc:
-            reconnect_interval = config[DOMAIN][CONF_RECONNECT_INTERVAL]
+            reconnect_interval = config.get(CONF_RECONNECT_INTERVAL)
             _LOGGER.exception(
                 "Error connecting to Rfplayer, reconnecting in %s", reconnect_interval
             )
@@ -248,9 +215,7 @@ async def async_setup(hass, config):
         async_dispatcher_send(hass, SIGNAL_AVAILABILITY, True)
 
         # Bind protocol to command class to allow entities to send commands
-        RfplayerCommand.set_rfplayer_protocol(
-            protocol, config[DOMAIN][CONF_WAIT_FOR_ACK]
-        )
+        RfplayerCommand.set_rfplayer_protocol(protocol, config.get(CONF_WAIT_FOR_ACK))
 
         # handle shutdown of Rfplayer asyncio transport
         hass.bus.async_listen_once(
@@ -260,6 +225,12 @@ async def async_setup(hass, config):
         _LOGGER.info("Connected to Rfplayer")
 
     hass.async_create_task(connect())
+
+    for platform in PLATFORMS:
+        hass.async_create_task(
+            hass.config_entries.async_forward_entry_setup(entry, platform)
+        )
+
     return True
 
 
@@ -286,7 +257,7 @@ class RfplayerDevice(Entity):
         signal_repetitions=DEFAULT_SIGNAL_REPETITIONS,
     ):
         """Initialize the device."""
-        # Rfplayer specific attributes for every component type
+        # Rflink specific attributes for every component type
         self._initial_event = initial_event
         self._device_id = device_id
         if name:
@@ -300,9 +271,6 @@ class RfplayerDevice(Entity):
         self._nogroup_aliases = nogroup_aliases
         self._should_fire_event = fire_event
         self._signal_repetitions = signal_repetitions
-
-        self._attr_should_poll = False
-        self._attr_name = self._name
 
     @callback
     def handle_event_callback(self, event):
@@ -326,6 +294,16 @@ class RfplayerDevice(Entity):
     def _handle_event(self, event):
         """Platform specific event handler."""
         raise NotImplementedError()
+
+    @property
+    def should_poll(self):
+        """No polling needed."""
+        return False
+
+    @property
+    def name(self):
+        """Return a name for the device."""
+        return self._name
 
     @property
     def is_on(self):
@@ -411,13 +389,13 @@ class RfplayerDevice(Entity):
 
 
 class RfplayerCommand(RfplayerDevice):
-    """Singleton class to make Rfplayer command interface available to entities.
+    """Singleton class to make Rflink command interface available to entities.
 
     This class is to be inherited by every Entity class that is actionable
-    (switches/lights). It exposes the Rfplayer command interface for these
+    (switches/lights). It exposes the Rflink command interface for these
     entities.
 
-    The Rfplayer interface is managed as a class level and set during setup (and
+    The Rflink interface is managed as a class level and set during setup (and
     reset on reconnect).
     """
 
@@ -429,7 +407,7 @@ class RfplayerCommand(RfplayerDevice):
 
     @classmethod
     def set_rfplayer_protocol(cls, protocol, wait_ack=None):
-        """Set the Rfplayer asyncio protocol as a class variable."""
+        """Set the Rflink asyncio protocol as a class variable."""
         cls._protocol = protocol
         if wait_ack is not None:
             cls._wait_ack = wait_ack
@@ -441,11 +419,11 @@ class RfplayerCommand(RfplayerDevice):
 
     @classmethod
     async def send_command(cls, device_id, action):
-        """Send device command to Rfplayer."""
-        cls._protocol.send_command(device_id, action)
+        """Send device command to Rflink and wait for acknowledgement."""
+        return await cls._protocol.send_command_ack(device_id, action)
 
     async def _async_handle_command(self, command, *args):
-        """Do bookkeeping for command, send it to rfplayer and update state."""
+        """Do bookkeeping for command, send it to rflink and update state."""
         self.cancel_queued_send_commands()
 
         if command == "turn_on":
@@ -457,8 +435,8 @@ class RfplayerCommand(RfplayerDevice):
             self._state = False
 
         elif command == "dim":
-            # convert brightness to rfplayer dim level
-            cmd = str(int(args[0] / 17))
+            # convert brightness to rflink dim level
+            # cmd = str(brightness_to_rfplayer(args[0])) TODO
             self._state = True
 
         elif command == "toggle":
@@ -467,7 +445,7 @@ class RfplayerCommand(RfplayerDevice):
             # if the state is true, it gets set as false
             self._state = self._state in [None, False]
 
-        # Cover options for RFplayer
+        # Cover options for RFlink
         elif command == "close_cover":
             cmd = "DOWN"
             self._state = False
@@ -492,7 +470,7 @@ class RfplayerCommand(RfplayerDevice):
         """Cancel queued signal repetition commands.
 
         For example when user changed state while repetitions are still
-        queued for broadcast. Or when an incoming Rfplayer command (remote
+        queued for broadcast. Or when an incoming Rflink command (remote
         switch) changes the state.
         """
         # cancel any outstanding tasks from the previous state change
@@ -500,21 +478,19 @@ class RfplayerCommand(RfplayerDevice):
             self._repetition_task.cancel()
 
     async def _async_send_command(self, cmd, repetitions):
-        """Send a command for device to Rfplayer gateway."""
-        _LOGGER.debug(
-            "Sending command: %s to Rfplayer device: %s", cmd, self._device_id
-        )
+        """Send a command for device to Rflink gateway."""
+        _LOGGER.debug("Sending command: %s to Rflink device: %s", cmd, self._device_id)
 
         if not self.is_connected():
             raise HomeAssistantError("Cannot send command, not connected!")
 
         if self._wait_ack:
-            # Puts command on outgoing buffer then waits for Rfplayer to confirm
-            # the command has been send out in the ether.
+            # Puts command on outgoing buffer then waits for Rflink to confirm
+            # the command has been sent out.
             await self._protocol.send_command_ack(self._device_id, cmd)
         else:
             # Puts command on outgoing buffer and returns straight away.
-            # Rfplayer protocol/transport handles asynchronous writing of buffer
+            # Rflink protocol/transport handles asynchronous writing of buffer
             # to serial/tcp device. Does not wait for command send
             # confirmation.
             self._protocol.send_command(self._device_id, cmd)
@@ -525,19 +501,17 @@ class RfplayerCommand(RfplayerDevice):
             )
 
 
-class SwitchableRfplayerkDevice(RfplayerCommand, RestoreEntity):
-    """Rfplayer entity which can switch on/off (eg: light, switch)."""
+class SwitchableRfplayerDevice(RfplayerCommand, RestoreEntity):
+    """Rflink entity which can switch on/off (eg: light, switch)."""
 
     async def async_added_to_hass(self):
-        """Restore Rfplayer device state (ON/OFF)."""
+        """Restore RFLink device state (ON/OFF)."""
         await super().async_added_to_hass()
-
-        old_state = await self.async_get_last_state()
-        if old_state is not None:
+        if (old_state := await self.async_get_last_state()) is not None:
             self._state = old_state.state == STATE_ON
 
     def _handle_event(self, event):
-        """Adjust state if Rfplayer picks up a remote command for this device."""
+        """Adjust state if Rflink picks up a remote command for this device."""
         self.cancel_queued_send_commands()
 
         command = event["command"]

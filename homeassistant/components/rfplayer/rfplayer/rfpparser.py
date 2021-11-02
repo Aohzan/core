@@ -1,12 +1,10 @@
 """Parsers."""
 
+from enum import Enum
+import json
 import logging
 import re
-import time
-from enum import Enum
-from typing import Any, Callable, DefaultDict, Dict, Generator, cast
-import json
-import pprint
+from typing import Any, Callable, Dict, Generator, cast
 
 log = logging.getLogger(__name__)
 
@@ -66,10 +64,12 @@ class PacketHeader(Enum):
 
 
 def valid_packet(packet: str) -> bool:
+    """Check if packet is valid."""
     return bool(packet_header_re.match(packet))
 
 
 def decode_packet(packet: str) -> PacketType:
+    """Decode packet."""
     data = cast(PacketType, {"node": PacketHeader.gateway.name})
 
     # Welcome messages directly send
@@ -115,6 +115,7 @@ def serialize_packet_id(packet: PacketType) -> str:
 
 
 def deserialize_packet_id(packet_id: str) -> Dict[str, str]:
+    """Deserialize packet id."""
     if packet_id == "rfplayer":
         return {"protocol": "unknown"}
 
@@ -141,7 +142,7 @@ def deserialize_packet_id(packet_id: str) -> Dict[str, str]:
 
 
 def packet_events(packet: PacketType) -> Generator[PacketType, None, None]:
-
+    """Handle packet events."""
     field_abbrev = {
         v: k
         for k, v in sorted(
