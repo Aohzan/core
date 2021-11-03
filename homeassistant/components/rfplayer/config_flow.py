@@ -5,7 +5,7 @@ import serial
 import voluptuous as vol
 
 from homeassistant import config_entries, exceptions
-from homeassistant.const import CONF_DEVICE
+from homeassistant.const import CONF_DEVICE, CONF_DEVICES
 
 from .const import CONF_AUTOMATIC_ADD, DOMAIN
 
@@ -21,9 +21,9 @@ class RfPlayerConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         errors = {}
 
         if user_input is not None:
-            user_selection = user_input[CONF_DEVICE]
+            user_input[CONF_DEVICES] = {}
             dev_path = await self.hass.async_add_executor_job(
-                get_serial_by_id, user_selection
+                get_serial_by_id, user_input[CONF_DEVICE]
             )
 
             try:

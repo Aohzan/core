@@ -236,10 +236,7 @@ async def async_setup_entry(hass, entry):
     hass.async_create_task(connect())
     async_dispatcher_connect(hass, SIGNAL_EVENT, event_callback)
 
-    for platform in PLATFORMS:
-        hass.async_create_task(
-            hass.config_entries.async_forward_entry_setup(entry, platform)
-        )
+    hass.config_entries.async_setup_platforms(entry, PLATFORMS)
 
     return True
 

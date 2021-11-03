@@ -1,0 +1,35 @@
+{
+  "config": {
+    "abort": {
+      "already_configured": "[%key:common::config_flow::abort::single_instance_allowed%]",
+      "cannot_connect": "[%key:common::config_flow::error::cannot_connect%]"
+    },
+    "error": {
+      "cannot_connect": "[%key:common::config_flow::error::cannot_connect%]"
+    },
+    "step": {
+      "user": {
+        "data": {
+          "device": "Select RFPlayer",
+          "automatic_add": "Enable automatic add entity"
+        },
+        "title": "GCE RFPlayer"
+      }
+    }
+  },
+  "options": {
+    "step": {
+      "prompt_options": {
+        "data": {
+          "automatic_add": "Enable automatic add",
+          "event_code": "Enter event code to add"
+        },
+        "title": "RFPlayer Options"
+      }
+    },
+    "error": {
+      "already_configured_device": "[%key:common::config_flow::abort::already_configured_device%]",
+      "unknown": "[%key:common::config_flow::error::unknown%]"
+    }
+  }
+}

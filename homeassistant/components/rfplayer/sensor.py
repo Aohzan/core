@@ -112,12 +112,12 @@ class RfplayerSensor(RfplayerDevice):
             self.handle_event_callback(self._initial_event)
 
     @property
-    def native_unit_of_measurement(self):
+    def unit_of_measurement(self):
         """Return measurement unit."""
         return self._unit_of_measurement
 
     @property
-    def native_value(self):
+    def state(self):
         """Return value."""
         return self._state
 
