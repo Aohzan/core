@@ -1,34 +1,23 @@
 {
   "config": {
-    "abort": {
-      "already_configured": "[%key:common::config_flow::abort::single_instance_allowed%]",
-      "cannot_connect": "[%key:common::config_flow::error::cannot_connect%]"
-    },
-    "error": {
-      "cannot_connect": "[%key:common::config_flow::error::cannot_connect%]"
-    },
     "step": {
       "user": {
+        "title": "RFPlayer",
+        "description": "Configure RFPlayer integration",
         "data": {
-          "device": "Select RFPlayer",
-          "automatic_add": "Enable automatic add entity"
-        },
-        "title": "GCE RFPlayer"
-      }
-    }
-  },
-  "options": {
-    "step": {
-      "prompt_options": {
-        "data": {
-          "automatic_add": "Enable automatic add",
-          "event_code": "Enter event code to add"
-        },
-        "title": "RFPlayer Options"
+          "device": "RFPlayer USB device",
+          "automatic_add": "Add device automatically",
+          "wait_for_ack": "Wait for ACK",
+          "reconnect_interval": "Reconnect interval"
+        }
       }
     },
     "error": {
-      "already_configured_device": "[%key:common::config_flow::abort::already_configured_device%]",
+      "cannot_connect": "[%key:common::config_flow::error::cannot_connect%]"
+    },
+    "abort": {
+      "already_configured": "[%key:common::config_flow::abort::already_configured_device%]",
+      "already_in_progress": "[%key:common::config_flow::abort::already_in_progress%]",
       "unknown": "[%key:common::config_flow::error::unknown%]"
     }
   }

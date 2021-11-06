@@ -95,9 +95,16 @@ def decode_packet(packet: str) -> PacketType:
 def encode_packet(packet: PacketType) -> str:
     """Construct packet string from packet dictionary."""
     # TODO testing for rfplayer
-    return "{node};{protocol};{id};{command};".format(
-        node=PacketHeader.master.value, **packet
-    )
+    if packet["protocol"] == "rfdebug":
+        return "10;RFDEBUG=%s;" % packet["command"]
+    elif packet["protocol"] == "rfudebug":
+        return "10;RFUDEBUG=%s;" % packet["command"]
+    elif packet["protocol"] == "qrfdebug":
+        return "10;QRFDEBUG=%s;" % packet["command"]
+    else:
+        return "{node};{protocol};{id};{switch};{command};".format(
+            node=PacketHeader.master.value, **packet
+        )
 
 
 def serialize_packet_id(packet: PacketType) -> str:
@@ -106,9 +113,9 @@ def serialize_packet_id(packet: PacketType) -> str:
         filter(
             None,
             [
-                packet.get("protocol", "rfplayer"),
+                packet.get("protocol", None),
                 packet.get("id", None),
-                packet.get("cmd", None),
+                packet.get("switch", None),
             ],
         )
     )

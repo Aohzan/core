@@ -23,6 +23,7 @@ from serial_asyncio import create_serial_connection
 from .rfpparser import (
     PacketType,
     decode_packet,
+    deserialize_packet_id,
     encode_packet,
     packet_events,
     valid_packet,
@@ -36,7 +37,7 @@ TIMEOUT = timedelta(seconds=5)
 class ProtocolBase(asyncio.Protocol):
     """Manage low level rfplayer protocol."""
 
-    # transport = None  # type: asyncio.BaseTransport
+    transport = None  # type: asyncio.BaseTransport
 
     def __init__(
         self,
@@ -77,8 +78,9 @@ class ProtocolBase(asyncio.Protocol):
 
     def handle_lines(self) -> None:
         """Assemble incoming data into per-line packets."""
-        while "\r" in self.buffer:
-            line, self.buffer = self.buffer.split("\r", 1)
+        # rflink: "\r\n"
+        while "\n\r" in self.buffer:
+            line, self.buffer = self.buffer.split("\n\r", 1)
             if valid_packet(line):
                 self.handle_raw_packet(line)
             else:
@@ -91,8 +93,10 @@ class ProtocolBase(asyncio.Protocol):
     def send_raw_packet(self, packet: str) -> None:
         """Encode and put packet string onto write buffer."""
         data = bytes(packet + "\n\r", "utf-8")
+        # rflink : data = packet + "\r\n"
         log.debug("writing data: %s", repr(data))
         self.transport.write(data)
+        # rflink : self.transport.write(data.encode())  # type: ignore
 
     def connection_lost(self, exc: Optional[Exception]) -> None:
         """Log when connection is closed, if needed call callback."""
@@ -162,11 +166,10 @@ class PacketHandling(ProtocolBase):
 
     def send_command(self, device_id: str, action: str) -> None:
         """Send device command to rfplayer gateway."""
-        # command = deserialize_packet_id(device_id)
-        # command["command"] = action
-        # log.debug("sending command: %s", command)
-        # self.send_packet(command)
-        self.send_raw_packet(device_id)
+        command = deserialize_packet_id(device_id)
+        command["command"] = action
+        log.debug("sending command: %s", command)
+        self.send_packet(command)
 
 
 class CommandSerialization(PacketHandling):

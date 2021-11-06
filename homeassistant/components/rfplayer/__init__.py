@@ -1,6 +1,7 @@
 """Support for Rfplayer devices."""
 import asyncio
 from collections import defaultdict
+import copy
 import logging
 
 import async_timeout
@@ -11,6 +12,7 @@ from homeassistant.const import (
     ATTR_ENTITY_ID,
     CONF_COMMAND,
     CONF_DEVICE,
+    CONF_DEVICES,
     EVENT_HOMEASSISTANT_STOP,
     STATE_ON,
 )
@@ -24,49 +26,12 @@ from homeassistant.helpers.dispatcher import (
 from homeassistant.helpers.entity import Entity
 from homeassistant.helpers.restore_state import RestoreEntity
 
+from .const import *
 from .const import DOMAIN, PLATFORMS
 from .rflib.rfpprotocol import create_rfplayer_connection
 
 _LOGGER = logging.getLogger(__name__)
 
-ATTR_EVENT = "event"
-ATTR_STATE = "state"
-
-CONF_ALIASES = "aliases"
-CONF_GROUP_ALIASES = "group_aliases"
-CONF_GROUP = "group"
-CONF_NOGROUP_ALIASES = "nogroup_aliases"
-CONF_DEVICE_DEFAULTS = "device_defaults"
-CONF_DEVICE_ID = "device_id"
-CONF_DEVICES = "devices"
-CONF_FIRE_EVENT = "fire_event"
-CONF_IGNORE_DEVICES = "ignore_devices"
-CONF_RECONNECT_INTERVAL = "reconnect_interval"
-CONF_SIGNAL_REPETITIONS = "signal_repetitions"
-CONF_WAIT_FOR_ACK = "wait_for_ack"
-
-DATA_DEVICE_REGISTER = "rfplayer_device_register"
-DATA_ENTITY_LOOKUP = "rfplayer_entity_lookup"
-DATA_ENTITY_GROUP_LOOKUP = "rfplayer_entity_group_only_lookup"
-DEFAULT_RECONNECT_INTERVAL = 10
-DEFAULT_SIGNAL_REPETITIONS = 1
-CONNECTION_TIMEOUT = 10
-
-EVENT_BUTTON_PRESSED = "button_pressed"
-EVENT_KEY_COMMAND = "command"
-EVENT_KEY_ID = "id"
-EVENT_KEY_SENSOR = "sensor"
-EVENT_KEY_UNIT = "unit"
-
-RFPLAYER_GROUP_COMMANDS = ["allon", "alloff"]
-
-SERVICE_SEND_COMMAND = "send_command"
-
-SIGNAL_AVAILABILITY = "rfplayer_device_available"
-SIGNAL_HANDLE_EVENT = "rfplayer_handle_event_{}"
-SIGNAL_EVENT = "rfplayer_event"
-
-TMP_ENTITY = "tmp.{}"
 
 SEND_COMMAND_SCHEMA = vol.Schema(
     {vol.Required(CONF_DEVICE_ID): cv.string, vol.Required(CONF_COMMAND): cv.string}
@@ -170,11 +135,20 @@ async def async_setup_entry(hass, entry):
                 hass.data[DATA_ENTITY_LOOKUP][event_type][event_id].append(
                     TMP_ENTITY.format(event_id)
                 )
+                _add_device(event, event_id)
                 hass.async_create_task(
                     hass.data[DATA_DEVICE_REGISTER][event_type](event)
                 )
             else:
                 _LOGGER.debug("device_id not known and automatic add disabled")
+
+    @callback
+    def _add_device(event, event_id):
+        """Add a device to config entry."""
+        data = entry.data.copy()
+        data[CONF_DEVICES] = copy.deepcopy(entry.data[CONF_DEVICES])
+        data[CONF_DEVICES][event_id] = event
+        hass.config_entries.async_update_entry(entry=entry, data=data)
 
     @callback
     def reconnect(exc=None):
@@ -209,7 +183,7 @@ async def async_setup_entry(hass, entry):
             OSError,
             asyncio.TimeoutError,
         ) as exc:
-            reconnect_interval = config.get(CONF_RECONNECT_INTERVAL, 30)
+            reconnect_interval = config[CONF_RECONNECT_INTERVAL]
             _LOGGER.exception(
                 "Error connecting to Rfplayer, reconnecting in %s", reconnect_interval
             )
@@ -224,7 +198,7 @@ async def async_setup_entry(hass, entry):
         async_dispatcher_send(hass, SIGNAL_AVAILABILITY, True)
 
         # Bind protocol to command class to allow entities to send commands
-        RfplayerCommand.set_rfplayer_protocol(protocol, config.get(CONF_WAIT_FOR_ACK))
+        RfplayerCommand.set_rfplayer_protocol(protocol, config[CONF_WAIT_FOR_ACK])
 
         # handle shutdown of Rfplayer asyncio transport
         hass.bus.async_listen_once(

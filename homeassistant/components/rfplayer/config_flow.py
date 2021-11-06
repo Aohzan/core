@@ -7,11 +7,17 @@ import voluptuous as vol
 from homeassistant import config_entries, exceptions
 from homeassistant.const import CONF_DEVICE, CONF_DEVICES
 
-from .const import CONF_AUTOMATIC_ADD, DOMAIN
+from .const import (
+    CONF_AUTOMATIC_ADD,
+    CONF_RECONNECT_INTERVAL,
+    CONF_WAIT_FOR_ACK,
+    DEFAULT_RECONNECT_INTERVAL,
+    DOMAIN,
+)
 
 
 @config_entries.HANDLERS.register(DOMAIN)
-class RfPlayerConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
+class RfplayerConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     """Handle a rfplayer config flow."""
 
     VERSION = 1
@@ -22,20 +28,18 @@ class RfPlayerConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 
         if user_input is not None:
             user_input[CONF_DEVICES] = {}
+
             dev_path = await self.hass.async_add_executor_job(
                 get_serial_by_id, user_input[CONF_DEVICE]
             )
 
-            try:
-                # TODO test connection
-                # data = await self.async_validate_rfx(device=dev_path)
-                truc = dev_path
-                print(truc)
-            except CannotConnect:
-                errors["base"] = "cannot_connect"
+            # try:
+            #     # TODO test connection
+            # except CannotConnect:
+            #     errors["base"] = "cannot_connect"
 
             if not errors:
-                return self.async_create_entry(title=DOMAIN, data=user_input)
+                return self.async_create_entry(title=dev_path, data=user_input)
 
         ports = await self.hass.async_add_executor_job(serial.tools.list_ports.comports)
         list_of_ports = {}
@@ -47,15 +51,17 @@ class RfPlayerConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             )
         # list_of_ports[CONF_MANUAL_PATH] = CONF_MANUAL_PATH
 
-        schema = vol.Schema(
-            {
-                vol.Required(CONF_DEVICE): vol.In(list_of_ports),
-                vol.Required(CONF_AUTOMATIC_ADD, default=True): bool,
-            }
-        )
+        data = {
+            vol.Required(CONF_DEVICE): vol.In(list_of_ports),
+            vol.Required(CONF_AUTOMATIC_ADD, default=True): bool,
+            vol.Required(CONF_WAIT_FOR_ACK, default=False): bool,
+            vol.Required(
+                CONF_RECONNECT_INTERVAL, default=DEFAULT_RECONNECT_INTERVAL
+            ): int,
+        }
         return self.async_show_form(
             step_id="user",
-            data_schema=schema,
+            data_schema=vol.Schema(data),
             errors=errors,
         )
 

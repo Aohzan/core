@@ -1,6 +1,7 @@
 """Support for Rfplayer sensors."""
 import logging
 
+from homeassistant.const import CONF_DEVICES
 from homeassistant.helpers.dispatcher import async_dispatcher_connect
 
 from . import (
@@ -44,15 +45,20 @@ async def async_setup_entry(hass, entry, async_add_entities):
         """Check if device is known, otherwise create device entity."""
         device_id = event[EVENT_KEY_ID]
 
+        # create entity
         device = RfplayerSensor(
             device_id,
             event[EVENT_KEY_SENSOR],
             event[EVENT_KEY_UNIT],
             initial_event=event,
         )
-        # Add device entity
         _LOGGER.debug("Add sensor entity %s", device_id)
         async_add_entities([device])
+
+    if CONF_DEVICES in config:
+        for device_id, event in config[CONF_DEVICES].items():
+            if EVENT_KEY_SENSOR in event:
+                await add_new_device(event)
 
     if config[CONF_AUTOMATIC_ADD]:
         hass.data[DATA_DEVICE_REGISTER][EVENT_KEY_SENSOR] = add_new_device

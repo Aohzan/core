@@ -5,13 +5,13 @@ send_command:
       name: Command
       description: The command to be sent.
       required: true
-      example: "on"
+      example: "on or 1"
       selector:
         text:
     device_id:
       name: Device ID
       description: RFLink device ID.
       required: true
-      example: 2724069380
+      example: chacon_935364736_cmd
       selector:
         text:
