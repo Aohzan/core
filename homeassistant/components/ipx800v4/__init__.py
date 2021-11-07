@@ -49,6 +49,7 @@ from .const import (
     CONF_TYPE_ALLOWED,
     CONTROLLER,
     COORDINATOR,
+    DEFAULT_SCAN_INTERVAL,
     DEFAULT_TRANSITION,
     DOMAIN,
     PUSH_USERNAME,
@@ -88,7 +89,7 @@ GATEWAY_CONFIG = vol.Schema(
         vol.Required(CONF_API_KEY): cv.string,
         vol.Optional(CONF_USERNAME): cv.string,
         vol.Optional(CONF_PASSWORD): cv.string,
-        vol.Optional(CONF_SCAN_INTERVAL, default=10): cv.positive_int,
+        vol.Optional(CONF_SCAN_INTERVAL): cv.positive_int,
         vol.Optional(CONF_DEVICES, default=[]): vol.All(
             cv.ensure_list, [DEVICE_CONFIG_SCHEMA_ENTRY]
         ),
@@ -121,14 +122,17 @@ async def async_setup_entry(hass: HomeAssistantType, entry: ConfigEntry) -> bool
     """Set up the IPX800v4."""
     hass.data.setdefault(DOMAIN, {})
 
+    config = entry.data
+    options = entry.options
+
     session = async_get_clientsession(hass, False)
 
     ipx = IPX800(
-        host=entry.data[CONF_HOST],
-        port=entry.data[CONF_PORT],
-        api_key=entry.data[CONF_API_KEY],
-        username=entry.data.get(CONF_USERNAME),
-        password=entry.data.get(CONF_PASSWORD),
+        host=config[CONF_HOST],
+        port=config[CONF_PORT],
+        api_key=config[CONF_API_KEY],
+        username=config.get(CONF_USERNAME),
+        password=config.get(CONF_PASSWORD),
         session=session,
     )
 
@@ -138,7 +142,7 @@ async def async_setup_entry(hass: HomeAssistantType, entry: ConfigEntry) -> bool
     except Ipx800CannotConnectError as exception:
         _LOGGER.error(
             "Cannot connect to the IPX800 named %s, check host, port or api_key",
-            entry.data[CONF_NAME],
+            config[CONF_NAME],
         )
         raise ConfigEntryNotReady from exception
 
@@ -151,7 +155,9 @@ async def async_setup_entry(hass: HomeAssistantType, entry: ConfigEntry) -> bool
         except Ipx800CannotConnectError as err:
             raise UpdateFailed(f"Failed to communicating with API: {err}") from err
 
-    scan_interval = entry.data[CONF_SCAN_INTERVAL]
+    scan_interval = options.get(
+        CONF_SCAN_INTERVAL, config.get(CONF_SCAN_INTERVAL, DEFAULT_SCAN_INTERVAL)
+    )
 
     if scan_interval < 10:
         _LOGGER.warning(
@@ -177,7 +183,7 @@ async def async_setup_entry(hass: HomeAssistantType, entry: ConfigEntry) -> bool
     await coordinator.async_refresh()
 
     hass.data[DOMAIN][entry.entry_id] = {
-        CONF_NAME: entry.data[CONF_NAME],
+        CONF_NAME: config[CONF_NAME],
         CONTROLLER: ipx,
         COORDINATOR: coordinator,
         CONF_DEVICES: {},
@@ -191,17 +197,17 @@ async def async_setup_entry(hass: HomeAssistantType, entry: ConfigEntry) -> bool
         identifiers={(DOMAIN, ipx.host)},
         manufacturer="GCE",
         model="IPX800 V4",
-        name=entry.data[CONF_NAME],
+        name=config[CONF_NAME],
     )
 
-    if CONF_DEVICES not in entry.data:
+    if CONF_DEVICES not in config:
         _LOGGER.warning(
-            "No devices configuration found for the IPX800 %s", entry.data[CONF_NAME]
+            "No devices configuration found for the IPX800 %s", config[CONF_NAME]
         )
         return True
 
     # Load each supported component entities from their devices
-    devices = build_device_list(entry.data[CONF_DEVICES])
+    devices = build_device_list(config[CONF_DEVICES])
 
     for component in CONF_COMPONENT_ALLOWED:
         _LOGGER.debug("Load component %s.", component)
@@ -213,12 +219,12 @@ async def async_setup_entry(hass: HomeAssistantType, entry: ConfigEntry) -> bool
         )
 
     # Provide endpoints for the IPX to call to push states
-    if CONF_PUSH_PASSWORD in entry.data:
+    if CONF_PUSH_PASSWORD in config:
         hass.http.register_view(
-            IpxRequestView(entry.data[CONF_HOST], entry.data[CONF_PUSH_PASSWORD])
+            IpxRequestView(config[CONF_HOST], config[CONF_PUSH_PASSWORD])
         )
         hass.http.register_view(
-            IpxRequestDataView(entry.data[CONF_HOST], entry.data[CONF_PUSH_PASSWORD])
+            IpxRequestDataView(config[CONF_HOST], config[CONF_PUSH_PASSWORD])
         )
     else:
         _LOGGER.info(
@@ -273,7 +279,10 @@ def build_device_list(devices_config: list) -> list:
             continue
 
         # Check if X4VR have extension id set
-        if (device_config[CONF_TYPE] == TYPE_X4VR or device_config[CONF_TYPE] == TYPE_X4VR_BSO) and CONF_EXT_ID not in device_config:
+        if (
+            device_config[CONF_TYPE] == TYPE_X4VR
+            or device_config[CONF_TYPE] == TYPE_X4VR_BSO
+        ) and CONF_EXT_ID not in device_config:
             _LOGGER.error(
                 "Device %s skipped: %s must have %s set.",
                 device_config[CONF_NAME],
