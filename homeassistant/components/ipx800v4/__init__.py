@@ -2,7 +2,6 @@
 from base64 import b64decode
 from datetime import timedelta
 import logging
-import re
 
 from aiohttp import web
 from pypx800 import IPX800, Ipx800CannotConnectError, Ipx800InvalidAuthError
@@ -34,6 +33,7 @@ from homeassistant.helpers.update_coordinator import (
     DataUpdateCoordinator,
     UpdateFailed,
 )
+from homeassistant.util import slugify
 
 from .const import (
     CONF_COMPONENT,
@@ -54,12 +54,19 @@ from .const import (
     DOMAIN,
     PUSH_USERNAME,
     REQUEST_REFRESH_DELAY,
+    TYPE_ANALOGIN,
+    TYPE_DIGITALIN,
     TYPE_RELAY,
+    TYPE_VIRTUALANALOGIN,
+    TYPE_VIRTUALIN,
+    TYPE_VIRTUALOUT,
     TYPE_X4VR,
     TYPE_X4VR_BSO,
+    TYPE_XDIMMER,
     TYPE_XPWM,
     TYPE_XPWM_RGB,
     TYPE_XPWM_RGBW,
+    TYPE_XTHL,
     UNDO_UPDATE_LISTENER,
 )
 
@@ -198,6 +205,7 @@ async def async_setup_entry(hass: HomeAssistantType, entry: ConfigEntry) -> bool
         manufacturer="GCE",
         model="IPX800 V4",
         name=config[CONF_NAME],
+        configuration_url=f"http://{config[CONF_HOST]}:{config[CONF_PORT]}",
     )
 
     if CONF_DEVICES not in config:
@@ -476,26 +484,46 @@ class IpxEntity(CoordinatorEntity):
         )
         self._attr_icon = device_config.get(CONF_ICON)
         self._attr_unique_id = "_".join(
-            [
-                DOMAIN,
-                self.ipx.host,
-                self._component,
-                re.sub("[^A-Za-z0-9_]+", "", self._attr_name.replace(" ", "_")).lower(),
-            ]
+            [DOMAIN, self.ipx.host, self._component, slugify(self._attr_name)]
         )
+
+        configuration_url = f"http://{self.ipx.host}:{self.ipx.port}/admin/"
+        if self._ipx_type == TYPE_RELAY:
+            if self._id:
+                if self._id <= 8:
+                    configuration_url += "output.htm"
+                else:
+                    configuration_url += "8out.htm"
+        elif self._ipx_type in [TYPE_X4VR, TYPE_X4VR_BSO]:
+            configuration_url += "volet.htm"
+        elif self._ipx_type in [TYPE_XPWM, TYPE_XPWM_RGB, TYPE_XPWM_RGBW]:
+            configuration_url += "volet.htm"
+        elif self._ipx_type == TYPE_XDIMMER:
+            configuration_url += "dimmer.htm"
+        elif self._ipx_type == TYPE_VIRTUALOUT:
+            configuration_url += "virtualout.htm"
+        elif self._ipx_type == TYPE_VIRTUALIN:
+            configuration_url += "virtualin.htm"
+        elif self._ipx_type == TYPE_ANALOGIN:
+            configuration_url += "analog.htm"
+        elif self._ipx_type == TYPE_VIRTUALANALOGIN:
+            configuration_url += "analogVirt.htm"
+        elif self._ipx_type == TYPE_DIGITALIN:
+            if self._id:
+                if self._id <= 8:
+                    configuration_url += "input.htm"
+                else:
+                    configuration_url += "24in.htm"
+        elif self._ipx_type == TYPE_XTHL:
+            configuration_url += "rht.htm"
+        else:
+            configuration_url += "periph.htm"
+
         self._attr_device_info = {
-            "identifiers": {
-                (
-                    DOMAIN,
-                    re.sub(
-                        "[^A-Za-z0-9_]+",
-                        "",
-                        self._attr_name.replace(" ", "_"),
-                    ).lower(),
-                )
-            },
-            "name": self._attr_name,
+            "identifiers": {(DOMAIN, slugify(device_config[CONF_NAME]))},
+            "name": device_config[CONF_NAME],
             "manufacturer": "GCE",
             "model": "IPX800 V4",
             "via_device": (DOMAIN, self.ipx.host),
+            "configuration_url": configuration_url,
         }

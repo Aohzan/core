@@ -7,7 +7,7 @@ from homeassistant import config_entries
 from homeassistant.const import CONF_NAME, CONF_SCAN_INTERVAL
 from homeassistant.core import callback
 
-from .const import DEFAULT_SCAN_INTERVAL, DOMAIN
+from .const import COORDINATOR, DEFAULT_SCAN_INTERVAL, DOMAIN
 
 
 @config_entries.HANDLERS.register(DOMAIN)
@@ -58,11 +58,13 @@ class Ipx800OptionsFlowHandler(config_entries.OptionsFlow):
     async def async_step_init(self, user_input=None):
         """Manage the options."""
         if user_input is not None:
-            coordinator = self.hass.data[DOMAIN][self.config_entry.entry_id]
+            coordinator = self.hass.data[DOMAIN][self.config_entry.entry_id][
+                COORDINATOR
+            ]
             update_interval_sec = user_input[CONF_SCAN_INTERVAL]
             update_interval = timedelta(seconds=update_interval_sec)
             coordinator.update_interval = update_interval
-            return self.async_create_entry(title="", data=self.config_entry.data)
+            return self.async_create_entry(title="", data=user_input)
 
         scan_interval = self.config_entry.options.get(
             CONF_SCAN_INTERVAL,
