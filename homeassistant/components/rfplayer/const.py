@@ -3,21 +3,23 @@ DOMAIN = "rfplayer"
 DATA_RFOBJECT = "rfobject"
 
 CONF_AUTOMATIC_ADD = "automatic_add"
-CONF_WAIT_FOR_ACK = "wait_for_ack"
 CONF_RECONNECT_INTERVAL = "reconnect_interval"
 
 DEFAULT_RECONNECT_INTERVAL = 10
 DEFAULT_SIGNAL_REPETITIONS = 1
 
-PLATFORMS = ["sensor"]
+PLATFORMS = ["sensor", "switch"]
 
 ATTR_EVENT = "event"
 ATTR_STATE = "state"
+
+RFPLAYER_PROTOCOL = "rfplayer_protocol"
 
 CONF_ALIASES = "aliases"
 CONF_GROUP_ALIASES = "group_aliases"
 CONF_GROUP = "group"
 CONF_NOGROUP_ALIASES = "nogroup_aliases"
+CONF_DEVICE_ADDRESS = "device_address"
 CONF_DEVICE_DEFAULTS = "device_defaults"
 CONF_DEVICE_ID = "device_id"
 CONF_FIRE_EVENT = "fire_event"

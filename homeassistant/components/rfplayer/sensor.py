@@ -40,6 +40,7 @@ def lookup_unit_for_sensor_type(sensor_type):
 async def async_setup_entry(hass, entry, async_add_entities):
     """Set up the Rfplayer platform."""
     config = entry.data
+    options = entry.options
 
     async def add_new_device(event):
         """Check if device is known, otherwise create device entity."""
@@ -47,8 +48,8 @@ async def async_setup_entry(hass, entry, async_add_entities):
 
         # create entity
         device = RfplayerSensor(
-            device_id,
-            event[EVENT_KEY_SENSOR],
+            device_id.split("_")[0],
+            device_id.split("_")[1],
             event[EVENT_KEY_UNIT],
             initial_event=event,
         )
@@ -60,7 +61,7 @@ async def async_setup_entry(hass, entry, async_add_entities):
             if EVENT_KEY_SENSOR in event:
                 await add_new_device(event)
 
-    if config[CONF_AUTOMATIC_ADD]:
+    if options.get(CONF_AUTOMATIC_ADD, config[CONF_AUTOMATIC_ADD]):
         hass.data[DATA_DEVICE_REGISTER][EVENT_KEY_SENSOR] = add_new_device
 
 
@@ -68,12 +69,15 @@ class RfplayerSensor(RfplayerDevice):
     """Representation of a Rfplayer sensor."""
 
     def __init__(
-        self, device_id, sensor_type, unit_of_measurement, initial_event=None, **kwargs
+        self, protocol, device_id, unit_of_measurement, initial_event=None, **kwargs
     ):
         """Handle sensor specific args and super init."""
-        self._sensor_type = sensor_type
+        self._protocol = protocol
+        self._device_id = device_id
         self._unit_of_measurement = unit_of_measurement
-        super().__init__(device_id, initial_event=initial_event, **kwargs)
+        super().__init__(
+            protocol, device_id=device_id, initial_event=initial_event, **kwargs
+        )
 
     def _handle_event(self, event):
         """Domain specific event handler."""
@@ -95,11 +99,11 @@ class RfplayerSensor(RfplayerDevice):
         self.hass.data[DATA_ENTITY_LOOKUP][EVENT_KEY_SENSOR][self._device_id].append(
             self.entity_id
         )
-        if self._aliases:
-            for _id in self._aliases:
-                self.hass.data[DATA_ENTITY_LOOKUP][EVENT_KEY_SENSOR][_id].append(
-                    self.entity_id
-                )
+        # if self._aliases:
+        #     for _id in self._aliases:
+        #         self.hass.data[DATA_ENTITY_LOOKUP][EVENT_KEY_SENSOR][_id].append(
+        #             self.entity_id
+        #         )
         self.async_on_remove(
             async_dispatcher_connect(
                 self.hass, SIGNAL_AVAILABILITY, self._availability_callback
@@ -126,9 +130,3 @@ class RfplayerSensor(RfplayerDevice):
     def state(self):
         """Return value."""
         return self._state
-
-    @property
-    def icon(self):
-        """Return possible sensor specific icon."""
-        if self._sensor_type in SENSOR_ICONS:
-            return SENSOR_ICONS[self._sensor_type]
