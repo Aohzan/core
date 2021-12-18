@@ -2,17 +2,16 @@
 import logging
 
 from homeassistant.components.switch import SwitchEntity
-from homeassistant.const import CONF_DEVICES, CONF_PROTOCOL, STATE_ON
+from homeassistant.const import CONF_DEVICE_ID, CONF_DEVICES, CONF_PROTOCOL
 from homeassistant.core import callback
-from homeassistant.helpers.dispatcher import async_dispatcher_connect
 
 from . import DATA_DEVICE_REGISTER, EVENT_KEY_COMMAND, RfplayerDevice
 from .const import (
+    COMMAND_OFF,
+    COMMAND_ON,
     CONF_AUTOMATIC_ADD,
     CONF_DEVICE_ADDRESS,
-    CONF_DEVICE_ID,
     DOMAIN,
-    RFPLAYER_PROTOCOL,
 )
 
 _LOGGER = logging.getLogger(__name__)
@@ -23,34 +22,29 @@ async def async_setup_entry(hass, entry, async_add_entities):
     config = entry.data
     options = entry.options
 
-    async def add_new_device(event):
+    async def add_new_device(device_info):
         """Check if device is known, otherwise create device entity."""
         # create entity
         device = RfplayerSwitch(
-            protocol=event[CONF_PROTOCOL],
-            device_address=event.get(CONF_DEVICE_ADDRESS),
-            device_id=event.get(CONF_DEVICE_ID),
-            initial_event=event,
+            protocol=device_info[CONF_PROTOCOL],
+            device_address=device_info.get(CONF_DEVICE_ADDRESS),
+            device_id=device_info.get(CONF_DEVICE_ID),
+            initial_event=device_info,
         )
-        _LOGGER.debug("Add switch entity %s", event)
+        _LOGGER.debug("Add switch entity %s", device_info)
         async_add_entities([device])
 
     if CONF_DEVICES in config:
-        for device_id, event in config[CONF_DEVICES].items():
-            if EVENT_KEY_COMMAND in event:
-                await add_new_device(event)
+        for device_id, device_info in config[CONF_DEVICES].items():
+            if EVENT_KEY_COMMAND in device_info:
+                await add_new_device(device_info)
 
     if options.get(CONF_AUTOMATIC_ADD, config[CONF_AUTOMATIC_ADD]):
-        hass.data[DATA_DEVICE_REGISTER][EVENT_KEY_COMMAND] = add_new_device
+        hass.data[DOMAIN][DATA_DEVICE_REGISTER][EVENT_KEY_COMMAND] = add_new_device
 
 
 class RfplayerSwitch(RfplayerDevice, SwitchEntity):
     """Representation of a Rfplayer sensor."""
-
-    @property
-    def is_on(self):
-        """Return true if device is on."""
-        return self._state
 
     async def async_added_to_hass(self):
         """Restore RFLink device state (ON/OFF)."""
@@ -59,24 +53,29 @@ class RfplayerSwitch(RfplayerDevice, SwitchEntity):
         if self._event is None:
             old_state = await self.async_get_last_state()
             if old_state is not None:
-                self._state = old_state.state == STATE_ON
+                self._state = old_state.state == COMMAND_ON
 
     @callback
     def _handle_event(self, event):
         command = event["command"]
-        if command in ["ON", "ALLON"]:
+        if command in [COMMAND_ON, "ALLON"]:
             self._state = True
-        elif command in ["OFF", "ALLOFF"]:
+        elif command in [COMMAND_OFF, "ALLOFF"]:
             self._state = False
+
+    @property
+    def is_on(self):
+        """Return true if device is on."""
+        return self._state
 
     async def async_turn_on(self, **kwargs):
         """Turn the device on."""
-        await self._async_send_command("ON")
+        await self._async_send_command(COMMAND_ON)
         self._state = True
         self.async_write_ha_state()
 
     async def async_turn_off(self, **kwargs):
         """Turn the device off."""
-        await self._async_send_command("OFF")
+        await self._async_send_command(COMMAND_OFF)
         self._state = False
         self.async_write_ha_state()

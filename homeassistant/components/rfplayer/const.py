@@ -15,20 +15,13 @@ ATTR_STATE = "state"
 
 RFPLAYER_PROTOCOL = "rfplayer_protocol"
 
-CONF_ALIASES = "aliases"
-CONF_GROUP_ALIASES = "group_aliases"
-CONF_GROUP = "group"
-CONF_NOGROUP_ALIASES = "nogroup_aliases"
 CONF_DEVICE_ADDRESS = "device_address"
-CONF_DEVICE_DEFAULTS = "device_defaults"
-CONF_DEVICE_ID = "device_id"
 CONF_FIRE_EVENT = "fire_event"
 CONF_IGNORE_DEVICES = "ignore_devices"
 CONF_SIGNAL_REPETITIONS = "signal_repetitions"
 
-DATA_DEVICE_REGISTER = "rfplayer_device_register"
-DATA_ENTITY_LOOKUP = "rfplayer_entity_lookup"
-DATA_ENTITY_GROUP_LOOKUP = "rfplayer_entity_group_only_lookup"
+DATA_DEVICE_REGISTER = "device_register"
+DATA_ENTITY_LOOKUP = "entity_lookup"
 
 CONNECTION_TIMEOUT = 10
 
@@ -47,3 +40,6 @@ SIGNAL_HANDLE_EVENT = "rfplayer_handle_event_{}"
 SIGNAL_EVENT = "rfplayer_event"
 
 TMP_ENTITY = "tmp.{}"
+
+COMMAND_ON = "ON"
+COMMAND_OFF = "OFF"

@@ -4,18 +4,19 @@ import logging
 from homeassistant.const import CONF_DEVICES
 from homeassistant.helpers.dispatcher import async_dispatcher_connect
 
-from . import (
+from . import RfplayerDevice
+from .const import (
+    CONF_AUTOMATIC_ADD,
     DATA_DEVICE_REGISTER,
     DATA_ENTITY_LOOKUP,
+    DOMAIN,
     EVENT_KEY_ID,
     EVENT_KEY_SENSOR,
     EVENT_KEY_UNIT,
     SIGNAL_AVAILABILITY,
     SIGNAL_HANDLE_EVENT,
     TMP_ENTITY,
-    RfplayerDevice,
 )
-from .const import CONF_AUTOMATIC_ADD
 from .rflib.rfpparser import PACKET_FIELDS, UNITS
 
 _LOGGER = logging.getLogger(__name__)
@@ -42,27 +43,27 @@ async def async_setup_entry(hass, entry, async_add_entities):
     config = entry.data
     options = entry.options
 
-    async def add_new_device(event):
+    async def add_new_device(device_info):
         """Check if device is known, otherwise create device entity."""
-        device_id = event[EVENT_KEY_ID]
+        device_id = device_info[EVENT_KEY_ID]
 
         # create entity
         device = RfplayerSensor(
-            device_id.split("_")[0],
-            device_id.split("_")[1],
-            event[EVENT_KEY_UNIT],
-            initial_event=event,
+            protocol=device_id.split("_")[0],
+            device_id=device_id.split("_")[1],
+            unit_of_measurement=device_info[EVENT_KEY_UNIT],
+            initial_event=device_info,
         )
         _LOGGER.debug("Add sensor entity %s", device_id)
         async_add_entities([device])
 
     if CONF_DEVICES in config:
-        for device_id, event in config[CONF_DEVICES].items():
-            if EVENT_KEY_SENSOR in event:
-                await add_new_device(event)
+        for device_id, device_info in config[CONF_DEVICES].items():
+            if EVENT_KEY_SENSOR in device_info:
+                await add_new_device(device_info)
 
     if options.get(CONF_AUTOMATIC_ADD, config[CONF_AUTOMATIC_ADD]):
-        hass.data[DATA_DEVICE_REGISTER][EVENT_KEY_SENSOR] = add_new_device
+        hass.data[DOMAIN][DATA_DEVICE_REGISTER][EVENT_KEY_SENSOR] = add_new_device
 
 
 class RfplayerSensor(RfplayerDevice):
@@ -74,14 +75,10 @@ class RfplayerSensor(RfplayerDevice):
         """Handle sensor specific args and super init."""
         self._protocol = protocol
         self._device_id = device_id
-        self._unit_of_measurement = unit_of_measurement
+        self._attr_unit_of_measurement = unit_of_measurement
         super().__init__(
             protocol, device_id=device_id, initial_event=initial_event, **kwargs
         )
-
-    def _handle_event(self, event):
-        """Domain specific event handler."""
-        self._state = event["value"]
 
     async def async_added_to_hass(self):
         """Register update callback."""
@@ -89,21 +86,18 @@ class RfplayerSensor(RfplayerDevice):
         tmp_entity = TMP_ENTITY.format(self._device_id)
         if (
             tmp_entity
-            in self.hass.data[DATA_ENTITY_LOOKUP][EVENT_KEY_SENSOR][self._device_id]
+            in self.hass.data[DOMAIN][DATA_ENTITY_LOOKUP][EVENT_KEY_SENSOR][
+                self._device_id
+            ]
         ):
-            self.hass.data[DATA_ENTITY_LOOKUP][EVENT_KEY_SENSOR][
+            self.hass.data[DOMAIN][DATA_ENTITY_LOOKUP][EVENT_KEY_SENSOR][
                 self._device_id
             ].remove(tmp_entity)
 
         # Register id and aliases
-        self.hass.data[DATA_ENTITY_LOOKUP][EVENT_KEY_SENSOR][self._device_id].append(
-            self.entity_id
-        )
-        # if self._aliases:
-        #     for _id in self._aliases:
-        #         self.hass.data[DATA_ENTITY_LOOKUP][EVENT_KEY_SENSOR][_id].append(
-        #             self.entity_id
-        #         )
+        self.hass.data[DOMAIN][DATA_ENTITY_LOOKUP][EVENT_KEY_SENSOR][
+            self._device_id
+        ].append(self.entity_id)
         self.async_on_remove(
             async_dispatcher_connect(
                 self.hass, SIGNAL_AVAILABILITY, self._availability_callback
@@ -121,10 +115,9 @@ class RfplayerSensor(RfplayerDevice):
         if self._initial_event:
             self.handle_event_callback(self._initial_event)
 
-    @property
-    def unit_of_measurement(self):
-        """Return measurement unit."""
-        return self._unit_of_measurement
+    def _handle_event(self, event):
+        """Domain specific event handler."""
+        self._state = event["value"]
 
     @property
     def state(self):

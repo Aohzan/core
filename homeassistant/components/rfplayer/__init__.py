@@ -10,8 +10,10 @@ import voluptuous as vol
 
 from homeassistant.const import (
     ATTR_ENTITY_ID,
+    ATTR_STATE,
     CONF_COMMAND,
     CONF_DEVICE,
+    CONF_DEVICE_ID,
     CONF_DEVICES,
     CONF_PROTOCOL,
     EVENT_HOMEASSISTANT_STOP,
@@ -26,8 +28,26 @@ from homeassistant.helpers.dispatcher import (
 from homeassistant.helpers.entity import DeviceInfo
 from homeassistant.helpers.restore_state import RestoreEntity
 
-from .const import *
-from .const import CONF_DEVICE_ADDRESS, DOMAIN, PLATFORMS
+from .const import (
+    CONF_AUTOMATIC_ADD,
+    CONF_DEVICE_ADDRESS,
+    CONF_RECONNECT_INTERVAL,
+    CONNECTION_TIMEOUT,
+    DATA_DEVICE_REGISTER,
+    DATA_ENTITY_LOOKUP,
+    DOMAIN,
+    EVENT_BUTTON_PRESSED,
+    EVENT_KEY_COMMAND,
+    EVENT_KEY_ID,
+    EVENT_KEY_SENSOR,
+    PLATFORMS,
+    RFPLAYER_PROTOCOL,
+    SERVICE_SEND_COMMAND,
+    SIGNAL_AVAILABILITY,
+    SIGNAL_EVENT,
+    SIGNAL_HANDLE_EVENT,
+    TMP_ENTITY,
+)
 from .rflib.rfpprotocol import create_rfplayer_connection
 
 _LOGGER = logging.getLogger(__name__)
@@ -61,41 +81,26 @@ async def async_setup_entry(hass, entry):
     config = entry.data
     options = entry.options
 
-    # Allow entities to register themselves by device_id to be looked up when
-    # new rfplayer events arrive to be handled
-    hass.data[DATA_ENTITY_LOOKUP] = {
-        EVENT_KEY_COMMAND: defaultdict(list),
-        EVENT_KEY_SENSOR: defaultdict(list),
-    }
-    hass.data[DATA_ENTITY_GROUP_LOOKUP] = {EVENT_KEY_COMMAND: defaultdict(list)}
-
-    # Allow platform to specify function to register new unknown devices
-    hass.data[DATA_DEVICE_REGISTER] = {}
-    if options.get(CONF_AUTOMATIC_ADD, config[CONF_AUTOMATIC_ADD]) is True:
-        for device_type in "sensor", "command":
-            hass.data[DATA_DEVICE_REGISTER][device_type] = {}
-
     async def async_send_command(call):
         """Send Rfplayer command."""
         _LOGGER.debug("Rfplayer send command for %s", str(call.data))
         if not await hass.data[DOMAIN][RFPLAYER_PROTOCOL].send_command_ack(
-            call.data.get(CONF_PROTOCOL),
-            call.data.get(CONF_COMMAND),
+            call.data[CONF_PROTOCOL],
+            call.data[CONF_COMMAND],
             device_address=call.data.get(CONF_DEVICE_ADDRESS),
             device_id=call.data.get(CONF_DEVICE_ID),
         ):
             _LOGGER.error("Failed Rfplayer command")
         if call.data[CONF_AUTOMATIC_ADD] is True:
             _LOGGER.debug("Add device for %s", str(call.data))
-            _add_device(
+            add_device = hass.data[DOMAIN][DATA_DEVICE_REGISTER][EVENT_KEY_COMMAND]
+            add_device(
                 {
-                    CONF_PROTOCOL: call.data.get(CONF_PROTOCOL),
+                    CONF_PROTOCOL: call.data[CONF_PROTOCOL],
                     CONF_DEVICE_ADDRESS: call.data.get(CONF_DEVICE_ADDRESS),
+                    CONF_DEVICE_ID: call.data.get(CONF_DEVICE_ID),
                     EVENT_KEY_COMMAND: True,
-                },
-                call.data[CONF_PROTOCOL]
-                + "_"
-                + call.data.get(CONF_DEVICE_ADDRESS, call.data[CONF_DEVICE_ID]),
+                }
             )
 
     hass.services.async_register(
@@ -114,23 +119,14 @@ async def async_setup_entry(hass, entry):
         _LOGGER.debug("event of type %s: %s", event_type, event)
 
         # Don't propagate non entity events (eg: version string, ack response)
-        if event_type not in hass.data[DATA_ENTITY_LOOKUP]:
+        if event_type not in hass.data[DOMAIN][DATA_ENTITY_LOOKUP]:
             _LOGGER.debug("unhandled event of type: %s", event_type)
             return
 
         # Lookup entities who registered this device id as device id or alias
         event_id = event.get(EVENT_KEY_ID)
 
-        is_group_event = (
-            event_type == EVENT_KEY_COMMAND
-            and event[EVENT_KEY_COMMAND] in RFPLAYER_GROUP_COMMANDS
-        )
-        if is_group_event:
-            entity_ids = hass.data[DATA_ENTITY_GROUP_LOOKUP][event_type].get(
-                event_id, []
-            )
-        else:
-            entity_ids = hass.data[DATA_ENTITY_LOOKUP][event_type][event_id]
+        entity_ids = hass.data[DOMAIN][DATA_ENTITY_LOOKUP][event_type][event_id]
 
         _LOGGER.debug("entity_ids: %s", entity_ids)
         if entity_ids:
@@ -138,20 +134,20 @@ async def async_setup_entry(hass, entry):
             for entity in entity_ids:
                 _LOGGER.debug("passing event to %s", entity)
                 async_dispatcher_send(hass, SIGNAL_HANDLE_EVENT.format(entity), event)
-        elif not is_group_event:
+        else:
             # If device is not yet known, register with platform (if loaded)
-            if event_type in hass.data[DATA_DEVICE_REGISTER]:
+            if event_type in hass.data[DOMAIN][DATA_DEVICE_REGISTER]:
                 _LOGGER.debug("device_id not known, adding new device")
                 # Add bogus event_id first to avoid race if we get another
                 # event before the device is created
                 # Any additional events received before the device has been
                 # created will thus be ignored.
-                hass.data[DATA_ENTITY_LOOKUP][event_type][event_id].append(
+                hass.data[DOMAIN][DATA_ENTITY_LOOKUP][event_type][event_id].append(
                     TMP_ENTITY.format(event_id)
                 )
                 _add_device(event, event_id)
                 hass.async_create_task(
-                    hass.data[DATA_DEVICE_REGISTER][event_type](event)
+                    hass.data[DOMAIN][DATA_DEVICE_REGISTER][event_type](event)
                 )
             else:
                 _LOGGER.debug("device_id not known and automatic add disabled")
@@ -213,7 +209,16 @@ async def async_setup_entry(hass, entry):
         hass.data[DOMAIN] = {
             RFPLAYER_PROTOCOL: protocol,
             CONF_DEVICE: config[CONF_DEVICE],
+            DATA_ENTITY_LOOKUP: {
+                EVENT_KEY_COMMAND: defaultdict(list),
+                EVENT_KEY_SENSOR: defaultdict(list),
+            },
+            DATA_DEVICE_REGISTER: {},
         }
+
+        if options.get(CONF_AUTOMATIC_ADD, config[CONF_AUTOMATIC_ADD]) is True:
+            for device_type in "sensor", "command":
+                hass.data[DOMAIN][DATA_DEVICE_REGISTER][device_type] = {}
 
         # handle shutdown of Rfplayer asyncio transport
         hass.bus.async_listen_once(
@@ -348,11 +353,13 @@ class RfplayerDevice(RestoreEntity):
             tmp_entity = "_".join([self._protocol, "ID", self._device_id])
         elif self._device_address:
             tmp_entity = "_".join([self._protocol, self._device_address])
-        if tmp_entity in self.hass.data[DATA_ENTITY_LOOKUP][EVENT_KEY_COMMAND]:
-            self.hass.data[DATA_ENTITY_LOOKUP][EVENT_KEY_COMMAND].remove(tmp_entity)
+        if tmp_entity in self.hass.data[DOMAIN][DATA_ENTITY_LOOKUP][EVENT_KEY_COMMAND]:
+            self.hass.data[DOMAIN][DATA_ENTITY_LOOKUP][EVENT_KEY_COMMAND].remove(
+                tmp_entity
+            )
 
         # Register id and aliases
-        self.hass.data[DATA_ENTITY_LOOKUP][EVENT_KEY_COMMAND].update(
+        self.hass.data[DOMAIN][DATA_ENTITY_LOOKUP][EVENT_KEY_COMMAND].update(
             self._initial_event
         )
 
@@ -374,6 +381,7 @@ class RfplayerDevice(RestoreEntity):
             self.handle_event_callback(self._initial_event)
 
     async def async_will_remove_from_hass(self):
+        """Clean when entity removed."""
         await super().async_will_remove_from_hass()
         device_registry = await async_get_registry(self.hass)
         device = device_registry.async_get_device(
