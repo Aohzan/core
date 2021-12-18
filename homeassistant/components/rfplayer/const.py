@@ -11,7 +11,6 @@ DEFAULT_SIGNAL_REPETITIONS = 1
 PLATFORMS = ["sensor", "switch"]
 
 ATTR_EVENT = "event"
-ATTR_STATE = "state"
 
 RFPLAYER_PROTOCOL = "rfplayer_protocol"
 
@@ -38,8 +37,6 @@ SERVICE_SEND_COMMAND = "send_command"
 SIGNAL_AVAILABILITY = "rfplayer_device_available"
 SIGNAL_HANDLE_EVENT = "rfplayer_handle_event_{}"
 SIGNAL_EVENT = "rfplayer_event"
-
-TMP_ENTITY = "tmp.{}"
 
 COMMAND_ON = "ON"
 COMMAND_OFF = "OFF"

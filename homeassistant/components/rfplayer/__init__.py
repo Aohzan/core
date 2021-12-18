@@ -46,7 +46,6 @@ from .const import (
     SIGNAL_AVAILABILITY,
     SIGNAL_EVENT,
     SIGNAL_HANDLE_EVENT,
-    TMP_ENTITY,
 )
 from .rflib.rfpprotocol import create_rfplayer_connection
 
@@ -93,15 +92,21 @@ async def async_setup_entry(hass, entry):
             _LOGGER.error("Failed Rfplayer command")
         if call.data[CONF_AUTOMATIC_ADD] is True:
             _LOGGER.debug("Add device for %s", str(call.data))
-            add_device = hass.data[DOMAIN][DATA_DEVICE_REGISTER][EVENT_KEY_COMMAND]
-            add_device(
-                {
-                    CONF_PROTOCOL: call.data[CONF_PROTOCOL],
-                    CONF_DEVICE_ADDRESS: call.data.get(CONF_DEVICE_ADDRESS),
-                    CONF_DEVICE_ID: call.data.get(CONF_DEVICE_ID),
-                    EVENT_KEY_COMMAND: True,
-                }
+            event_id = "_".join(
+                [
+                    call.data[CONF_PROTOCOL],
+                    call.data.get(CONF_DEVICE_ID) or call.data.get(CONF_DEVICE_ADDRESS),
+                ]
             )
+            device = {
+                CONF_PROTOCOL: call.data[CONF_PROTOCOL],
+                CONF_DEVICE_ADDRESS: call.data.get(CONF_DEVICE_ADDRESS),
+                CONF_DEVICE_ID: call.data.get(CONF_DEVICE_ID),
+                EVENT_KEY_COMMAND: True,
+                EVENT_KEY_ID: event_id,
+            }
+            await hass.data[DOMAIN][DATA_DEVICE_REGISTER][EVENT_KEY_COMMAND](device)
+            _add_device_to_base_config(device, event_id)
 
     hass.services.async_register(
         DOMAIN, SERVICE_SEND_COMMAND, async_send_command, schema=SEND_COMMAND_SCHEMA
@@ -126,26 +131,18 @@ async def async_setup_entry(hass, entry):
         # Lookup entities who registered this device id as device id or alias
         event_id = event.get(EVENT_KEY_ID)
 
-        entity_ids = hass.data[DOMAIN][DATA_ENTITY_LOOKUP][event_type][event_id]
+        entity_id = hass.data[DOMAIN][DATA_ENTITY_LOOKUP][event_type][event_id]
 
-        _LOGGER.debug("entity_ids: %s", entity_ids)
-        if entity_ids:
+        if entity_id:
             # Propagate event to every entity matching the device id
-            for entity in entity_ids:
-                _LOGGER.debug("passing event to %s", entity)
-                async_dispatcher_send(hass, SIGNAL_HANDLE_EVENT.format(entity), event)
+            _LOGGER.debug("passing event to %s", entity_id)
+            async_dispatcher_send(hass, SIGNAL_HANDLE_EVENT.format(entity_id), event)
         else:
             # If device is not yet known, register with platform (if loaded)
             if event_type in hass.data[DOMAIN][DATA_DEVICE_REGISTER]:
                 _LOGGER.debug("device_id not known, adding new device")
-                # Add bogus event_id first to avoid race if we get another
-                # event before the device is created
-                # Any additional events received before the device has been
-                # created will thus be ignored.
-                hass.data[DOMAIN][DATA_ENTITY_LOOKUP][event_type][event_id].append(
-                    TMP_ENTITY.format(event_id)
-                )
-                _add_device(event, event_id)
+                hass.data[DOMAIN][DATA_ENTITY_LOOKUP][event_type][event_id] = event
+                _add_device_to_base_config(event, event_id)
                 hass.async_create_task(
                     hass.data[DOMAIN][DATA_DEVICE_REGISTER][event_type](event)
                 )
@@ -153,7 +150,7 @@ async def async_setup_entry(hass, entry):
                 _LOGGER.debug("device_id not known and automatic add disabled")
 
     @callback
-    def _add_device(event, event_id):
+    def _add_device_to_base_config(event, event_id):
         """Add a device to config entry."""
         data = entry.data.copy()
         data[CONF_DEVICES] = copy.deepcopy(entry.data[CONF_DEVICES])
@@ -262,6 +259,7 @@ class RfplayerDevice(RestoreEntity):
         self._device_address = device_address
         self._event = None
         self._state: bool = None
+        self._attr_assumed_state = True
         self._attr_unique_id = "_".join(
             [self._protocol, self._device_address or self._device_id]
         )
@@ -314,25 +312,15 @@ class RfplayerDevice(RestoreEntity):
             identifiers={
                 (
                     DOMAIN,
-                    self.hass.data[DOMAIN][CONF_DEVICE] + "_" + self._attr_unique_id,
+                    self.hass.data[DOMAIN][
+                        CONF_DEVICE
+                    ],  # + "_" + self._attr_unique_id,
                 )
             },
             manufacturer="GCE",
             model="RFPlayer",
-            name=self._attr_unique_id,
+            name="RFPlayer",
         )
-
-    @property
-    def is_on(self):
-        """Return true if device is on."""
-        if self.assumed_state:
-            return False
-        return self._state
-
-    @property
-    def assumed_state(self):
-        """Assume device state until first device event sets state."""
-        return self._state is None
 
     @property
     def available(self):
@@ -348,21 +336,6 @@ class RfplayerDevice(RestoreEntity):
     async def async_added_to_hass(self):
         """Register update callback."""
         await super().async_added_to_hass()
-        # Remove temporary bogus entity_id if added
-        if self._device_id:
-            tmp_entity = "_".join([self._protocol, "ID", self._device_id])
-        elif self._device_address:
-            tmp_entity = "_".join([self._protocol, self._device_address])
-        if tmp_entity in self.hass.data[DOMAIN][DATA_ENTITY_LOOKUP][EVENT_KEY_COMMAND]:
-            self.hass.data[DOMAIN][DATA_ENTITY_LOOKUP][EVENT_KEY_COMMAND].remove(
-                tmp_entity
-            )
-
-        # Register id and aliases
-        self.hass.data[DOMAIN][DATA_ENTITY_LOOKUP][EVENT_KEY_COMMAND].update(
-            self._initial_event
-        )
-
         self.async_on_remove(
             async_dispatcher_connect(
                 self.hass, SIGNAL_AVAILABILITY, self._availability_callback
@@ -387,38 +360,5 @@ class RfplayerDevice(RestoreEntity):
         device = device_registry.async_get_device(
             (DOMAIN, self.hass.data[DOMAIN][CONF_DEVICE] + "_" + self._attr_unique_id)
         )
-        device_registry.async_remove_device(device)
-
-
-# class SwitchableRfplayerDevice(RfplayerDevice, RestoreEntity):
-#     """Rflink entity which can switch on/off (eg: light, switch)."""
-
-#     async def async_added_to_hass(self):
-#         """Restore RFLink device state (ON/OFF)."""
-#         await super().async_added_to_hass()
-#         if (old_state := await self.async_get_last_state()) is not None:
-#             self._state = old_state.state == STATE_ON
-
-#     def _handle_event(self, event):
-#         command = event["command"]
-#         if command in ["on", "allon"]:
-#             self._state = True
-#         elif command in ["off", "alloff"]:
-#             self._state = False
-
-#     async def async_turn_on(self, **kwargs):
-#         """Turn the device on."""
-#         await self._protocol.send_command(
-#             "on", self._protocol, self._device_id, self._device_address
-#         )
-#         self._state = True
-
-#         # Update state of entity
-#         self.async_write_ha_state()
-
-#     async def async_turn_off(self, **kwargs):
-#         """Turn the device off."""
-#         await self._protocol.send_command(
-#             "false", self._protocol, self._device_id, self._device_address
-#         )
-#         self._state = False
+        if device:
+            device_registry.async_remove_device(device)

@@ -2,7 +2,6 @@
 import logging
 
 from homeassistant.const import CONF_DEVICES
-from homeassistant.helpers.dispatcher import async_dispatcher_connect
 
 from . import RfplayerDevice
 from .const import (
@@ -13,9 +12,6 @@ from .const import (
     EVENT_KEY_ID,
     EVENT_KEY_SENSOR,
     EVENT_KEY_UNIT,
-    SIGNAL_AVAILABILITY,
-    SIGNAL_HANDLE_EVENT,
-    TMP_ENTITY,
 )
 from .rflib.rfpparser import PACKET_FIELDS, UNITS
 
@@ -82,38 +78,12 @@ class RfplayerSensor(RfplayerDevice):
 
     async def async_added_to_hass(self):
         """Register update callback."""
-        # Remove temporary bogus entity_id if added
-        tmp_entity = TMP_ENTITY.format(self._device_id)
-        if (
-            tmp_entity
-            in self.hass.data[DOMAIN][DATA_ENTITY_LOOKUP][EVENT_KEY_SENSOR][
-                self._device_id
-            ]
-        ):
-            self.hass.data[DOMAIN][DATA_ENTITY_LOOKUP][EVENT_KEY_SENSOR][
-                self._device_id
-            ].remove(tmp_entity)
-
         # Register id and aliases
-        self.hass.data[DOMAIN][DATA_ENTITY_LOOKUP][EVENT_KEY_SENSOR][
-            self._device_id
-        ].append(self.entity_id)
-        self.async_on_remove(
-            async_dispatcher_connect(
-                self.hass, SIGNAL_AVAILABILITY, self._availability_callback
-            )
-        )
-        self.async_on_remove(
-            async_dispatcher_connect(
-                self.hass,
-                SIGNAL_HANDLE_EVENT.format(self.entity_id),
-                self.handle_event_callback,
-            )
-        )
+        await super().async_added_to_hass()
 
-        # Process the initial event now that the entity is created
-        if self._initial_event:
-            self.handle_event_callback(self._initial_event)
+        self.hass.data[DOMAIN][DATA_ENTITY_LOOKUP][EVENT_KEY_SENSOR][
+            self._initial_event[EVENT_KEY_ID]
+        ] = self.entity_id
 
     def _handle_event(self, event):
         """Domain specific event handler."""

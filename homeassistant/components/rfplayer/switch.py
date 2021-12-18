@@ -11,7 +11,9 @@ from .const import (
     COMMAND_ON,
     CONF_AUTOMATIC_ADD,
     CONF_DEVICE_ADDRESS,
+    DATA_ENTITY_LOOKUP,
     DOMAIN,
+    EVENT_KEY_ID,
 )
 
 _LOGGER = logging.getLogger(__name__)
@@ -47,8 +49,12 @@ class RfplayerSwitch(RfplayerDevice, SwitchEntity):
     """Representation of a Rfplayer sensor."""
 
     async def async_added_to_hass(self):
-        """Restore RFLink device state (ON/OFF)."""
+        """Restore RFPlayer device state (ON/OFF)."""
         await super().async_added_to_hass()
+
+        self.hass.data[DOMAIN][DATA_ENTITY_LOOKUP][EVENT_KEY_COMMAND][
+            self._initial_event[EVENT_KEY_ID]
+        ] = self.entity_id
 
         if self._event is None:
             old_state = await self.async_get_last_state()
