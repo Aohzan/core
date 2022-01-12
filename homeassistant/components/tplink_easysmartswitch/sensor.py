@@ -1,23 +1,19 @@
 """Support for the TP-Link Easy Smart Switch."""
 import logging
 
-from homeassistant.components.sensor import (
-    SensorEntity,
-)
+from homeassistant.components.sensor import SensorEntity
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 from homeassistant.util import slugify
-from .tplink import EasySwitch
+
 from .const import (
     CONTROLLER,
     COORDINATOR,
     DOMAIN,
-    TPLINK_PORT_LINK_STATUS,
-    TPLINK_PORT_RX_BAD_PKT,
+    TIMESTAMP,
     TPLINK_PORT_RX_GOOD_PKT,
-    TPLINK_PORT_STATE,
-    TPLINK_PORT_TX_BAD_PKT,
     TPLINK_PORT_TX_GOOD_PKT,
 )
+from .tplink import EasySwitch
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -32,26 +28,26 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
     ports_count = controller.port_number
     for port in range(ports_count):
         entities.append(
-            TpLinkSwitchSensor(
+            TpLinkSpeedSensor(
                 controller,
                 coordinator,
                 port_number=port + 1,
-                attribut=TPLINK_PORT_RX_GOOD_PKT,
+                attribute=TPLINK_PORT_RX_GOOD_PKT,
             )
         )
         entities.append(
-            TpLinkSwitchSensor(
+            TpLinkSpeedSensor(
                 controller,
                 coordinator,
                 port_number=port + 1,
-                attribut=TPLINK_PORT_TX_GOOD_PKT,
+                attribute=TPLINK_PORT_TX_GOOD_PKT,
             )
         )
     if entities:
         async_add_entities(entities)
 
 
-class TpLinkSwitchSensor(CoordinatorEntity, SensorEntity):
+class TpLinkSpeedSensor(CoordinatorEntity, SensorEntity):
     """Representation of a generic TP-Link Easy Smart Switch sensor."""
 
     def __init__(
@@ -59,24 +55,28 @@ class TpLinkSwitchSensor(CoordinatorEntity, SensorEntity):
         controller,
         coordinator,
         port_number,
-        attribut,
+        attribute,
     ):
         """Initialize the sensor."""
         super().__init__(coordinator)
+        self._last_value = None
+        self._last_timestamp = None
+
         self.controller = controller
         self._port_number = port_number
-        self._attribut = attribut
-        self._attr_unit_of_measurement = "packets"
+        self._attribute = attribute
+        self._attr_unit_of_measurement = "packets/s"
 
-        self._attr_name = f"Port {port_number:02} - {attribut}"
+        suffix = "Ingress" if attribute == TPLINK_PORT_RX_GOOD_PKT else "Egress"
+        self._attr_name = f"Port {port_number:02} - {suffix}"
         self._attr_unique_id = slugify(
             "_".join(
                 [
                     DOMAIN,
                     self.controller.mac_address,
-                    "sensor",
+                    "speed_sensor",
                     str(port_number),
-                    attribut,
+                    attribute,
                 ]
             )
         )
@@ -87,7 +87,32 @@ class TpLinkSwitchSensor(CoordinatorEntity, SensorEntity):
 
         self._state = None
 
+    def _has_overflowed(self, current_value) -> bool:
+        """Check if value has overflowed."""
+        return current_value < self._last_value
+
     @property
     def native_value(self):
         """Return the state."""
-        return int(self.coordinator.data[self._port_number][self._attribut])
+        current_value = int(self.coordinator.data[self._port_number][self._attribute])
+        if current_value is None:
+            return None
+        current_timestamp = self.coordinator.data[TIMESTAMP]
+        if self._last_value is None or self._has_overflowed(current_value):
+            self._last_value = current_value
+            self._last_timestamp = current_timestamp
+            return None
+
+        # Calculate derivative.
+        delta_value = current_value - self._last_value
+        delta_time = current_timestamp - self._last_timestamp
+        if delta_time.total_seconds() == 0:
+            # Prevent division by 0.
+            return None
+        derived = delta_value / delta_time.total_seconds()
+
+        # Store current values for future use.
+        self._last_value = current_value
+        self._last_timestamp = current_timestamp
+
+        return round(derived, 2)

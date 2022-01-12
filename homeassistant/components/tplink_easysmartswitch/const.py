@@ -8,6 +8,8 @@ UNDO_UPDATE_LISTENER = "undo_update_listener"
 
 DEFAULT_SCAN_INTERVAL = 10
 
+TIMESTAMP = "timestamp"
+
 TPLINK_STATUS = {
     "0": "Link Down",
     "1": "LS 1",

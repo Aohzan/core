@@ -1,14 +1,16 @@
-"""Query the TP-Link switch"""
-import re
-import requests
-from bs4 import BeautifulSoup
+"""Query the TP-Link Easy Smart Switch."""
 import asyncio
+import re
 import socket
 
-import async_timeout
-
 import aiohttp
+import async_timeout
+from bs4 import BeautifulSoup
+
+from homeassistant.util.dt import utcnow
+
 from .const import (
+    TIMESTAMP,
     TPLINK_PORT_LINK_STATUS,
     TPLINK_PORT_RX_BAD_PKT,
     TPLINK_PORT_RX_GOOD_PKT,
@@ -21,7 +23,7 @@ from .const import (
 
 
 class EasySwitch:
-    """Get information from a TP-Link Easy Smart Switch"""
+    """Represent a TP-Link Easy Smart Switch."""
 
     def __init__(
         self,
@@ -31,9 +33,12 @@ class EasySwitch:
         request_timeout: int = 10,
         session: aiohttp.client.ClientSession = None,
     ) -> None:
+        """Init a switch."""
         self._host = host
-        self._mac_address = "temporary"
-        self._port_number = 0
+        self._mac_address = None
+        self._firmware_version = None
+        self._hardware_version = None
+        self._ports_count = 0
         self._url = f"http://{host}"
         self._user = user
         self._password = password
@@ -48,19 +53,24 @@ class EasySwitch:
         return self._host
 
     @property
-    def mac_address(self) -> str:
+    def mac_address(self):
         """Switch's mac address."""
         return self._mac_address
 
     @property
-    def version(self) -> str:
+    def hardware_version(self):
+        """Switch's hardware version."""
+        return self._hardware_version
+
+    @property
+    def firmware_version(self):
         """Switch's firmware version."""
-        return "1.0"
+        return self._firmware_version
 
     @property
     def port_number(self) -> int:
         """Switch's ports number."""
-        return self._port_number
+        return self._ports_count
 
     async def login(self) -> bool:
         """Log on the switch."""
@@ -73,7 +83,7 @@ class EasySwitch:
 
         try:
             with async_timeout.timeout(self._request_timeout):
-                response = await self._session.post(
+                await self._session.post(
                     f"{self._url}/logon.cgi",
                     data=data,
                     headers=headers,
@@ -84,19 +94,42 @@ class EasySwitch:
         except (aiohttp.ClientError, socket.gaierror) as exception:
             raise TpLinkSwitchCannotConnectError(exception) from exception
 
-        # if response.status == 401:
-        #     raise TpLinkSwitchInvalidAuthError("Authentication failed")
-
         return True
 
-    async def get_data(self) -> dict:
-        """Get all port informations."""
+    async def update_informations(self) -> None:
+        """Get switch information."""
         headers = {
             "Referer": f"{self._url}/",
             "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
             "Upgrade-Insecure-Requests": "1",
         }
-        request = await self._session.get(
+        request = await self._session.get(  # type: ignore
+            f"{self._url}/SystemInfoRpm.htm",
+            headers=headers,
+            timeout=self._request_timeout,
+        )
+        soup = BeautifulSoup(await request.text(), "html.parser")
+
+        if request.status != 200:
+            raise TpLinkSwitchInvalidAuthError("Authentication failed")
+
+        infos = str(soup.script.string).split("\n")
+        for idx, element in enumerate(infos):
+            if "macStr" in element:
+                self._mac_address = infos[idx + 1].replace('"', "")  # type: ignore
+            elif "firmwareStr" in element:
+                self._firmware_version = infos[idx + 1].replace('"', "")  # type: ignore
+            elif "hardwareStr" in element:
+                self._hardware_version = infos[idx + 1].replace('"', "")  # type: ignore
+
+    async def get_data(self) -> dict:
+        """Get all ports data."""
+        headers = {
+            "Referer": f"{self._url}/",
+            "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+            "Upgrade-Insecure-Requests": "1",
+        }
+        request = await self._session.get(  # type: ignore
             f"{self._url}/PortStatisticsRpm.htm",
             headers=headers,
             timeout=self._request_timeout,
@@ -112,20 +145,20 @@ class EasySwitch:
 
         if convoluted:
             port_number = int(
-                pattern.search(str(soup.head.find_all("script"))).group(2)
+                pattern.search(str(soup.head.find_all("script"))).group(2)  # type: ignore
             )
         else:
-            port_number = int(pattern.search(str(soup.script)).group(2))
-        self._port_number = port_number
+            port_number = int(pattern.search(str(soup.script)).group(2))  # type: ignore
+        self._ports_count = port_number
 
         if convoluted:
             i1 = (
-                re.compile(r'tmp_info = "(.*?)";$', re.MULTILINE | re.DOTALL)
+                re.compile(r'tmp_info = "(.*?)";$', re.MULTILINE | re.DOTALL)  # type: ignore
                 .search(str(soup.body.script))
                 .group(1)
             )
             i2 = (
-                re.compile(r'tmp_info2 = "(.*?)";$', re.MULTILINE | re.DOTALL)
+                re.compile(r'tmp_info2 = "(.*?)";$', re.MULTILINE | re.DOTALL)  # type: ignore
                 .search(str(soup.body.script))
                 .group(1)
             )
@@ -137,7 +170,7 @@ class EasySwitch:
             ).replace(" ", ",")
         else:
             script_vars = (
-                re.compile(r"var all_info = {\n?(.*?)\n?};$", re.MULTILINE | re.DOTALL)
+                re.compile(r"var all_info = {\n?(.*?)\n?};$", re.MULTILINE | re.DOTALL)  # type: ignore
                 .search(str(soup.script))
                 .group(1)
             )
@@ -148,7 +181,7 @@ class EasySwitch:
         drop2 = re.compile(r"\[(.*),0,0]")
         for entry in entries:
             e2 = re.split(":", entry)
-            edict[str(e2[0])] = drop2.search(e2[1]).group(1)
+            edict[str(e2[0])] = drop2.search(e2[1]).group(1)  # type: ignore
 
         if convoluted:
             e3 = {}
@@ -163,13 +196,13 @@ class EasySwitch:
                 e5[(port * 4) + 2] = ee[(port * 6) + 4]
                 e5[(port * 4) + 3] = ee[(port * 6) + 5]
         else:
-            e3 = re.split(",", edict["state"])
-            e4 = re.split(",", edict["link_status"])
-            e5 = re.split(",", edict["pkts"])
+            e3 = re.split(",", edict["state"])  # type: ignore
+            e4 = re.split(",", edict["link_status"])  # type: ignore
+            e5 = re.split(",", edict["pkts"])  # type: ignore
 
-        ports = {}
+        states = {TIMESTAMP: utcnow()}
         for port in range(1, port_number + 1):
-            ports[port] = {
+            states[port] = {  # type: ignore
                 TPLINK_PORT_STATE: TPLINK_STATE[e3[port - 1]],
                 TPLINK_PORT_LINK_STATUS: TPLINK_STATUS[e4[port - 1]],
                 TPLINK_PORT_TX_GOOD_PKT: e5[((port - 1) * 4)],
@@ -177,7 +210,7 @@ class EasySwitch:
                 TPLINK_PORT_RX_GOOD_PKT: e5[((port - 1) * 4) + 2],
                 TPLINK_PORT_RX_BAD_PKT: e5[((port - 1) * 4) + 3],
             }
-        return ports
+        return states
 
     async def close(self) -> None:
         """Close open client session."""
