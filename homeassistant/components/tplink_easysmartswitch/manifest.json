@@ -1,0 +1,11 @@
+{
+  "domain": "tplink_easysmartswitch",
+  "name": "TP-Link Easy Smart Switch",
+  "codeowners": ["@Aohzan"],
+  "config_flow": true,
+  "dependencies": [],
+  "documentation": "https://github.com/Aohzan/hass-easysmartswitch",
+  "iot_class": "local_polling",
+  "issue_tracker": "https://github.com/Aohzan/hass-easysmartswitch/issues",
+  "requirements": ["beautifulsoup4==4.10.0"]
+}

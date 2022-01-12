@@ -475,6 +475,7 @@ FLOWS = {
         "toon",
         "totalconnect",
         "tplink",
+        "tplink_easysmartswitch",
         "tplink_omada",
         "traccar",
         "tractive",

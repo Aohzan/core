@@ -5857,6 +5857,12 @@
         "matter"
       ]
     },
+    "tplink_easysmartswitch": {
+      "name": "TP-Link Easy Smart Switch",
+      "integration_type": "hub",
+      "config_flow": true,
+      "iot_class": "local_polling"
+    },
     "traccar": {
       "name": "Traccar",
       "integration_type": "hub",
