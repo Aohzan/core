@@ -10,14 +10,12 @@ from homeassistant.const import (
 )
 from homeassistant.core import callback
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
+
+from .const import DEFAULT_SCAN_INTERVAL, DOMAIN
 from .tplink import (
     EasySwitch,
     TpLinkSwitchCannotConnectError,
     TpLinkSwitchInvalidAuthError,
-)
-from .const import (
-    DEFAULT_SCAN_INTERVAL,
-    DOMAIN,
 )
 
 BASE_SCHEMA = vol.Schema(
@@ -62,17 +60,16 @@ class TpLinkSwitchConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         )
 
         try:
-            if await switch.login():
-                return self.async_create_entry(
-                    title=f"Switch {user_input[CONF_HOST]}",
-                    data=user_input,
-                )
+            await switch.login()
+            await switch.get_data()
+            return self.async_create_entry(
+                title=f"Switch {user_input[CONF_HOST]}",
+                data=user_input,
+            )
         except TpLinkSwitchInvalidAuthError:
             errors["base"] = "invalid_auth"
         except TpLinkSwitchCannotConnectError:
             errors["base"] = "connect_error"
-        else:
-            errors["base"] = "unknown_error"
         return self.async_show_form(
             step_id="user", data_schema=BASE_SCHEMA, errors=errors
         )
@@ -116,23 +113,22 @@ class TpLinkSwitchOptionsFlowHandler(config_entries.OptionsFlow):
 
         session = async_get_clientsession(self.hass, False)
         switch = EasySwitch(
-            user_input[CONF_HOST],
+            self.config_entry.data[CONF_HOST],
             user_input[CONF_USERNAME],
             user_input[CONF_PASSWORD],
             session=session,
         )
         try:
-            if await switch.login():
-                return self.async_create_entry(
-                    title=f"Switch {user_input[CONF_HOST]}",
-                    data=user_input,
-                )
+            await switch.login()
+            await switch.get_data()
+            return self.async_create_entry(
+                title=f"Switch {self.config_entry.data[CONF_HOST]}",
+                data=user_input,
+            )
         except TpLinkSwitchInvalidAuthError:
             errors["base"] = "invalid_auth"
         except TpLinkSwitchCannotConnectError:
             errors["base"] = "connect_error"
-        else:
-            errors["base"] = "unknown_error"
         return self.async_show_form(
             step_id="init", data_schema=BASE_SCHEMA, errors=errors
         )
