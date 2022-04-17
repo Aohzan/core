@@ -1,0 +1,11 @@
+{
+  "domain": "prix_carburant",
+  "name": "Prix Carburant",
+  "version": "2.0",
+  "documentation": "https://github.com/Aohzan/hass-prixcarburant/",
+  "issue_tracker": "https://github.com/Aohzan/hass-prixcarburant/issues",
+  "dependencies": [],
+  "codeowners": [],
+  "requirements": ["Prix-Carburant-FR-Client==1.0.3"],
+  "iot_class": "cloud_polling"
+}

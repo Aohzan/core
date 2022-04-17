@@ -1,0 +1,1 @@
+"""Prix Carburant component."""
