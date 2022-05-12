@@ -454,6 +454,7 @@ FLOWS = {
         "poolsense",
         "powerwall",
         "private_ble_device",
+        "prix_carburant",
         "profiler",
         "progettihwsw",
         "prosegur",

@@ -139,7 +139,7 @@ class PrixCarburant(SensorEntity):
             station_name = f"Station {self.station_info[ATTR_NAME]}"
         else:
             station_name = f"Station {self.station_id}"
-        self._attr_name = f"{station_name} - {self.carburant}"
+        self._attr_name = f"{station_name} {self.carburant}"
         self._attr_device_info = DeviceInfo(
             identifiers={(DOMAIN, self.station_id)},
             manufacturer="Station",
@@ -147,11 +147,7 @@ class PrixCarburant(SensorEntity):
             name=station_name,
             configuration_url="https://www.prix-carburants.gouv.fr/",
         )
-
-    @property
-    def extra_attr_state_attributes(self):
-        """Return the state attributes."""
-        return {
+        self._attr_extra_state_attributes = {
             ATTR_NAME: self.station_info[ATTR_NAME],
             ATTR_ADDRESS: self.station_info[ATTR_ADDRESS],
             ATTR_POSTAL_CODE: self.station_info[ATTR_POSTAL_CODE],
