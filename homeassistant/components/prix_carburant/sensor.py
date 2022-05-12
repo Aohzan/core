@@ -4,42 +4,8 @@ from __future__ import annotations
 from datetime import timedelta
 import logging
 
-from prixCarburantClient.prixCarburantClient import PrixCarburantClient
 import voluptuous as vol
 
-<<<<<<< HEAD
-from homeassistant.components.sensor import PLATFORM_SCHEMA, SensorDeviceClass
-from homeassistant.const import CONF_LATITUDE, CONF_LONGITUDE, CURRENCY_EURO
-import homeassistant.helpers.config_validation as cv
-from homeassistant.helpers.entity import Entity
-from homeassistant.util import Throttle
-
-DOMAIN = "prix_carburant"
-
-ATTR_ID = "Station ID"
-ATTR_GASOIL = "Gasoil"
-ATTR_E95 = "E95"
-ATTR_E98 = "E98"
-ATTR_E10 = "E10"
-ATTR_GPL = "GPLc"
-ATTR_E85 = "E85"
-ATTR_GASOIL_LAST_UPDATE = "Last Update Gasoil"
-ATTR_E95_LAST_UPDATE = "Last Update E95"
-ATTR_E98_LAST_UPDATE = "Last Update E98"
-ATTR_E10_LAST_UPDATE = "Last Update E10"
-ATTR_GPL_LAST_UPDATE = "Last Update GPLc"
-ATTR_E85_LAST_UPDATE = "Last Update E85"
-ATTR_ADDRESS = "Station Address"
-ATTR_NAME = "Station name"
-ATTR_LAST_UPDATE = "Last update"
-
-CONF_MAX_KM = "maxDistance"
-CONF_STATION_ID = "stationID"
-CARBURANTS = [ATTR_E10, ATTR_E85, ATTR_E95, ATTR_E98, ATTR_GASOIL, ATTR_GPL]
-
-SCAN_INTERVAL = timedelta(seconds=3600)
-
-=======
 from homeassistant.components.sensor import (
     PLATFORM_SCHEMA,
     SensorDeviceClass,
@@ -69,7 +35,6 @@ from .const import (
 from .tools import PrixCarburantTool
 
 _LOGGER = logging.getLogger(__name__)
->>>>>>> 20be55e452 (fix bug)
 
 # Validation of the user's configuration
 PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend(
@@ -77,24 +42,11 @@ PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend(
         vol.Optional(CONF_MAX_KM, default=10): cv.positive_int,
         vol.Optional(CONF_LATITUDE): cv.latitude,
         vol.Optional(CONF_LONGITUDE): cv.longitude,
-        vol.Optional(CONF_STATION_ID, default=[]): cv.ensure_list,
+        vol.Optional(CONF_STATIONS, default=[]): cv.ensure_list,
     }
 )
 
 
-<<<<<<< HEAD
-def setup_platform(hass, config, add_devices, discovery_info=None):
-    """Setup the sensor platform."""
-    latitude = config.get(CONF_LATITUDE, hass.config.latitude)
-    longitude = config.get(CONF_LONGITUDE, hass.config.longitude)
-    max_distance = config.get(CONF_MAX_KM)
-    station_ids = config.get(CONF_STATION_ID)
-
-    location = [{"lat": str(latitude), "lng": str(longitude)}]
-
-    client = PrixCarburantClient(location, max_distance)
-    client.load()
-=======
 async def async_setup_platform(
     hass: HomeAssistant,
     config: ConfigType,
@@ -145,26 +97,6 @@ async def async_setup_entry(
 
     # user_stations_ids from location
     # location = [{"lat": str(latitude), "lng": str(longitude)}]
->>>>>>> 20be55e452 (fix bug)
-
-    if not station_ids:
-        logging.info("No station list, find nearest station")
-        stations = client.foundNearestStation()
-    else:
-        logging.info("Precessing station list")
-        stations = []
-        for station in station_ids:
-            stations.append(str(station))
-            logging.info("- %s", str(station))
-        stations = client.extractSpecificStation(stations)
-
-<<<<<<< HEAD
-    logging.info("%s stations found", str(len(stations)))
-    client.clean()
-    for station in stations:
-        for carburant in CARBURANTS:
-            add_devices([PrixCarburant(stations.get(station), client, carburant)])
-=======
     # if not station_ids:
     #     _LOGGER.info("No station list, find nearest station")
     #     stations = client.foundNearestStation()
@@ -185,23 +117,15 @@ async def async_setup_entry(
                 )
 
     async_add_entities(entities, True)
->>>>>>> 20be55e452 (fix bug)
 
 
 class PrixCarburant(SensorEntity):
     """Representation of a Sensor."""
 
-<<<<<<< HEAD
-    def __init__(self, station, client, carburant):
-        """Initialize the sensor."""
-        self.client = client
-        self.station = station
-=======
     def __init__(self, station_id, station_info, carburant, coordinator):
         """Initialize the sensor."""
         self.station_id = station_id
         self.station_info = station_info
->>>>>>> 20be55e452 (fix bug)
         self.carburant = carburant
         self.coordinator = coordinator
 
@@ -209,16 +133,6 @@ class PrixCarburant(SensorEntity):
 
         self._attr_icon = "mdi:gas-station"
         self._attr_device_class = SensorDeviceClass.MONETARY
-<<<<<<< HEAD
-        self._attr_unique_id = "_".join([DOMAIN, self.station.id, self.carburant])
-        self._attr_unit_of_measurement = CURRENCY_EURO
-        if self.station.name and self.station.name != "undefined":
-            self._attr_name = f"Station {self.station.name} - {self.carburant}"
-        else:
-            self._attr_name = f"Station {self.station.id} - {self.carburant}"
-
-        self.update()
-=======
         self._attr_unique_id = "_".join([DOMAIN, self.station_id, self.carburant])
         self._attr_native_unit_of_measurement = CURRENCY_EURO
         if self.station_info[ATTR_NAME] != "undefined":
@@ -233,44 +147,11 @@ class PrixCarburant(SensorEntity):
             name=station_name,
             configuration_url="https://www.prix-carburants.gouv.fr/",
         )
->>>>>>> 20be55e452 (fix bug)
 
     @property
     def extra_attr_state_attributes(self):
         """Return the state attributes."""
         return {
-<<<<<<< HEAD
-            ATTR_ADDRESS: self.station.adress,
-            ATTR_NAME: self.station.name,
-        }
-
-    @Throttle(SCAN_INTERVAL)
-    def update(self):
-        """Fetch new state data."""
-
-        self.client.reloadIfNecessary()
-        if self.client.lastUpdate == self._last_update:
-            logging.debug("%s already updated", self.station.id)
-        else:
-            logging.debug("%s needs update", self.station.id)
-            station = self.client.extractSpecificStation([str(self.station.id)])
-            self.station = station.get(self.station.id)
-            self._last_update = self.client.lastUpdate
-
-        if self.carburant == ATTR_GASOIL:
-            self._attr_state = self.station.gazoil["valeur"]
-        elif self.carburant == ATTR_E10:
-            self._attr_state = self.station.e10["valeur"]
-        elif self.carburant == ATTR_E85:
-            self._attr_state = self.station.e85["valeur"]
-        elif self.carburant == ATTR_E95:
-            self._attr_state = self.station.e95["valeur"]
-        elif self.carburant == ATTR_E98:
-            self._attr_state = self.station.e98["valeur"]
-        elif self.carburant == ATTR_GPL:
-            self._attr_state = self.station.gpl["valeur"]
-        self.client.clean()
-=======
             ATTR_NAME: self.station_info[ATTR_NAME],
             ATTR_ADDRESS: self.station_info[ATTR_ADDRESS],
             ATTR_POSTAL_CODE: self.station_info[ATTR_POSTAL_CODE],
@@ -284,4 +165,3 @@ class PrixCarburant(SensorEntity):
             return self.coordinator.data[self.station_id][ATTR_FUELS][self.carburant][
                 ATTR_PRICE
             ]
->>>>>>> 20be55e452 (fix bug)
