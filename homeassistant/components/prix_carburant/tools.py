@@ -92,17 +92,15 @@ class PrixCarburantTool:
                             }
                         )
                         if "prix" in station:
-                            for carburant in station["prix"]:
-                                carburant_info = (
-                                    carburant
-                                    if isinstance(carburant, dict)
-                                    else station["prix"]
+                            for fuel in station["prix"]:
+                                fuel_info = (
+                                    fuel if isinstance(fuel, dict) else station["prix"]
                                 )
                                 data[station["@id"]][ATTR_FUELS].update(
                                     {
-                                        carburant_info["@nom"]: {
-                                            ATTR_DATE: carburant_info["@maj"],
-                                            ATTR_PRICE: carburant_info["@valeur"],
+                                        fuel_info["@nom"]: {
+                                            ATTR_DATE: fuel_info["@maj"],
+                                            ATTR_PRICE: fuel_info["@valeur"],
                                         }
                                     }
                                 )

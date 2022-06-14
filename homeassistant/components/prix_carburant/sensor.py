@@ -130,24 +130,24 @@ async def async_setup_entry(
 class PrixCarburant(SensorEntity):
     """Representation of a Sensor."""
 
-    def __init__(self, station_id, station_info, carburant, coordinator):
+    def __init__(self, station_id, station_info, fuel, coordinator):
         """Initialize the sensor."""
         self.station_id = station_id
         self.station_info = station_info
-        self.carburant = carburant
+        self.fuel = fuel
         self.coordinator = coordinator
 
         self._last_update = None
 
         self._attr_icon = "mdi:gas-station"
         self._attr_device_class = SensorDeviceClass.MONETARY
-        self._attr_unique_id = "_".join([DOMAIN, self.station_id, self.carburant])
+        self._attr_unique_id = "_".join([DOMAIN, self.station_id, self.fuel])
         self._attr_native_unit_of_measurement = CURRENCY_EURO
         if self.station_info[ATTR_NAME] != "undefined":
             station_name = f"Station {self.station_info[ATTR_NAME]}"
         else:
             station_name = f"Station {self.station_id}"
-        self._attr_name = f"{station_name} {self.carburant}"
+        self._attr_name = f"{station_name} {self.fuel}"
         self._attr_device_info = DeviceInfo(
             identifiers={(DOMAIN, self.station_id)},
             manufacturer="Station",
@@ -168,7 +168,7 @@ class PrixCarburant(SensorEntity):
     @property
     def native_value(self):
         """Return the current price."""
-        if self.carburant in self.coordinator.data[self.station_id][ATTR_FUELS]:
-            return self.coordinator.data[self.station_id][ATTR_FUELS][self.carburant][
+        if self.fuel in self.coordinator.data[self.station_id][ATTR_FUELS]:
+            return self.coordinator.data[self.station_id][ATTR_FUELS][self.fuel][
                 ATTR_PRICE
             ]
