@@ -12,7 +12,7 @@ from homeassistant.components.sensor import (
     SensorEntity,
 )
 from homeassistant.config_entries import SOURCE_IMPORT, ConfigEntry
-from homeassistant.const import ATTR_NAME, CURRENCY_EURO
+from homeassistant.const import ATTR_LATITUDE, ATTR_LONGITUDE, ATTR_NAME, CURRENCY_EURO
 from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import ConfigEntryNotReady
 import homeassistant.helpers.config_validation as cv
@@ -27,10 +27,12 @@ from .const import (
     ATTR_FUELS,
     ATTR_POSTAL_CODE,
     ATTR_PRICE,
-    CARBURANTS,
+    ATTR_UPDATED_DATE,
+    CONF_FUELS,
     CONF_MAX_KM,
     CONF_STATIONS,
     DOMAIN,
+    FUELS,
 )
 from .tools import PrixCarburantTool
 
@@ -70,6 +72,10 @@ async def async_setup_entry(
     config = entry.data
     options = entry.options
     max_distance = options.get(CONF_MAX_KM, config.get(CONF_MAX_KM))
+    enabled_fuels = {}
+    for fuel in FUELS:
+        fuel_key = f"{CONF_FUELS}_{fuel}"
+        enabled_fuels[fuel] = options.get(fuel_key, config.get(fuel_key, True))
 
     tool = await hass.async_add_executor_job(PrixCarburantTool)
 
@@ -107,11 +113,14 @@ async def async_setup_entry(
     _LOGGER.info("%s stations found", str(len(user_stations_ids)))
     entities = []
     for station_id in user_stations_ids:
-        for carburant in CARBURANTS:
-            if carburant in tool.stations[station_id][ATTR_FUELS]:
+        for fuel in FUELS:
+            if (
+                fuel in tool.stations[station_id][ATTR_FUELS]
+                and enabled_fuels[fuel] is True
+            ):
                 entities.append(
                     PrixCarburant(
-                        station_id, tool.stations[station_id], carburant, coordinator
+                        station_id, tool.stations[station_id], fuel, coordinator
                     )
                 )
 
@@ -151,6 +160,9 @@ class PrixCarburant(SensorEntity):
             ATTR_ADDRESS: self.station_info[ATTR_ADDRESS],
             ATTR_POSTAL_CODE: self.station_info[ATTR_POSTAL_CODE],
             ATTR_CITY: self.station_info[ATTR_CITY],
+            ATTR_LATITUDE: self.station_info[ATTR_LATITUDE],
+            ATTR_LONGITUDE: self.station_info[ATTR_LONGITUDE],
+            ATTR_UPDATED_DATE: self.station_info[ATTR_UPDATED_DATE],
         }
 
     @property
