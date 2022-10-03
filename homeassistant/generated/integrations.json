@@ -3550,6 +3550,11 @@
       "config_flow": true,
       "iot_class": "local_polling"
     },
+    "mczmaestro": {
+      "config_flow": true,
+      "iot_class": "local_polling",
+      "name": "mczmaestro"
+    },
     "meater": {
       "name": "Meater",
       "integration_type": "hub",

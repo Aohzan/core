@@ -349,6 +349,7 @@ FLOWS = {
         "mastodon",
         "matter",
         "mealie",
+        "mczmaestro",
         "meater",
         "medcom_ble",
         "media_extractor",
