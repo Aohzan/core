@@ -2,8 +2,8 @@
     "config": {
         "step": {
             "user": {
-                "title": "Initial MCZ configuration",
-                "description": "Set connexion settings.",
+                "title": "Initial MCZ Maestro configuration",
+                "description": "Set connexion settings, Home-Assistant must have direct access to the stove.",
                 "data": {
                     "host": "Host",
                     "port": "Port",
