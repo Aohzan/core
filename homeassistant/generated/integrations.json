@@ -2930,6 +2930,12 @@
       "config_flow": true,
       "iot_class": "local_polling"
     },
+    "ipx800v5": {
+      "name": "GCE IPX800 V5",
+      "integration_type": "hub",
+      "config_flow": true,
+      "iot_class": "local_polling"
+    },
     "iqvia": {
       "name": "IQVIA",
       "integration_type": "service",
