@@ -1,8 +1,10 @@
 """Config flow to configure the ipx800v5 integration."""
+from collections.abc import Mapping
 from itertools import groupby
 import logging
 from typing import Any
 
+import aiohttp
 from pypx800v5 import (
     API_CONFIG_NAME,
     EXT_X8R,
@@ -136,9 +138,7 @@ class IpxOptionsFlowHandler(config_entries.OptionsFlow):
         """Initialize."""
         self.config_entry = config_entry
 
-    async def async_step_init(
-        self, user_input: dict[str, Any] | None = None
-    ) -> FlowResult:
+    async def async_step_init(self, user_input=None) -> FlowResult:
         """Manage the options."""
         if user_input is None:
             session = async_get_clientsession(self.hass, False)
@@ -181,7 +181,10 @@ async def _test_connection(session, base_config):
 
 
 async def _build_param_schema(
-    session, base_config: dict, options: dict, entry_source: str
+    session: aiohttp.ClientSession,
+    base_config: Mapping[str, Any],
+    options: Mapping[str, Any],
+    entry_source: str,
 ):
     """Build schema for params and options flow according to the IPX800 config."""
     config = {**base_config, **options}
@@ -267,7 +270,7 @@ async def _build_param_schema(
     return schema
 
 
-def config_organizer(base_config: dict, user_input: dict):
+def config_organizer(base_config, user_input):
     """Organize devices config to be a list like yaml schema."""
     config = dict(base_config)
 
