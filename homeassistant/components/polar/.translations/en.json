@@ -1,0 +1,22 @@
+{
+  "config": {
+    "title": "Polar",
+    "step": {
+      "client": {
+        "title": "Polar Client",
+        "description": "Enter your Polar Accesslink client ID and secret. If you have not registered your client yet, please visit the [admin dashboard](https://admin.polaraccesslink.com/) to do so. Enter `{callback_url}` as your callback domain and enable access to all data types.",
+        "data": {
+          "client_id": "Client ID",
+          "client_secret": "Client secret"
+        }
+      },
+      "oauth": {
+        "title": "Polar Authorization",
+        "description": "Login with your Polar credentials to authorize access to your Polar account.",
+        "data": {}
+      }
+    },
+    "error": {},
+    "abort": {}
+  }
+}

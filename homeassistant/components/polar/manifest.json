@@ -1,0 +1,10 @@
+{
+  "domain": "polar",
+  "name": "Polar",
+  "config_flow": true,
+  "documentation": "https://github.com/Aohzan/hass-polar",
+  "dependencies": [],
+  "codeowners": ["@Aohzan"],
+  "requirements": ["isodate==0.6.0"],
+  "version": "0.1.0"
+}

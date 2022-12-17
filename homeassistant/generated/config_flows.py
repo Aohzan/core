@@ -455,6 +455,7 @@ FLOWS = {
         "plex",
         "plugwise",
         "plum_lightpad",
+        "polar",
         "point",
         "poolsense",
         "powerwall",
