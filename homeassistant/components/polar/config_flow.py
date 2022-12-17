@@ -1,9 +1,6 @@
 """Config flow for Polar Flow."""
 import logging
 
-from collections import OrderedDict
-
-
 import aiohttp
 import requests
 import voluptuous as vol
@@ -43,12 +40,12 @@ class PolarConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     """Handle a Polar config flow."""
 
     VERSION = 1
-    CONNECTION_CLASS = config_entries.CONN_CLASS_LOCAL_POLL
+    CONNECTION_CLASS = config_entries.CONN_CLASS_CLOUD_POLL
 
     def __init__(self):
         """Initialize class variables."""
         self.data = {}
-        self.accesslink = None
+        self.accesslink: AccessLink = None
 
     def get_callback_url(self) -> str:
         return f"{self.hass.config.external_url}{AUTH_CALLBACK_PATH}"
