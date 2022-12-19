@@ -4,7 +4,7 @@
   "documentation": "https://www.home-assistant.io/integrations/polar",
   "codeowners": ["@Aohzan"],
   "config_flow": true,
-  "requirements": [],
-  "dependencies": [],
+  "requirements": ["isodate==0.6.1"],
+  "dependencies": ["application_credentials", "http"],
   "iot_class": "cloud_polling"
 }

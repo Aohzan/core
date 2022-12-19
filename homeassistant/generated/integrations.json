@@ -4730,6 +4730,12 @@
       "config_flow": true,
       "iot_class": "cloud_polling"
     },
+    "polar": {
+      "name": "Polar",
+      "integration_type": "hub",
+      "config_flow": true,
+      "iot_class": "cloud_polling"
+    },
     "poolsense": {
       "name": "PoolSense",
       "integration_type": "hub",

@@ -1,258 +1,211 @@
-"""Support for HDHomeRun devices."""
+"""Support for the polar sensors."""
+from __future__ import annotations
+
+from collections.abc import Mapping
+from dataclasses import dataclass
 import logging
-import datetime
+from typing import Any
 
-from accesslink import AccessLink
-import time
-from homeassistant.helpers.restore_state import RestoreEntity
+from homeassistant.components.sensor import (
+    SensorEntity,
+    SensorEntityDescription,
+    SensorStateClass,
+)
+from homeassistant.config_entries import ConfigEntry
+from homeassistant.core import HomeAssistant
+from homeassistant.helpers.device_registry import DeviceEntryType
+from homeassistant.helpers.entity import DeviceInfo
+from homeassistant.helpers.entity_platform import AddEntitiesCallback
+from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
+from . import PolarCoordinator
 from .const import (
+    ATTR_LAST_DAILY,
+    ATTR_LAST_EXERCISE,
+    ATTR_LAST_RECHARGE,
+    ATTR_LAST_SLEEP,
+    ATTR_USER_DATA,
+    ATTRIBUTION,
     DOMAIN,
-    CONF_CLIENT_ID,
-    CONF_CLIENT_SECRET,
-    CONF_USER_ID,
-    CONF_ACCESS_TOKEN,
-    CONF_MONITORED_RESOURCES,
-    CONF_DAILY_ACTIVITY,
-    CONF_TRAINING_DATA,
-    CONF_PHYSICAL_INFO,
-    ENDPOINTS,
-    RESOURCES_BY_NAME,
 )
 
 _LOGGER = logging.getLogger(__name__)
 
-SCAN_INTERVAL = datetime.timedelta(minutes=30)
+
+@dataclass
+class PolarEntityDescription(SensorEntityDescription):
+    """Provide a description of a Polar sensor."""
+
+    key_category: str | None = None
+    unique_id: str | None = None
+    attributes_keys: list[str] | None = None
 
 
-async def async_setup_entry(hass, entry, async_add_entities):
-    """Set up Polar from a config entry."""
-    config = hass.data[DOMAIN]
-    resources_by_endpoint = config.get(CONF_MONITORED_RESOURCES)
-
-    accesslink = AccessLink(
-        client_id=entry.data.get(CONF_CLIENT_ID),
-        client_secret=entry.data.get(CONF_CLIENT_SECRET),
-    )
-
-    user_id = entry.data.get(CONF_USER_ID)
-    access_token = entry.data.get(CONF_ACCESS_TOKEN)
-
-    unit_system = hass.config.units.name
-
-    if resources_by_endpoint is not None:
-        entities = []
-
-        for endpoint_name, resources in resources_by_endpoint.items():
-            _LOGGER.debug("Setting up Polar entities for endpoint: %s", endpoint_name)
-
-            endpoint = PolarEndpoint(
-                accesslink, ENDPOINTS[endpoint_name], user_id, access_token
-            )
-            add_resource_entities(entities, endpoint, resources, unit_system)
-
-            transaction = await hass.async_add_executor_job(endpoint.create_transaction)
-            if transaction is not None:
-                updates = await hass.async_add_executor_job(
-                    endpoint.list_updates, transaction
-                )
-                if updates is not None:
-                    for url in updates:
-                        data = await hass.async_add_executor_job(
-                            endpoint.get_update, transaction, url
-                        )
-                        _LOGGER.debug("received data")
-                        _LOGGER.debug(data)
-                else:
-                    _LOGGER.debug("no update")
-                transaction.commit()
-            else:
-                _LOGGER.debug("no transaction")
-
-        async_add_entities(entities)
-
-    return True
-
-
-def add_resource_entities(entities, endpoint, resources, system):
-    endpoint_name = endpoint.name
-    master = None
-
-    for resource_name in resources:
-        resource = RESOURCES_BY_NAME[endpoint_name][resource_name]
-
-        _LOGGER.debug(
-            "Setting up Polar sensor for resource: %s/%s", endpoint_name, resource_name
-        )
-
-        if master is None:
-            _LOGGER.debug("Entity %s/%s is master sensor", endpoint_name, resource_name)
-            sensor = PolarMasterSensor(endpoint, resource, system)
-            master = sensor
-        else:
-            sensor = PolarSensor(endpoint, resource, system)
-            master.add_child(sensor)
-
-        entities.append(sensor)
-
-
-class PolarEndpoint:
-    """Wrapper class for standardizing calls to Polar endpoints."""
-
-    def __init__(self, accesslink, endpoint_type, user_id, access_token):
-        self._accesslink = accesslink
-        self._endpoint = endpoint_type
-        self._user_id = user_id
-        self._access_token = access_token
-        self._transaction = None
-
-    @property
-    def name(self):
-        return self._endpoint.name
-
-    def create_transaction(self):
-        return getattr(self._accesslink, self._endpoint.name).create_transaction(
-            self._user_id, self._access_token
-        )
-
-    def list_updates(self, transaction):
-        result = getattr(transaction, self._endpoint.list_method)()
-        return result[self._endpoint.result_name]
-
-    def get_update(self, transaction, url):
-        return getattr(transaction, self._endpoint.get_method)(url)
-
-    def get_timestamp(self, data):
-        return data[self._endpoint.timestamp_name]
+SENSORS = (
+    # personal
+    PolarEntityDescription(
+        key_category=ATTR_USER_DATA,
+        key="weight",
+        name="Weight",
+        unique_id="weight",
+        native_unit_of_measurement="kg",
+    ),
+    # daily
+    PolarEntityDescription(
+        key_category=ATTR_LAST_DAILY,
+        key="calories",
+        native_unit_of_measurement="kcal",
+        name="Daily activity Calories",
+        unique_id="daily_activity_calories",
+        attributes_keys=[
+            "active-calories",
+        ],
+    ),
+    PolarEntityDescription(
+        key_category=ATTR_LAST_DAILY,
+        key="duration",
+        name="Daily activity Duration",
+        unique_id="daily_activity_duration",
+    ),
+    PolarEntityDescription(
+        key_category=ATTR_LAST_DAILY,
+        key="active-steps",
+        native_unit_of_measurement="steps",
+        name="Daily activity Steps",
+        unique_id="daily_activity_steps",
+    ),
+    # exercise
+    PolarEntityDescription(
+        key_category=ATTR_LAST_EXERCISE,
+        key="start_time",
+        name="Last exercice",
+        unique_id="last_exercice",
+        attributes_keys=[
+            "distance",
+            "duration",
+            "heart_rate",
+            "training_load",
+            "sport",
+            "calories",
+            "running_index",
+            "device",
+        ],
+    ),
+    # sleep
+    PolarEntityDescription(
+        key_category=ATTR_LAST_SLEEP,
+        key="sleep_score",
+        name="Last sleep score",
+        unique_id="last_sleep",
+        attributes_keys=[
+            "date",
+            "sleep_start_time",
+            "sleep_end_time",
+            "continuity",
+            "continuity_class",
+            "light_sleep",
+            "deep_sleep",
+            "rem_sleep",
+            "unrecognized_sleep_stage",
+            "total_interruption_duration",
+            "sleep_charge",
+            "sleep_rating",
+            "sleep_goal",
+            "short_interruption_duration",
+            "long_interruption_duration",
+            "sleep_cycles",
+            "group_duration_score",
+            "group_solidity_score",
+            "group_regeneration_score",
+        ],
+    ),
+    # recharge
+    PolarEntityDescription(
+        key_category=ATTR_LAST_RECHARGE,
+        key="nightly_recharge_status",
+        name="Last nightly recharge",
+        unique_id="last_recharge",
+        native_unit_of_measurement="score",
+        attributes_keys=[
+            "date",
+            "heart_rate_avg",
+            "beat_to_beat_avg",
+            "heart_rate_variability_avg",
+            "breathing_rate_avg",
+            "ans_charge",
+            "ans_charge_status",
+        ],
+    ),
+)
 
 
-class PolarSensor(RestoreEntity):
-    """Representation of a sensor."""
+async def async_setup_entry(
+    hass: HomeAssistant, entry: ConfigEntry, async_add_entities: AddEntitiesCallback
+) -> None:
+    """Set up the Polar sensor platform."""
+    coordinator: PolarCoordinator = hass.data[DOMAIN][entry.entry_id]
+    async_add_entities(PolarSensor(coordinator, description) for description in SENSORS)
 
-    def __init__(self, endpoint, resource, system):
+
+class PolarSensor(CoordinatorEntity[PolarCoordinator], SensorEntity):
+    """Implementation of the Polar sensor."""
+
+    entity_description: PolarEntityDescription
+    _attr_attribution = ATTRIBUTION
+    _attr_has_entity_name = True
+    _attr_state_class = SensorStateClass.MEASUREMENT
+
+    def __init__(
+        self,
+        coordinator: PolarCoordinator,
+        description: PolarEntityDescription,
+    ) -> None:
         """Initialize the sensor."""
-        self._endpoint = endpoint
-        self._resource = resource
-        self._system = system
-        self._state = None
+        super().__init__(coordinator)
+        self.entity_description = description
 
-    @property
-    def should_poll(self):
-        return False
-
-    @property
-    def name(self):
-        """Return the name of the sensor."""
-        return self._resource.friendly_name
-
-    @property
-    def icon(self):
-        """Return the icon for the sensor."""
-        return self._resource.icon
-
-    @property
-    def state(self):
-        """Return the state of the sensor."""
-        return self._state
-
-    @property
-    def unit_of_measurement(self):
-        """Return the unit of measurement of this entity, if any."""
-        return self._resource.units.unit(self._system)
-
-    async def async_update_from_raw(self, raw):
-        item = raw
-        keys = self._resource.name.split("/")
-
-        for key in keys:
-            item = item[key]
-
-        item = self._resource.units.parse(item, self._system)
-
-        _LOGGER.debug(
-            "Setting state for resource %s/%s: %s",
-            self._endpoint.name,
-            self._resource.name,
-            item,
+        self._attr_device_info = DeviceInfo(
+            configuration_url="https://flow.polar.com/",
+            entry_type=DeviceEntryType.SERVICE,
+            identifiers={(DOMAIN, coordinator.entry_id)},
+            default_manufacturer="Polar",
+            default_name=coordinator.user_name,
         )
-        self._state = item
-
-        if not self.should_poll:
-            _LOGGER.debug(
-                "Triggering state update for resource: %s/%s",
-                self._endpoint.name,
-                self._resource.name,
-            )
-            await self.async_update_ha_state()
-
-    async def async_added_to_hass(self):
-        """Run when entity about to be added to hass."""
-        await super().async_added_to_hass()
-        if self._state is not None:
-            return
-
-        _LOGGER.debug(
-            "Restoring state for resource: %s/%s",
-            self._endpoint.name,
-            self._resource.name,
-        )
-        previous = await self.async_get_last_state()
-
-        if previous is not None:
-            self._state = previous.state
-
-
-class PolarMasterSensor(PolarSensor):
-    """Master sensor to coordinate update transactions to an Accesslink endpoint."""
-
-    def __init__(self, endpoint, resource, system):
-        """Initialize the sensor."""
-        super().__init__(endpoint, resource, system)
-        self._children = []
-
-    @property
-    def should_poll(self):
-        return True
-
-    def add_child(self, child_entity):
-        self._children.append(child_entity)
-
-    async def async_update(self):
-        """Update the sensor state."""
-        _LOGGER.debug(
-            "Beginning update for master sensor: %s/%s",
-            self._endpoint.name,
-            self._resource.name,
+        self._attr_unique_id = (
+            f"{coordinator.entry_id}_{description.unique_id or description.key}"
         )
 
-        transaction = self._endpoint.create_transaction()
+    @property
+    def available(self) -> bool:
+        """Return True if entity is available."""
 
-        if transaction is None:
-            _LOGGER.debug("No updates available for endpoint %s", self._endpoint.name)
-            return
+        return (
+            super().available
+            and self.entity_description.key
+            in self.coordinator.data[self.entity_description.key_category]
+        )
 
-        updates = self._endpoint.list_updates(transaction)
+    @property
+    def native_value(self) -> float | None:
+        """Return sensor state."""
+        if (
+            value := self.coordinator.data[self.entity_description.key_category][
+                self.entity_description.key
+            ]
+        ) is None:
+            return None
+        return value
 
-        if updates is not None:
-            timestamp = None
-            recent_update = None
-
-            _LOGGER.debug(
-                "Found %d updates for endpoint %s", len(updates), self._endpoint.name
-            )
-
-            for url in updates:
-                _LOGGER.debug("Reading update for URL: %s", url)
-                data = self._endpoint.get_update(transaction, url)
-
-                if timestamp is None or self._endpoint.get_timestamp(data) > timestamp:
-                    recent_update = data
-
-            _LOGGER.debug("Using most recent update: %s", recent_update)
-
-            await self.async_update_from_raw(recent_update)
-
-            for child in self._children:
-                await child.async_update_from_raw(recent_update)
-
-        transaction.commit()
+    @property
+    def extra_state_attributes(self) -> Mapping[str, Any] | None:
+        """Return attributes."""
+        if self.entity_description.attributes_keys:
+            attributes = {}
+            for key in self.entity_description.attributes_keys:
+                if key in self.coordinator.data[self.entity_description.key_category]:
+                    value = self.coordinator.data[self.entity_description.key_category][
+                        key
+                    ]
+                    attributes.update({key: value})
+            return attributes
+        return None
