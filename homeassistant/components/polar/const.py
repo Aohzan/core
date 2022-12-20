@@ -5,10 +5,7 @@ DOMAIN = "polar"
 OAUTH2_AUTHORIZE = "https://flow.polar.com/oauth2/authorization"
 OAUTH2_TOKEN = "https://polarremote.com/v2/oauth2/token"
 
-CONF_CLIENT_ID = "client_id"
-CONF_CLIENT_SECRET = "client_secret"
 CONF_USER_ID = "user_id"
-CONF_ACCESS_TOKEN = "access_token"
 DEFAULT_SCAN_INTERVAL = 30
 
 
