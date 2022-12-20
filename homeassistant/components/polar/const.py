@@ -2,12 +2,8 @@
 
 DOMAIN = "polar"
 
-OAUTH2_AUTHORIZE = "https://flow.polar.com/oauth2/authorization"
-OAUTH2_TOKEN = "https://polarremote.com/v2/oauth2/token"
-
 CONF_USER_ID = "user_id"
 DEFAULT_SCAN_INTERVAL = 30
-
 
 ATTR_EXERCISE_DATA = "exercisedata"
 ATTR_SLEEP_DATA = "sleepdata"
