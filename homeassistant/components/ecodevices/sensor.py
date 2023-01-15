@@ -2,16 +2,11 @@
 import logging
 
 from homeassistant.components.sensor import (
-    STATE_CLASS_MEASUREMENT,
-    STATE_CLASS_TOTAL_INCREASING,
+    SensorDeviceClass,
     SensorEntity,
+    SensorStateClass,
 )
-from homeassistant.const import (
-    DEVICE_CLASS_ENERGY,
-    DEVICE_CLASS_POWER,
-    ENERGY_WATT_HOUR,
-    POWER_WATT,
-)
+from homeassistant.const import UnitOfEnergy, UnitOfPower
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 from homeassistant.util import slugify
 
@@ -65,9 +60,9 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
                 coordinator,
                 input_name="t1",
                 name=DEFAULT_T1_NAME,
-                unit=POWER_WATT,
-                device_class=DEVICE_CLASS_POWER,
-                state_class=STATE_CLASS_MEASUREMENT,
+                unit=UnitOfPower.WATT,
+                device_class=SensorDeviceClass.POWER,
+                state_class=SensorStateClass.MEASUREMENT,
                 icon="mdi:flash",
             )
         )
@@ -78,9 +73,9 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
                     coordinator,
                     input_name="t1_total",
                     name=DEFAULT_T1_NAME + " Total",
-                    unit=ENERGY_WATT_HOUR,
-                    device_class=DEVICE_CLASS_ENERGY,
-                    state_class=STATE_CLASS_TOTAL_INCREASING,
+                    unit=UnitOfEnergy.WATT_HOUR,
+                    device_class=SensorDeviceClass.ENERGY,
+                    state_class=SensorStateClass.TOTAL_INCREASING,
                     icon="mdi:flash",
                 )
             )
@@ -90,9 +85,9 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
                     coordinator,
                     input_name="t1_total_hc",
                     name=DEFAULT_T1_NAME + " HC Total",
-                    unit=ENERGY_WATT_HOUR,
-                    device_class=DEVICE_CLASS_ENERGY,
-                    state_class=STATE_CLASS_TOTAL_INCREASING,
+                    unit=UnitOfEnergy.WATT_HOUR,
+                    device_class=SensorDeviceClass.ENERGY,
+                    state_class=SensorStateClass.TOTAL_INCREASING,
                     icon="mdi:flash",
                 )
             )
@@ -102,9 +97,9 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
                     coordinator,
                     input_name="t1_total_hp",
                     name=DEFAULT_T1_NAME + " HP Total",
-                    unit=ENERGY_WATT_HOUR,
-                    device_class=DEVICE_CLASS_ENERGY,
-                    state_class=STATE_CLASS_TOTAL_INCREASING,
+                    unit=UnitOfEnergy.WATT_HOUR,
+                    device_class=SensorDeviceClass.ENERGY,
+                    state_class=SensorStateClass.TOTAL_INCREASING,
                     icon="mdi:flash",
                 )
             )
@@ -115,9 +110,9 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
                     coordinator,
                     input_name="t1_total",
                     name=DEFAULT_T1_NAME + " Total",
-                    unit=ENERGY_WATT_HOUR,
-                    device_class=DEVICE_CLASS_ENERGY,
-                    state_class=STATE_CLASS_TOTAL_INCREASING,
+                    unit=UnitOfEnergy.WATT_HOUR,
+                    device_class=SensorDeviceClass.ENERGY,
+                    state_class=SensorStateClass.TOTAL_INCREASING,
                     icon="mdi:flash",
                 )
             )
@@ -129,9 +124,9 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
                 coordinator,
                 input_name="t2",
                 name=DEFAULT_T2_NAME,
-                unit=POWER_WATT,
-                device_class=DEVICE_CLASS_POWER,
-                state_class=STATE_CLASS_MEASUREMENT,
+                unit=UnitOfPower.WATT,
+                device_class=SensorDeviceClass.POWER,
+                state_class=SensorStateClass.MEASUREMENT,
                 icon="mdi:flash",
             )
         )
@@ -142,9 +137,9 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
                     coordinator,
                     input_name="t2_total",
                     name=DEFAULT_T2_NAME + " Total",
-                    unit=ENERGY_WATT_HOUR,
-                    device_class=DEVICE_CLASS_ENERGY,
-                    state_class=STATE_CLASS_TOTAL_INCREASING,
+                    unit=UnitOfEnergy.WATT_HOUR,
+                    device_class=SensorDeviceClass.ENERGY,
+                    state_class=SensorStateClass.TOTAL_INCREASING,
                     icon="mdi:flash",
                 )
             )
@@ -154,9 +149,9 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
                     coordinator,
                     input_name="t2_total_hc",
                     name=DEFAULT_T2_NAME + " HC Total",
-                    unit=ENERGY_WATT_HOUR,
-                    device_class=DEVICE_CLASS_ENERGY,
-                    state_class=STATE_CLASS_TOTAL_INCREASING,
+                    unit=UnitOfEnergy.WATT_HOUR,
+                    device_class=SensorDeviceClass.ENERGY,
+                    state_class=SensorStateClass.TOTAL_INCREASING,
                     icon="mdi:flash",
                 )
             )
@@ -166,9 +161,9 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
                     coordinator,
                     input_name="t2_total_hp",
                     name=DEFAULT_T2_NAME + " HP Total",
-                    unit=ENERGY_WATT_HOUR,
-                    device_class=DEVICE_CLASS_ENERGY,
-                    state_class=STATE_CLASS_TOTAL_INCREASING,
+                    unit=UnitOfEnergy.WATT_HOUR,
+                    device_class=SensorDeviceClass.ENERGY,
+                    state_class=SensorStateClass.TOTAL_INCREASING,
                     icon="mdi:flash",
                 )
             )
@@ -179,9 +174,9 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
                     coordinator,
                     input_name="t2_total",
                     name=DEFAULT_T2_NAME + " Total",
-                    unit=ENERGY_WATT_HOUR,
-                    device_class="energy",
-                    state_class=STATE_CLASS_TOTAL_INCREASING,
+                    unit=UnitOfEnergy.WATT_HOUR,
+                    device_class=SensorDeviceClass.ENERGY,
+                    state_class=SensorStateClass.TOTAL_INCREASING,
                     icon="mdi:flash",
                 )
             )
@@ -199,7 +194,7 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
                 device_class=options.get(
                     CONF_C1_DEVICE_CLASS, config.get(CONF_C1_DEVICE_CLASS)
                 ),
-                state_class=STATE_CLASS_MEASUREMENT,
+                state_class=SensorStateClass.MEASUREMENT,
                 icon="mdi:counter",
             )
         )
@@ -215,7 +210,7 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
                 device_class=options.get(
                     CONF_C1_DEVICE_CLASS, config.get(CONF_C1_DEVICE_CLASS)
                 ),
-                state_class=STATE_CLASS_MEASUREMENT,
+                state_class=SensorStateClass.MEASUREMENT,
                 icon="mdi:counter",
             )
         )
@@ -235,7 +230,7 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
                 device_class=options.get(
                     CONF_C1_DEVICE_CLASS, config.get(CONF_C1_DEVICE_CLASS)
                 ),
-                state_class=STATE_CLASS_TOTAL_INCREASING,
+                state_class=SensorStateClass.TOTAL_INCREASING,
                 icon="mdi:counter",
             )
         )
@@ -251,7 +246,7 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
                 device_class=options.get(
                     CONF_C2_DEVICE_CLASS, config.get(CONF_C2_DEVICE_CLASS)
                 ),
-                state_class=STATE_CLASS_MEASUREMENT,
+                state_class=SensorStateClass.MEASUREMENT,
                 icon="mdi:counter",
             )
         )
@@ -267,7 +262,7 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
                 device_class=options.get(
                     CONF_C2_DEVICE_CLASS, config.get(CONF_C2_DEVICE_CLASS)
                 ),
-                state_class=STATE_CLASS_MEASUREMENT,
+                state_class=SensorStateClass.MEASUREMENT,
                 icon="mdi:counter",
             )
         )
@@ -287,7 +282,7 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
                 device_class=options.get(
                     CONF_C2_DEVICE_CLASS, config.get(CONF_C2_DEVICE_CLASS)
                 ),
-                state_class=STATE_CLASS_TOTAL_INCREASING,
+                state_class=SensorStateClass.TOTAL_INCREASING,
                 icon="mdi:counter",
             )
         )
@@ -370,6 +365,24 @@ class T1EdDevice(EdDevice):
                 "index_heures_pointes": self.coordinator.data.get("T1_EJPHPM"),
                 "preavis_heures_pointes": self.coordinator.data.get("T1_PEJP"),
                 "groupe_horaire": self.coordinator.data.get("T1_HHPHC"),
+                "index_heures_creuses_jour_bleu": self.coordinator.data.get(
+                    "T1_BBRHCJB"
+                ),
+                "index_heures_pleines_jour_bleu": self.coordinator.data.get(
+                    "T1_BBRHPJB"
+                ),
+                "index_heures_creuses_jour_blanc": self.coordinator.data.get(
+                    "T1_BBRHCJW"
+                ),
+                "index_heures_pleines_jour_blanc": self.coordinator.data.get(
+                    "T1_BBRHCJB"
+                ),
+                "index_heures_creuses_jour_rouge": self.coordinator.data.get(
+                    "T1_BBRHCJB"
+                ),
+                "index_heures_pleines_jour_rouge": self.coordinator.data.get(
+                    "T1_BBRHPJR"
+                ),
                 "etat": self.coordinator.data.get("T1_MOTDETAT"),
             }
 
@@ -452,6 +465,24 @@ class T2EdDevice(EdDevice):
                 "index_heures_pointes": self.coordinator.data.get("T2_EJPHPM"),
                 "preavis_heures_pointes": self.coordinator.data.get("T2_PEJP"),
                 "groupe_horaire": self.coordinator.data.get("T2_HHPHC"),
+                "index_heures_creuses_jour_bleu": self.coordinator.data.get(
+                    "T2_BBRHCJB"
+                ),
+                "index_heures_pleines_jour_bleu": self.coordinator.data.get(
+                    "T2_BBRHPJB"
+                ),
+                "index_heures_creuses_jour_blanc": self.coordinator.data.get(
+                    "T2_BBRHCJW"
+                ),
+                "index_heures_pleines_jour_blanc": self.coordinator.data.get(
+                    "T2_BBRHCJB"
+                ),
+                "index_heures_creuses_jour_rouge": self.coordinator.data.get(
+                    "T2_BBRHCJB"
+                ),
+                "index_heures_pleines_jour_rouge": self.coordinator.data.get(
+                    "T2_BBRHPJR"
+                ),
                 "etat": self.coordinator.data.get("T2_MOTDETAT"),
             }
 
