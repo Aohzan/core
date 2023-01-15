@@ -1,12 +1,17 @@
 """Support for the GCE Eco-Devices."""
+from collections.abc import Mapping
 import logging
+from typing import Any
 
 from homeassistant.components.sensor import (
     SensorDeviceClass,
     SensorEntity,
     SensorStateClass,
 )
+from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import UnitOfEnergy, UnitOfPower
+from homeassistant.core import HomeAssistant
+from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 from homeassistant.util import slugify
 
@@ -35,13 +40,15 @@ from .const import (
 _LOGGER = logging.getLogger(__name__)
 
 
-async def async_setup_entry(hass, config_entry, async_add_entities):
+async def async_setup_entry(
+    hass: HomeAssistant, entry: ConfigEntry, async_add_entities: AddEntitiesCallback
+) -> None:
     """Set up the GCE Eco-Devices platform."""
-    data = hass.data[DOMAIN][config_entry.entry_id]
+    data = hass.data[DOMAIN][entry.entry_id]
     controller = data[CONTROLLER]
     coordinator = data[COORDINATOR]
-    config = config_entry.data
-    options = config_entry.options
+    config = entry.data
+    options = entry.options
 
     t1_enabled = options.get(CONF_T1_ENABLED, config.get(CONF_T1_ENABLED))
     t1_hchp = options.get(CONF_T1_HCHP, config.get(CONF_T1_HCHP))
@@ -50,7 +57,7 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
     c1_enabled = options.get(CONF_C1_ENABLED, config.get(CONF_C1_ENABLED))
     c2_enabled = options.get(CONF_C2_ENABLED, config.get(CONF_C2_ENABLED))
 
-    entities = []
+    entities: list[EdDevice] = []
 
     if t1_enabled:
         _LOGGER.debug("Add the teleinfo 1 entities")
@@ -337,12 +344,12 @@ class T1EdDevice(EdDevice):
     """Initialize the T1 sensor."""
 
     @property
-    def native_value(self):
+    def native_value(self) -> int:
         """Return the state."""
         return self.coordinator.data["T1_PAPP"]
 
     @property
-    def extra_state_attributes(self):
+    def extra_state_attributes(self) -> Mapping[str, Any]:
         """Return the state attributes."""
         if self.coordinator.data:
             return {
@@ -385,64 +392,65 @@ class T1EdDevice(EdDevice):
                 ),
                 "etat": self.coordinator.data.get("T1_MOTDETAT"),
             }
+        raise EcoDevicesIncorrectValueError("Data not received.")
 
 
 class T1TotalEdDevice(EdDevice):
     """Initialize the T1 Total sensor."""
 
     @property
-    def native_value(self):
+    def native_value(self) -> float:
         """Return the total value if it's greater than 0."""
-        value = float(self.coordinator.data["T1_BASE"])
-        if value > 0:
+        if value := float(self.coordinator.data["T1_BASE"]) > 0:
             return value
+        raise EcoDevicesIncorrectValueError("Total value not greater than 0.")
 
 
 class T1TotalHchpEdDevice(EdDevice):
     """Initialize the T1 HCHP Total sensor."""
 
     @property
-    def native_value(self):
+    def native_value(self) -> float:
         """Return the total value if it's greater than 0."""
         value_hc = float(self.coordinator.data["T1_HCHC"])
         value_hp = float(self.coordinator.data["T1_HCHP"])
-        value = value_hc + value_hp
-        if value > 0:
+        if value := value_hc + value_hp > 0:
             return value
+        raise EcoDevicesIncorrectValueError("Total value not greater than 0.")
 
 
 class T1TotalHcEdDevice(EdDevice):
     """Initialize the T1 HC Total sensor."""
 
     @property
-    def native_value(self):
+    def native_value(self) -> float:
         """Return the total value if it's greater than 0."""
-        value = float(self.coordinator.data["T1_HCHC"])
-        if value > 0:
+        if value := float(self.coordinator.data["T1_HCHC"]) > 0:
             return value
+        raise EcoDevicesIncorrectValueError("Total value not greater than 0.")
 
 
 class T1TotalHpEdDevice(EdDevice):
     """Initialize the T1 HP Total sensor."""
 
     @property
-    def native_value(self):
+    def native_value(self) -> float:
         """Return the total value if it's greater than 0."""
-        value = float(self.coordinator.data["T1_HCHP"])
-        if value > 0:
+        if value := float(self.coordinator.data["T1_HCHP"]) > 0:
             return value
+        raise EcoDevicesIncorrectValueError("Total value not greater than 0.")
 
 
 class T2EdDevice(EdDevice):
     """Initialize the T2 sensor."""
 
     @property
-    def native_value(self):
+    def native_value(self) -> int:
         """Return the state."""
         return self.coordinator.data["T2_PAPP"]
 
     @property
-    def extra_state_attributes(self):
+    def extra_state_attributes(self) -> Mapping[str, Any]:
         """Return the state attributes."""
         if self.coordinator.data:
             return {
@@ -485,77 +493,79 @@ class T2EdDevice(EdDevice):
                 ),
                 "etat": self.coordinator.data.get("T2_MOTDETAT"),
             }
+        raise EcoDevicesIncorrectValueError("Data not received.")
 
 
 class T2TotalEdDevice(EdDevice):
     """Initialize the T1 Total sensor."""
 
     @property
-    def native_value(self):
+    def native_value(self) -> float:
         """Return the total value if it's greater than 0."""
-        value = float(self.coordinator.data["T2_BASE"])
-        if value > 0:
+        if value := float(self.coordinator.data["T2_BASE"]) > 0:
             return value
+        raise EcoDevicesIncorrectValueError("Total value not greater than 0.")
 
 
 class T2TotalHchpEdDevice(EdDevice):
     """Initialize the T2 HCHP Total sensor."""
 
     @property
-    def native_value(self):
+    def native_value(self) -> float:
         """Return the total value if it's greater than 0."""
         value_hc = float(self.coordinator.data["T2_HCHC"])
         value_hp = float(self.coordinator.data["T2_HCHP"])
-        value = value_hc + value_hp
-        if value > 0:
+        if value := value_hc + value_hp > 0:
             return value
+        raise EcoDevicesIncorrectValueError("Total value not greater than 0.")
 
 
 class T2TotalHcEdDevice(EdDevice):
     """Initialize the T2 HC Total sensor."""
 
     @property
-    def native_value(self):
+    def native_value(self) -> float:
         """Return the total value if it's greater than 0."""
-        value = float(self.coordinator.data["T2_HCHC"])
-        if value > 0:
+        if value := float(self.coordinator.data["T2_HCHC"]) > 0:
             return value
+        raise EcoDevicesIncorrectValueError("Total value not greater than 0.")
 
 
 class T2TotalHpEdDevice(EdDevice):
     """Initialize the T2 HP Total sensor."""
 
     @property
-    def native_value(self):
+    def native_value(self) -> float:
         """Return the total value if it's greater than 0."""
-        value = float(self.coordinator.data["T2_HCHP"])
-        if value > 0:
+        if value := float(self.coordinator.data["T2_HCHP"]) > 0:
             return value
+        raise EcoDevicesIncorrectValueError("Total value not greater than 0.")
 
 
 class C1EdDevice(EdDevice):
     """Initialize the C1 sensor."""
 
     @property
-    def native_value(self):
+    def native_value(self) -> int:
         """Return the state."""
         return self.coordinator.data["meter2"]
 
     @property
-    def extra_state_attributes(self):
+    def extra_state_attributes(self) -> Mapping[str, Any]:
         """Return the state attributes."""
         if self.coordinator.data:
             return {
                 "total": self.coordinator.data["count0"],
                 "fuel": self.coordinator.data["c0_fuel"],
             }
+        raise EcoDevicesIncorrectValueError("Data not received.")
 
 
 class C1DailyEdDevice(EdDevice):
     """Initialize the C1 daily sensor."""
 
     @property
-    def native_value(self):
+    def native_value(self) -> int:
         """Return the state."""
         return self.coordinator.data["c0day"]
 
@@ -576,25 +586,26 @@ class C2EdDevice(EdDevice):
     """Initialize the C2 sensor."""
 
     @property
-    def native_value(self):
+    def native_value(self) -> int:
         """Return the state."""
         return self.coordinator.data["meter3"]
 
     @property
-    def extra_state_attributes(self):
+    def extra_state_attributes(self) -> Mapping[str, Any]:
         """Return the state attributes."""
         if self.coordinator.data:
             return {
                 "total": self.coordinator.data["count1"],
                 "fuel": self.coordinator.data["c1_fuel"],
             }
+        raise EcoDevicesIncorrectValueError("Data not received.")
 
 
 class C2DailyEdDevice(EdDevice):
     """Initialize the C2 daily sensor."""
 
     @property
-    def native_value(self):
+    def native_value(self) -> int:
         """Return the state."""
         return self.coordinator.data["c1day"]
 
