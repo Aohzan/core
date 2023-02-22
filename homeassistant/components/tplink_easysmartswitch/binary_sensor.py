@@ -1,12 +1,15 @@
 """Support for the TP-Link Easy Smart Switch."""
+from collections.abc import Mapping
 import logging
+from typing import Any
 
-from homeassistant.components.binary_sensor import (
-    BinarySensorEntity,
-)
+from homeassistant.components.binary_sensor import BinarySensorEntity
+from homeassistant.config_entries import ConfigEntry
+from homeassistant.core import HomeAssistant
+from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 from homeassistant.util import slugify
-from .tplink import EasySwitch
+
 from .const import (
     CONTROLLER,
     COORDINATOR,
@@ -18,13 +21,16 @@ from .const import (
     TPLINK_PORT_TX_BAD_PKT,
     TPLINK_PORT_TX_GOOD_PKT,
 )
+from .tplink import EasySwitch
 
 _LOGGER = logging.getLogger(__name__)
 
 
-async def async_setup_entry(hass, config_entry, async_add_entities):
+async def async_setup_entry(
+    hass: HomeAssistant, entry: ConfigEntry, async_add_entities: AddEntitiesCallback
+) -> None:
     """Set up the TP-Link Easy Smart binary sensor platform."""
-    data = hass.data[DOMAIN][config_entry.entry_id]
+    data = hass.data[DOMAIN][entry.entry_id]
     controller: EasySwitch = data[CONTROLLER]
     coordinator = data[COORDINATOR]
 
@@ -46,7 +52,7 @@ class TpLinkSwitchBinarySensor(CoordinatorEntity, BinarySensorEntity):
         controller,
         coordinator,
         port_number,
-    ):
+    ) -> None:
         """Initialize the sensor."""
         super().__init__(coordinator)
         self.controller = controller
@@ -70,7 +76,7 @@ class TpLinkSwitchBinarySensor(CoordinatorEntity, BinarySensorEntity):
         }
 
     @property
-    def is_on(self):
+    def is_on(self) -> bool | None:
         """Return the state."""
         return (
             self.coordinator.data[self._port_number][TPLINK_PORT_STATE] == "Enabled"
@@ -79,7 +85,7 @@ class TpLinkSwitchBinarySensor(CoordinatorEntity, BinarySensorEntity):
         )
 
     @property
-    def extra_state_attributes(self):
+    def extra_state_attributes(self) -> Mapping[str, Any] | None:
         """Return the state attributes."""
         if self.coordinator.data:
             return {
@@ -100,3 +106,4 @@ class TpLinkSwitchBinarySensor(CoordinatorEntity, BinarySensorEntity):
                     TPLINK_PORT_RX_BAD_PKT
                 ],
             }
+        return None

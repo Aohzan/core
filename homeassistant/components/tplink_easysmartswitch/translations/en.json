@@ -1,41 +1,41 @@
 {
     "config": {
-      "step": {
-        "user": {
-          "description": "Set connexion settings.",
-          "data": {
-            "host": "Host",
-            "password": "Password",
-            "scan_interval": "Seconds between updates",
-            "username": "Username"
-          }
+        "abort": {
+            "already_configured": "Device is already configured"
+        },
+        "error": {
+            "cannot_connect": "Failed to connect",
+            "invalid_auth": "Invalid authentication",
+            "unknown": "Unexpected error"
+        },
+        "step": {
+            "user": {
+                "data": {
+                    "host": "Host",
+                    "password": "Password",
+                    "scan_interval": "Seconds between updates",
+                    "username": "Username"
+                },
+                "description": "Set connexion settings."
+            }
         }
-      },
-      "error": {
-        "cannot_connect": "Failed to connect",
-        "invalid_auth": "Invalid authentication",
-        "unknown": "Unexpected error"
-      },
-      "abort": {
-        "already_configured": "Device is already configured"
-      }
     },
     "options": {
-      "step": {
-        "init": {
-          "description": "Update settings",
-          "data": {
-            "host": "Host",
-            "password": "Password",
-            "scan_interval": "Seconds between updates",
-            "username": "Username"
-          }
+        "error": {
+            "cannot_connect": "Failed to connect",
+            "invalid_auth": "Invalid authentication",
+            "unknown": "Unexpected error"
+        },
+        "step": {
+            "init": {
+                "data": {
+                    "host": "Host",
+                    "password": "Password",
+                    "scan_interval": "Seconds between updates",
+                    "username": "Username"
+                },
+                "description": "Update settings"
+            }
         }
-      },
-      "error": {
-        "cannot_connect": "Failed to connect",
-        "invalid_auth": "Invalid authentication",
-        "unknown": "Unexpected error"
-      }
     }
-  }
+}

@@ -96,6 +96,20 @@ class EasySwitch:
 
         return True
 
+    async def reboot(self) -> None:
+        """Reboot the switch."""
+        headers = {
+            "Referer": f"{self._url}/",
+            "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+            "Upgrade-Insecure-Requests": "1",
+        }
+        request = await self._session.get(  # type: ignore
+            f"{self._url}/SystemRebootRpm.htm",
+            headers=headers,
+            timeout=self._request_timeout,
+        )
+        print(request)
+
     async def update_informations(self) -> None:
         """Get switch information."""
         headers = {
