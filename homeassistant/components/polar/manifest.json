@@ -1,11 +1,11 @@
 {
-  "name": "Polar",
   "domain": "polar",
-  "documentation": "https://www.home-assistant.io/integrations/polar",
+  "name": "Polar",
   "codeowners": ["@Aohzan"],
   "config_flow": true,
-  "requirements": ["isodate==0.6.1"],
   "dependencies": ["http"],
+  "documentation": "https://www.home-assistant.io/integrations/polar",
+  "integration_type": "service",
   "iot_class": "cloud_polling",
-  "integration_type": "service"
+  "requirements": ["isodate==0.6.1"]
 }
