@@ -1,0 +1,11 @@
+{
+  "domain": "dyson_local",
+  "name": "Dyson Local",
+  "codeowners": ["@shenxn"],
+  "config_flow": true,
+  "dependencies": ["zeroconf"],
+  "documentation": "https://github.com/shenxn/ha-dyson",
+  "iot_class": "local_polling",
+  "issue_tracker": "https://github.com/shenxn/ha-dyson/issues",
+  "requirements": ["libdyson==0.8.11"]
+}

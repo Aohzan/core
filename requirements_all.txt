@@ -1042,6 +1042,9 @@ ld2410-ble==0.1.1
 # homeassistant.components.led_ble
 led-ble==1.0.0
 
+# homeassistant.components.dyson_local
+libdyson==0.8.11
+
 # homeassistant.components.foscam
 libpyfoscam==1.0
 

@@ -104,6 +104,7 @@ FLOWS = {
         "dsmr_reader",
         "dunehd",
         "dynalite",
+        "dyson_local",
         "eafm",
         "easyenergy",
         "ecobee",
