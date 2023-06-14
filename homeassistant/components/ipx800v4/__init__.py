@@ -463,10 +463,10 @@ class IpxRequestDataView(HomeAssistantView):
 
 
 class IpxRequestRefreshView(HomeAssistantView):
-    """Provide a page for the device to call for send multiple data at once."""
+    """Provide a page for the device to force refresh data from coordinator."""
 
     requires_auth = False
-    url = "/api/ipx800v4_refresh"
+    url = "/api/ipx800v4_refresh/{data}"
     name = "api:ipx800v4_refresh"
 
     def __init__(
