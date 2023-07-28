@@ -11,6 +11,8 @@ from homeassistant.components.sensor import (
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import UnitOfEnergy, UnitOfPower
 from homeassistant.core import HomeAssistant
+from homeassistant.helpers.device_registry import CONNECTION_NETWORK_MAC
+from homeassistant.helpers.entity import DeviceInfo
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 from homeassistant.util import slugify
@@ -311,7 +313,7 @@ class EdDevice(CoordinatorEntity, SensorEntity):
         device_class,
         state_class,
         icon,
-    ):
+    ) -> None:
         """Initialize the sensor."""
         super().__init__(coordinator)
         self.controller = controller
@@ -332,10 +334,15 @@ class EdDevice(CoordinatorEntity, SensorEntity):
                 ]
             )
         )
-        self._attr_device_info = {
-            "identifiers": {(DOMAIN, self.controller.mac_address)},
-            "via_device": (DOMAIN, self.controller.mac_address),
-        }
+        self._attr_device_info = DeviceInfo(
+            identifiers={(DOMAIN, controller.mac_address)},
+            manufacturer="GCE Electronics",
+            model="Eco-Devices",
+            name=f"Eco-Devices {controller.host}:{str(controller.port)}",
+            sw_version=controller.version,
+            connections={(CONNECTION_NETWORK_MAC, controller.mac_address)},
+            configuration_url=f"http://{controller.host}:{controller.port}",
+        )
 
         self._state = None
 
