@@ -12,8 +12,8 @@ from homeassistant.const import (
 )
 from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import ConfigEntryAuthFailed, ConfigEntryNotReady
-from homeassistant.helpers import device_registry as dr
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
+from homeassistant.helpers.device_registry import CONNECTION_NETWORK_MAC
 from homeassistant.helpers.entity import DeviceInfo
 from homeassistant.helpers.typing import ConfigType
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
@@ -134,6 +134,6 @@ def get_device_info(
         model=controller.hardware_version,
         name=f"Switch {controller.host}",
         sw_version=controller.firmware_version,
-        connections={(dr.CONNECTION_NETWORK_MAC, controller.mac_address)},
+        connections={(CONNECTION_NETWORK_MAC, controller.mac_address)},
         configuration_url=f"http://{controller.host}",
     )
