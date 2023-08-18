@@ -1,0 +1,4248 @@
+{
+  "65536": {
+    "_id": 65536,
+    "name": "[IPX] 1 Vide",
+    "link0": 0,
+    "link1": 12648448,
+    "virtual": false,
+    "on": true
+  },
+  "65537": {
+    "_id": 65537,
+    "name": "[IPX] 2 Vide",
+    "link0": 0,
+    "link1": 12648449,
+    "virtual": false,
+    "on": false
+  },
+  "65538": {
+    "_id": 65538,
+    "name": "[IPX] 3 VMC",
+    "link0": 0,
+    "link1": 12648450,
+    "virtual": false,
+    "on": true
+  },
+  "65539": {
+    "_id": 65539,
+    "name": "[IPX] 4 Chaudi\u00e8re",
+    "link0": 10485787,
+    "link1": 12648451,
+    "virtual": false,
+    "on": false
+  },
+  "65540": {
+    "_id": 65540,
+    "name": "[IPX] 5 Carillon",
+    "link0": 10485794,
+    "link1": 12648452,
+    "virtual": false,
+    "on": false
+  },
+  "65541": {
+    "_id": 65541,
+    "name": "[IPX] 6 Porte garage",
+    "link0": 10485776,
+    "link1": 12648453,
+    "virtual": false,
+    "on": false
+  },
+  "65542": {
+    "_id": 65542,
+    "name": "[IPX] 7 FP SdB -",
+    "link0": 0,
+    "link1": 12648454,
+    "virtual": false,
+    "on": false
+  },
+  "65543": {
+    "_id": 65543,
+    "name": "[IPX] 8 FP SdB +",
+    "link0": 0,
+    "link1": 12648455,
+    "virtual": false,
+    "on": true
+  },
+  "65544": {
+    "_id": 65544,
+    "name": "[IPX] 1 Vide",
+    "link0": 13500416,
+    "link1": 0,
+    "virtual": false,
+    "on": true
+  },
+  "65545": {
+    "_id": 65545,
+    "name": "[IPX] 2 VMC",
+    "link0": 13500417,
+    "link1": 0,
+    "virtual": false,
+    "on": false
+  },
+  "65546": {
+    "_id": 65546,
+    "name": "[IPX] 3 Vide",
+    "link0": 13500418,
+    "link1": 0,
+    "virtual": false,
+    "on": true
+  },
+  "65547": {
+    "_id": 65547,
+    "name": "[IPX] 4 Chaudi\u00e8re",
+    "link0": 13500419,
+    "link1": 0,
+    "virtual": false,
+    "on": false
+  },
+  "65548": {
+    "_id": 65548,
+    "name": "[IPX] 5 Carillon",
+    "link0": 13500420,
+    "link1": 0,
+    "virtual": false,
+    "on": false
+  },
+  "65549": {
+    "_id": 65549,
+    "name": "[IPX] 6 Porte Garage",
+    "link0": 13500421,
+    "link1": 0,
+    "virtual": false,
+    "on": false
+  },
+  "65550": {
+    "_id": 65550,
+    "name": "[IPX] 7 FP SdB -",
+    "link0": 13500422,
+    "link1": 0,
+    "virtual": false,
+    "on": false
+  },
+  "65551": {
+    "_id": 65551,
+    "name": "[IPX] 8 FP SdB +",
+    "link0": 13500423,
+    "link1": 0,
+    "virtual": false,
+    "on": true
+  },
+  "65552": {
+    "_id": 65552,
+    "name": "[IPX] 1 Sonnette",
+    "link0": 12582912,
+    "link1": 10485775,
+    "virtual": false,
+    "on": false
+  },
+  "65553": {
+    "_id": 65553,
+    "name": "[IPX] 2 Capteur Porte Garage",
+    "link0": 12582913,
+    "link1": 0,
+    "virtual": false,
+    "on": true
+  },
+  "65554": {
+    "_id": 65554,
+    "name": "[IPX] 3 Vide",
+    "link0": 12582914,
+    "link1": 0,
+    "virtual": false,
+    "on": false
+  },
+  "65555": {
+    "_id": 65555,
+    "name": "[IPX] 4 Vide",
+    "link0": 12582915,
+    "link1": 0,
+    "virtual": false,
+    "on": false
+  },
+  "65556": {
+    "_id": 65556,
+    "name": "[IPX] 5 Vide",
+    "link0": 12582916,
+    "link1": 0,
+    "virtual": false,
+    "on": false
+  },
+  "65557": {
+    "_id": 65557,
+    "name": "[IPX] 6 Vide",
+    "link0": 12582917,
+    "link1": 0,
+    "virtual": false,
+    "on": false
+  },
+  "65558": {
+    "_id": 65558,
+    "name": "[IPX] 7 Vide",
+    "link0": 12582918,
+    "link1": 0,
+    "virtual": false,
+    "on": false
+  },
+  "65559": {
+    "_id": 65559,
+    "name": "[IPX] 8 Vide",
+    "link0": 12582919,
+    "link1": 0,
+    "virtual": false,
+    "on": false
+  },
+  "65560": {
+    "_id": 65560,
+    "name": "[IPX]Opto input 1",
+    "link0": 14417920,
+    "link1": 10485788,
+    "virtual": false,
+    "on": false
+  },
+  "65561": {
+    "_id": 65561,
+    "name": "[IPX]Opto input 2",
+    "link0": 14417921,
+    "link1": 0,
+    "virtual": false,
+    "on": false
+  },
+  "65562": {
+    "_id": 65562,
+    "name": "[IPX]Opto input 3",
+    "link0": 14417922,
+    "link1": 0,
+    "virtual": false,
+    "on": false
+  },
+  "65563": {
+    "_id": 65563,
+    "name": "[IPX]Opto input 4",
+    "link0": 14417923,
+    "link1": 0,
+    "virtual": false,
+    "on": false
+  },
+  "65564": {
+    "_id": 65564,
+    "name": "[IPX]Open coll. state 1",
+    "link0": 14548992,
+    "link1": 0,
+    "virtual": false,
+    "on": false
+  },
+  "65565": {
+    "_id": 65565,
+    "name": "[IPX]Open coll. state 2",
+    "link0": 14548993,
+    "link1": 0,
+    "virtual": false,
+    "on": false
+  },
+  "65566": {
+    "_id": 65566,
+    "name": "[IPX]Open coll. state 3",
+    "link0": 14548994,
+    "link1": 0,
+    "virtual": false,
+    "on": false
+  },
+  "65567": {
+    "_id": 65567,
+    "name": "[IPX]Open coll. state 4",
+    "link0": 14548995,
+    "link1": 0,
+    "virtual": false,
+    "on": false
+  },
+  "65568": {
+    "_id": 65568,
+    "name": "[IPX]Open coll.  1",
+    "link0": 0,
+    "link1": 14483456,
+    "virtual": false,
+    "on": false
+  },
+  "65569": {
+    "_id": 65569,
+    "name": "[IPX]Open coll.  2",
+    "link0": 0,
+    "link1": 14483457,
+    "virtual": false,
+    "on": false
+  },
+  "65570": {
+    "_id": 65570,
+    "name": "[IPX]Open coll.  3",
+    "link0": 0,
+    "link1": 14483458,
+    "virtual": false,
+    "on": false
+  },
+  "65571": {
+    "_id": 65571,
+    "name": "[IPX]Open coll.  4",
+    "link0": 0,
+    "link1": 14483459,
+    "virtual": false,
+    "on": false
+  },
+  "65572": {
+    "_id": 65572,
+    "name": "[IPX]Reboot",
+    "link0": 0,
+    "link1": 12779520,
+    "virtual": false,
+    "on": true
+  },
+  "65573": {
+    "_id": 65573,
+    "name": "[IPX]Sel BP",
+    "link0": 0,
+    "link1": 9437184,
+    "virtual": false,
+    "on": true
+  },
+  "65574": {
+    "_id": 65574,
+    "name": "[X8R N\u00b00] 1 AL Garage",
+    "link0": 12910592,
+    "link1": 0,
+    "virtual": false,
+    "on": false
+  },
+  "65575": {
+    "_id": 65575,
+    "name": "[X8R N\u00b00] 2 AL Alim Cam Entree",
+    "link0": 12910592,
+    "link1": 0,
+    "virtual": false,
+    "on": false
+  },
+  "65576": {
+    "_id": 65576,
+    "name": "[X8R N\u00b00] 3 AL Lum Terrasse",
+    "link0": 12910592,
+    "link1": 0,
+    "virtual": false,
+    "on": false
+  },
+  "65577": {
+    "_id": 65577,
+    "name": "[X8R N\u00b00] 4 AL Vide",
+    "link0": 12910592,
+    "link1": 0,
+    "virtual": false,
+    "on": false
+  },
+  "65578": {
+    "_id": 65578,
+    "name": "[X8R N\u00b00] 5 AL Vide",
+    "link0": 12910592,
+    "link1": 0,
+    "virtual": false,
+    "on": false
+  },
+  "65579": {
+    "_id": 65579,
+    "name": "[X8R N\u00b00] 6 AL Cuisine",
+    "link0": 12910592,
+    "link1": 0,
+    "virtual": false,
+    "on": false
+  },
+  "65580": {
+    "_id": 65580,
+    "name": "[X8R N\u00b00] 7 AL Bureau",
+    "link0": 12910592,
+    "link1": 0,
+    "virtual": false,
+    "on": false
+  },
+  "65581": {
+    "_id": 65581,
+    "name": "[X8R N\u00b00] 8 AL Chambre",
+    "link0": 12910592,
+    "link1": 0,
+    "virtual": false,
+    "on": false
+  },
+  "65582": {
+    "_id": 65582,
+    "name": "[X8R N\u00b00] 1 Lum Garage",
+    "link0": 0,
+    "link1": 12845056,
+    "virtual": false,
+    "on": false
+  },
+  "65583": {
+    "_id": 65583,
+    "name": "[X8R N\u00b00] 2 Cam Entree",
+    "link0": 0,
+    "link1": 12845056,
+    "virtual": false,
+    "on": true
+  },
+  "65584": {
+    "_id": 65584,
+    "name": "[X8R N\u00b00] 3 Lum Terrasse",
+    "link0": 0,
+    "link1": 12845056,
+    "virtual": false,
+    "on": false
+  },
+  "65585": {
+    "_id": 65585,
+    "name": "[X8R N\u00b00] 4 Vide",
+    "link0": 0,
+    "link1": 12845056,
+    "virtual": false,
+    "on": false
+  },
+  "65586": {
+    "_id": 65586,
+    "name": "[X8R N\u00b00] 5 Vide",
+    "link0": 0,
+    "link1": 12845056,
+    "virtual": false,
+    "on": false
+  },
+  "65587": {
+    "_id": 65587,
+    "name": "[X8R N\u00b00] 6 Lum Cuisine",
+    "link0": 0,
+    "link1": 12845056,
+    "virtual": false,
+    "on": false
+  },
+  "65588": {
+    "_id": 65588,
+    "name": "[X8R N\u00b00] 7 Lum Bureau",
+    "link0": 0,
+    "link1": 12845056,
+    "virtual": false,
+    "on": false
+  },
+  "65589": {
+    "_id": 65589,
+    "name": "[X8R N\u00b00] 8 Lum Ch Parents",
+    "link0": 0,
+    "link1": 12845056,
+    "virtual": false,
+    "on": false
+  },
+  "65590": {
+    "_id": 65590,
+    "name": "[X8R N\u00b00] 1 Etat Lum garage",
+    "link0": 13565952,
+    "link1": 0,
+    "virtual": false,
+    "on": false
+  },
+  "65591": {
+    "_id": 65591,
+    "name": "[X8R N\u00b00] 2 Etat Cam Entree",
+    "link0": 13565952,
+    "link1": 0,
+    "virtual": false,
+    "on": true
+  },
+  "65592": {
+    "_id": 65592,
+    "name": "[X8R N\u00b00] 3 Etat Lum Terrasse",
+    "link0": 13565952,
+    "link1": 0,
+    "virtual": false,
+    "on": false
+  },
+  "65593": {
+    "_id": 65593,
+    "name": "[X8R N\u00b00] 4 Etat Vide",
+    "link0": 13565952,
+    "link1": 0,
+    "virtual": false,
+    "on": false
+  },
+  "65594": {
+    "_id": 65594,
+    "name": "[X8R N\u00b00] 5 Etat Vide",
+    "link0": 13565952,
+    "link1": 0,
+    "virtual": false,
+    "on": false
+  },
+  "65595": {
+    "_id": 65595,
+    "name": "[X8R N\u00b00] 6 Etat Lum Cuisine",
+    "link0": 13565952,
+    "link1": 10485769,
+    "virtual": false,
+    "on": false
+  },
+  "65596": {
+    "_id": 65596,
+    "name": "[X8R N\u00b00] 7 Etat Lum Bureau",
+    "link0": 13565952,
+    "link1": 0,
+    "virtual": false,
+    "on": false
+  },
+  "65597": {
+    "_id": 65597,
+    "name": "[X8R N\u00b00] 8 Etat Lum Ch Parents",
+    "link0": 13565952,
+    "link1": 0,
+    "virtual": false,
+    "on": false
+  },
+  "65598": {
+    "_id": 65598,
+    "name": "[X24D N\u00b00] 1 Int Chambre G",
+    "link0": 12976128,
+    "link1": 0,
+    "virtual": false,
+    "on": false
+  },
+  "65599": {
+    "_id": 65599,
+    "name": "[X24D N\u00b00] 2 Int Chevet Mel",
+    "link0": 12976128,
+    "link1": 0,
+    "virtual": false,
+    "on": false
+  },
+  "65600": {
+    "_id": 65600,
+    "name": "[X24D N\u00b00] 3 Int Chevet Mat",
+    "link0": 12976128,
+    "link1": 0,
+    "virtual": false,
+    "on": false
+  },
+  "65601": {
+    "_id": 65601,
+    "name": "[X24D N\u00b00] 4 Int Couloir G",
+    "link0": 12976128,
+    "link1": 0,
+    "virtual": false,
+    "on": false
+  },
+  "65602": {
+    "_id": 65602,
+    "name": "[X24D N\u00b00] 5 Int Couloir D",
+    "link0": 12976128,
+    "link1": 10485773,
+    "virtual": false,
+    "on": false
+  },
+  "65603": {
+    "_id": 65603,
+    "name": "[X24D N\u00b00] 6 Vide",
+    "link0": 12976128,
+    "link1": 0,
+    "virtual": false,
+    "on": false
+  },
+  "65604": {
+    "_id": 65604,
+    "name": "[X24D N\u00b00] 7 Int Esc G",
+    "link0": 12976128,
+    "link1": 0,
+    "virtual": false,
+    "on": false
+  },
+  "65605": {
+    "_id": 65605,
+    "name": "[X24D N\u00b00] 8 Vide",
+    "link0": 12976128,
+    "link1": 0,
+    "virtual": false,
+    "on": false
+  },
+  "65606": {
+    "_id": 65606,
+    "name": "[X24D N\u00b00] 9 Int Entree G",
+    "link0": 12976128,
+    "link1": 10485771,
+    "virtual": false,
+    "on": false
+  },
+  "65607": {
+    "_id": 65607,
+    "name": "[X24D N\u00b00] 10 Int Entree D",
+    "link0": 12976128,
+    "link1": 10485780,
+    "virtual": false,
+    "on": false
+  },
+  "65608": {
+    "_id": 65608,
+    "name": "[X24D N\u00b00] 11 Int Salon G",
+    "link0": 12976128,
+    "link1": 10485771,
+    "virtual": false,
+    "on": false
+  },
+  "65609": {
+    "_id": 65609,
+    "name": "[X24D N\u00b00] 12 Int Salon D",
+    "link0": 12976128,
+    "link1": 10485760,
+    "virtual": false,
+    "on": false
+  },
+  "65610": {
+    "_id": 65610,
+    "name": "[X24D N\u00b00] 13 Int Gar G",
+    "link0": 12976128,
+    "link1": 10485789,
+    "virtual": false,
+    "on": false
+  },
+  "65611": {
+    "_id": 65611,
+    "name": "[X24D N\u00b00] 14 Det Couloir",
+    "link0": 12976128,
+    "link1": 0,
+    "virtual": false,
+    "on": true
+  },
+  "65612": {
+    "_id": 65612,
+    "name": "[X24D N\u00b00] 15 Det Escalier",
+    "link0": 12976128,
+    "link1": 0,
+    "virtual": false,
+    "on": true
+  },
+  "65613": {
+    "_id": 65613,
+    "name": "[X24D N\u00b00] 16 Det Dressing",
+    "link0": 12976128,
+    "link1": 0,
+    "virtual": false,
+    "on": true
+  },
+  "65614": {
+    "_id": 65614,
+    "name": "[X24D N\u00b00] 17 Det SdB",
+    "link0": 12976128,
+    "link1": 0,
+    "virtual": false,
+    "on": true
+  },
+  "65615": {
+    "_id": 65615,
+    "name": "[X24D N\u00b00] 18 Det SdB WC",
+    "link0": 12976128,
+    "link1": 0,
+    "virtual": false,
+    "on": true
+  },
+  "65616": {
+    "_id": 65616,
+    "name": "[X24D N\u00b00] 19 Det Cuisine",
+    "link0": 12976128,
+    "link1": 0,
+    "virtual": false,
+    "on": true
+  },
+  "65617": {
+    "_id": 65617,
+    "name": "[X24D N\u00b00] 20 Det WC",
+    "link0": 12976128,
+    "link1": 0,
+    "virtual": false,
+    "on": true
+  },
+  "65618": {
+    "_id": 65618,
+    "name": "[X24D N\u00b00] 21 Det SaM",
+    "link0": 12976128,
+    "link1": 0,
+    "virtual": false,
+    "on": true
+  },
+  "65619": {
+    "_id": 65619,
+    "name": "[X24D N\u00b00] 22 Det Garage",
+    "link0": 12976128,
+    "link1": 0,
+    "virtual": false,
+    "on": true
+  },
+  "65620": {
+    "_id": 65620,
+    "name": "[X24D N\u00b00] 23 Vide",
+    "link0": 12976128,
+    "link1": 0,
+    "virtual": false,
+    "on": false
+  },
+  "65621": {
+    "_id": 65621,
+    "name": "[X24D N\u00b00] 24 Vide",
+    "link0": 12976128,
+    "link1": 0,
+    "virtual": false,
+    "on": false
+  },
+  "65622": {
+    "_id": 65622,
+    "name": "[XDIMMER N\u00b00] 1 On/Off SaM",
+    "link0": 0,
+    "link1": 4849664,
+    "virtual": false,
+    "on": false
+  },
+  "65623": {
+    "_id": 65623,
+    "name": "[XDIMMER N\u00b00] 2 On/Off Ewan",
+    "link0": 0,
+    "link1": 4849664,
+    "virtual": false,
+    "on": false
+  },
+  "65624": {
+    "_id": 65624,
+    "name": "[XDIMMER N\u00b00] 3 OnOff Chev Mat",
+    "link0": 0,
+    "link1": 4849664,
+    "virtual": false,
+    "on": false
+  },
+  "65625": {
+    "_id": 65625,
+    "name": "[XDIMMER N\u00b00] 4 OnOff Chev Mel",
+    "link0": 0,
+    "link1": 4849664,
+    "virtual": false,
+    "on": false
+  },
+  "65626": {
+    "_id": 65626,
+    "name": "[XDIMMER N\u00b00]On/Off All",
+    "link0": 0,
+    "link1": 4849664,
+    "virtual": false,
+    "on": false
+  },
+  "65627": {
+    "_id": 65627,
+    "name": "[Lumi\u00e8re WC]Enable",
+    "link0": 0,
+    "link1": 10551303,
+    "virtual": false,
+    "on": true
+  },
+  "65628": {
+    "_id": 65628,
+    "name": "[Lumi\u00e8re]Enable",
+    "link0": 0,
+    "link1": 10616840,
+    "virtual": false,
+    "on": true
+  },
+  "65629": {
+    "_id": 65629,
+    "name": "[Lumi\u00e8re]Result",
+    "link0": 10616840,
+    "link1": 0,
+    "virtual": false,
+    "on": false
+  },
+  "65630": {
+    "_id": 65630,
+    "name": "[WC normal]On/Off",
+    "link0": 0,
+    "link1": 1572868,
+    "virtual": false,
+    "on": false
+  },
+  "65631": {
+    "_id": 65631,
+    "name": "[SdB fort]On/Off",
+    "link0": 10485767,
+    "link1": 1572869,
+    "virtual": false,
+    "on": false
+  },
+  "65632": {
+    "_id": 65632,
+    "name": "[SdB faible]On/Off",
+    "link0": 0,
+    "link1": 1572870,
+    "virtual": false,
+    "on": false
+  },
+  "65633": {
+    "_id": 65633,
+    "name": "[Lumi\u00e8re Escalier]Enable",
+    "link0": 0,
+    "link1": 10551296,
+    "virtual": false,
+    "on": true
+  },
+  "65634": {
+    "_id": 65634,
+    "name": "[Tempo]Enable",
+    "link0": 0,
+    "link1": 10616832,
+    "virtual": false,
+    "on": true
+  },
+  "65635": {
+    "_id": 65635,
+    "name": "[Tempo]Result",
+    "link0": 10616832,
+    "link1": 0,
+    "virtual": false,
+    "on": false
+  },
+  "65636": {
+    "_id": 65636,
+    "name": "[Lumi\u00e8re]Enable",
+    "link0": 0,
+    "link1": 10616833,
+    "virtual": false,
+    "on": true
+  },
+  "65637": {
+    "_id": 65637,
+    "name": "[Lumi\u00e8re]Result",
+    "link0": 10616833,
+    "link1": 0,
+    "virtual": false,
+    "on": false
+  },
+  "65638": {
+    "_id": 65638,
+    "name": "[Det Off]Enable",
+    "link0": 0,
+    "link1": 10616839,
+    "virtual": false,
+    "on": true
+  },
+  "65639": {
+    "_id": 65639,
+    "name": "[Salon normal]On/Off",
+    "link0": 0,
+    "link1": 1572871,
+    "virtual": false,
+    "on": true
+  },
+  "65640": {
+    "_id": 65640,
+    "name": "[Lumi\u00e8re SaM]Enable",
+    "link0": 0,
+    "link1": 10551298,
+    "virtual": false,
+    "on": true
+  },
+  "65641": {
+    "_id": 65641,
+    "name": "[Det SaM On]Enable",
+    "link0": 0,
+    "link1": 10616834,
+    "virtual": false,
+    "on": true
+  },
+  "65642": {
+    "_id": 65642,
+    "name": "[Det SaM On]Result",
+    "link0": 10616834,
+    "link1": 0,
+    "virtual": false,
+    "on": false
+  },
+  "65643": {
+    "_id": 65643,
+    "name": "[COMPARATOR Lum SaM]Enable",
+    "link0": 0,
+    "link1": 1376256,
+    "virtual": false,
+    "on": true
+  },
+  "65644": {
+    "_id": 65644,
+    "name": "[COMPARATOR Lum SaM]Output",
+    "link0": 1376256,
+    "link1": 0,
+    "virtual": false,
+    "on": false
+  },
+  "65645": {
+    "_id": 65645,
+    "name": "[TEMPO Det SaM]Start",
+    "link0": 0,
+    "link1": 13697025,
+    "virtual": false,
+    "on": false
+  },
+  "65646": {
+    "_id": 65646,
+    "name": "[TEMPO Det SaM]Enable/Rst",
+    "link0": 0,
+    "link1": 13697025,
+    "virtual": false,
+    "on": true
+  },
+  "65647": {
+    "_id": 65647,
+    "name": "[TEMPO Det SaM]Output",
+    "link0": 13697025,
+    "link1": 0,
+    "virtual": false,
+    "on": false
+  },
+  "65648": {
+    "_id": 65648,
+    "name": "[TEMPO Det Dressing]Start",
+    "link0": 0,
+    "link1": 13697026,
+    "virtual": false,
+    "on": false
+  },
+  "65649": {
+    "_id": 65649,
+    "name": "[TEMPO Det Dressing]Enable/Rst",
+    "link0": 0,
+    "link1": 13697026,
+    "virtual": false,
+    "on": true
+  },
+  "65650": {
+    "_id": 65650,
+    "name": "[TEMPO Det Dressing]Output",
+    "link0": 13697026,
+    "link1": 0,
+    "virtual": false,
+    "on": false
+  },
+  "65651": {
+    "_id": 65651,
+    "name": "[TEMPO Det Cuisine]Start",
+    "link0": 0,
+    "link1": 13697027,
+    "virtual": false,
+    "on": false
+  },
+  "65652": {
+    "_id": 65652,
+    "name": "[TEMPO Det Cuisine]Enable/Rst",
+    "link0": 0,
+    "link1": 13697027,
+    "virtual": false,
+    "on": true
+  },
+  "65653": {
+    "_id": 65653,
+    "name": "[TEMPO Det Cuisine]Output",
+    "link0": 13697027,
+    "link1": 0,
+    "virtual": false,
+    "on": false
+  },
+  "65654": {
+    "_id": 65654,
+    "name": "[TEMPO Det Garage]Start",
+    "link0": 0,
+    "link1": 13697028,
+    "virtual": false,
+    "on": false
+  },
+  "65655": {
+    "_id": 65655,
+    "name": "[TEMPO Det Garage]Enable/Rst",
+    "link0": 0,
+    "link1": 13697028,
+    "virtual": false,
+    "on": true
+  },
+  "65656": {
+    "_id": 65656,
+    "name": "[TEMPO Det Garage]Output",
+    "link0": 13697028,
+    "link1": 0,
+    "virtual": false,
+    "on": false
+  },
+  "65657": {
+    "_id": 65657,
+    "name": "[TEMPO Det Couloir]Start",
+    "link0": 0,
+    "link1": 13697029,
+    "virtual": false,
+    "on": false
+  },
+  "65658": {
+    "_id": 65658,
+    "name": "[TEMPO Det Couloir]Enable/Rst",
+    "link0": 0,
+    "link1": 13697029,
+    "virtual": false,
+    "on": true
+  },
+  "65659": {
+    "_id": 65659,
+    "name": "[TEMPO Det Couloir]Output",
+    "link0": 13697029,
+    "link1": 0,
+    "virtual": false,
+    "on": true
+  },
+  "65660": {
+    "_id": 65660,
+    "name": "[TEMPO Det Escalier]Start",
+    "link0": 0,
+    "link1": 13697030,
+    "virtual": false,
+    "on": false
+  },
+  "65661": {
+    "_id": 65661,
+    "name": "[TEMPO Det Escalier]Enable/Rst",
+    "link0": 0,
+    "link1": 13697030,
+    "virtual": false,
+    "on": true
+  },
+  "65662": {
+    "_id": 65662,
+    "name": "[TEMPO Det Escalier]Output",
+    "link0": 13697030,
+    "link1": 0,
+    "virtual": false,
+    "on": false
+  },
+  "65663": {
+    "_id": 65663,
+    "name": "[TEMPO Det WC]Start",
+    "link0": 0,
+    "link1": 13697031,
+    "virtual": false,
+    "on": false
+  },
+  "65664": {
+    "_id": 65664,
+    "name": "[TEMPO Det WC]Enable/Rst",
+    "link0": 0,
+    "link1": 13697031,
+    "virtual": false,
+    "on": true
+  },
+  "65665": {
+    "_id": 65665,
+    "name": "[TEMPO Det WC]Output",
+    "link0": 13697031,
+    "link1": 0,
+    "virtual": false,
+    "on": false
+  },
+  "65666": {
+    "_id": 65666,
+    "name": "[TEMPO Det SdB]Start",
+    "link0": 0,
+    "link1": 13697032,
+    "virtual": false,
+    "on": false
+  },
+  "65667": {
+    "_id": 65667,
+    "name": "[TEMPO Det SdB]Enable/Rst",
+    "link0": 0,
+    "link1": 13697032,
+    "virtual": false,
+    "on": true
+  },
+  "65668": {
+    "_id": 65668,
+    "name": "[TEMPO Det SdB]Output",
+    "link0": 13697032,
+    "link1": 0,
+    "virtual": false,
+    "on": false
+  },
+  "65669": {
+    "_id": 65669,
+    "name": "[Lumi\u00e8res Cuisine]Enable",
+    "link0": 0,
+    "link1": 10551299,
+    "virtual": false,
+    "on": true
+  },
+  "65670": {
+    "_id": 65670,
+    "name": "[Start tempo]Enable",
+    "link0": 0,
+    "link1": 10616835,
+    "virtual": false,
+    "on": true
+  },
+  "65671": {
+    "_id": 65671,
+    "name": "[Start tempo]Result",
+    "link0": 10616835,
+    "link1": 0,
+    "virtual": false,
+    "on": false
+  },
+  "65672": {
+    "_id": 65672,
+    "name": "[Spots cuisine fort]On/Off",
+    "link0": 10485769,
+    "link1": 1572872,
+    "virtual": false,
+    "on": false
+  },
+  "65673": {
+    "_id": 65673,
+    "name": "[Spots cuisine faible]On/Off",
+    "link0": 0,
+    "link1": 1572873,
+    "virtual": false,
+    "on": false
+  },
+  "65674": {
+    "_id": 65674,
+    "name": "VIO Lumi\u00e8re SaM Auto",
+    "link0": 0,
+    "link1": 0,
+    "virtual": true,
+    "on": false
+  },
+  "65675": {
+    "_id": 65675,
+    "name": "[Lumi\u00e8re Salle de bains]Enable",
+    "link0": 0,
+    "link1": 10551301,
+    "virtual": false,
+    "on": true
+  },
+  "65676": {
+    "_id": 65676,
+    "name": "[On Journ\u00e9e]Enable",
+    "link0": 0,
+    "link1": 10616837,
+    "virtual": false,
+    "on": true
+  },
+  "65677": {
+    "_id": 65677,
+    "name": "[On Journ\u00e9e]Result",
+    "link0": 10616837,
+    "link1": 0,
+    "virtual": false,
+    "on": false
+  },
+  "65678": {
+    "_id": 65678,
+    "name": "[COMPARATOR Lum SdB]Enable",
+    "link0": 0,
+    "link1": 1376257,
+    "virtual": false,
+    "on": true
+  },
+  "65679": {
+    "_id": 65679,
+    "name": "[COMPARATOR Lum SdB]Output",
+    "link0": 1376257,
+    "link1": 0,
+    "virtual": false,
+    "on": true
+  },
+  "65680": {
+    "_id": 65680,
+    "name": "[Lumi\u00e8re Dressing]Enable",
+    "link0": 0,
+    "link1": 10551302,
+    "virtual": false,
+    "on": true
+  },
+  "65681": {
+    "_id": 65681,
+    "name": "[Lumi\u00e8re]Enable",
+    "link0": 0,
+    "link1": 10616838,
+    "virtual": false,
+    "on": true
+  },
+  "65682": {
+    "_id": 65682,
+    "name": "[Lumi\u00e8re]Result",
+    "link0": 10616838,
+    "link1": 0,
+    "virtual": false,
+    "on": false
+  },
+  "65683": {
+    "_id": 65683,
+    "name": "[Det Off]Result",
+    "link0": 10616839,
+    "link1": 0,
+    "virtual": false,
+    "on": false
+  },
+  "65684": {
+    "_id": 65684,
+    "name": "[Nuit]Enable",
+    "link0": 0,
+    "link1": 1507328,
+    "virtual": false,
+    "on": true
+  },
+  "65685": {
+    "_id": 65685,
+    "name": "[Dressing fort]On/Off",
+    "link0": 0,
+    "link1": 1572864,
+    "virtual": false,
+    "on": false
+  },
+  "65686": {
+    "_id": 65686,
+    "name": "[Dressing faible]On/Off",
+    "link0": 0,
+    "link1": 1572865,
+    "virtual": false,
+    "on": false
+  },
+  "65687": {
+    "_id": 65687,
+    "name": "[Couloir fort]On/Off",
+    "link0": 0,
+    "link1": 1572866,
+    "virtual": false,
+    "on": false
+  },
+  "65688": {
+    "_id": 65688,
+    "name": "[Couloir faible]On/Off",
+    "link0": 0,
+    "link1": 1572867,
+    "virtual": false,
+    "on": false
+  },
+  "65689": {
+    "_id": 65689,
+    "name": "[Nuit]State",
+    "link0": 1507328,
+    "link1": 0,
+    "virtual": false,
+    "on": false
+  },
+  "65690": {
+    "_id": 65690,
+    "name": "[Thermostat]Output",
+    "link0": 1638400,
+    "link1": 10485787,
+    "virtual": false,
+    "on": false
+  },
+  "65691": {
+    "_id": 65691,
+    "name": "[Thermostat]Fault",
+    "link0": 1638400,
+    "link1": 0,
+    "virtual": false,
+    "on": false
+  },
+  "65692": {
+    "_id": 65692,
+    "name": "[Thermostat]On/Off",
+    "link0": 0,
+    "link1": 1638400,
+    "virtual": false,
+    "on": true
+  },
+  "65693": {
+    "_id": 65693,
+    "name": "[Thermostat]Comfort",
+    "link0": 0,
+    "link1": 1638400,
+    "virtual": false,
+    "on": false
+  },
+  "65694": {
+    "_id": 65694,
+    "name": "[Thermostat]Eco",
+    "link0": 0,
+    "link1": 1638400,
+    "virtual": false,
+    "on": false
+  },
+  "65695": {
+    "_id": 65695,
+    "name": "[Thermostat]No Frost",
+    "link0": 0,
+    "link1": 1638400,
+    "virtual": false,
+    "on": true
+  },
+  "65696": {
+    "_id": 65696,
+    "name": "[Lumi\u00e8res RDC]Enable",
+    "link0": 0,
+    "link1": 10551297,
+    "virtual": false,
+    "on": true
+  },
+  "65697": {
+    "_id": 65697,
+    "name": "[Lumi\u00e8res]Enable",
+    "link0": 0,
+    "link1": 10616841,
+    "virtual": false,
+    "on": true
+  },
+  "65698": {
+    "_id": 65698,
+    "name": "[Lumi\u00e8res]Result",
+    "link0": 10616841,
+    "link1": 0,
+    "virtual": false,
+    "on": false
+  },
+  "65699": {
+    "_id": 65699,
+    "name": "[Lumi\u00e8res Chambre]Enable",
+    "link0": 0,
+    "link1": 10551304,
+    "virtual": false,
+    "on": true
+  },
+  "65700": {
+    "_id": 65700,
+    "name": "[Chevet commun]Enable",
+    "link0": 0,
+    "link1": 10616842,
+    "virtual": false,
+    "on": true
+  },
+  "65701": {
+    "_id": 65701,
+    "name": "[Chevet commun]Result",
+    "link0": 10616842,
+    "link1": 0,
+    "virtual": false,
+    "on": false
+  },
+  "65702": {
+    "_id": 65702,
+    "name": "[Push N\u00b00] HA Det SdB",
+    "link0": 0,
+    "link1": 1114112,
+    "virtual": false,
+    "on": false
+  },
+  "65703": {
+    "_id": 65703,
+    "name": "VIO Mode Cin\u00e9ma",
+    "link0": 0,
+    "link1": 0,
+    "virtual": true,
+    "on": false
+  },
+  "65704": {
+    "_id": 65704,
+    "name": "[On normal]Enable",
+    "link0": 0,
+    "link1": 10616836,
+    "virtual": false,
+    "on": true
+  },
+  "65705": {
+    "_id": 65705,
+    "name": "[On normal]Result",
+    "link0": 10616836,
+    "link1": 0,
+    "virtual": false,
+    "on": false
+  },
+  "65706": {
+    "_id": 65706,
+    "name": "[Seuil luminosit\u00e9 SdB]On/Off",
+    "link0": 0,
+    "link1": 1572874,
+    "virtual": false,
+    "on": true
+  },
+  "65707": {
+    "_id": 65707,
+    "name": "[Sonnette]Start",
+    "link0": 10485775,
+    "link1": 13828096,
+    "virtual": false,
+    "on": false
+  },
+  "65708": {
+    "_id": 65708,
+    "name": "[Sonnette]Enable/Rst",
+    "link0": 0,
+    "link1": 13828096,
+    "virtual": false,
+    "on": true
+  },
+  "65709": {
+    "_id": 65709,
+    "name": "[Sonnette]Output",
+    "link0": 13828096,
+    "link1": 10485794,
+    "virtual": false,
+    "on": false
+  },
+  "65710": {
+    "_id": 65710,
+    "name": "[Lumi\u00e8re Couloir]Enable",
+    "link0": 0,
+    "link1": 10551306,
+    "virtual": false,
+    "on": true
+  },
+  "65711": {
+    "_id": 65711,
+    "name": "VIO Lumi\u00e8re Couloir Auto",
+    "link0": 0,
+    "link1": 0,
+    "virtual": true,
+    "on": true
+  },
+  "65712": {
+    "_id": 65712,
+    "name": "[Tempo]Enable",
+    "link0": 0,
+    "link1": 10616843,
+    "virtual": false,
+    "on": true
+  },
+  "65713": {
+    "_id": 65713,
+    "name": "[Tempo]Result",
+    "link0": 10616843,
+    "link1": 0,
+    "virtual": false,
+    "on": false
+  },
+  "65714": {
+    "_id": 65714,
+    "name": "[Lumi\u00e8re]Enable",
+    "link0": 0,
+    "link1": 10616844,
+    "virtual": false,
+    "on": true
+  },
+  "65715": {
+    "_id": 65715,
+    "name": "[Lumi\u00e8re]Result",
+    "link0": 10616844,
+    "link1": 0,
+    "virtual": false,
+    "on": false
+  },
+  "65716": {
+    "_id": 65716,
+    "name": "[Interrupteur]Enable",
+    "link0": 0,
+    "link1": 10616845,
+    "virtual": false,
+    "on": true
+  },
+  "65717": {
+    "_id": 65717,
+    "name": "[Interrupteur]Result",
+    "link0": 10616845,
+    "link1": 0,
+    "virtual": false,
+    "on": false
+  },
+  "65718": {
+    "_id": 65718,
+    "name": "[Seuil luminosit\u00e9 RDC]On/Off",
+    "link0": 0,
+    "link1": 1572875,
+    "virtual": false,
+    "on": false
+  },
+  "65719": {
+    "_id": 65719,
+    "name": "[Lumi\u00e8re nuit]Enable",
+    "link0": 0,
+    "link1": 10616846,
+    "virtual": false,
+    "on": true
+  },
+  "65720": {
+    "_id": 65720,
+    "name": "[Lumi\u00e8re nuit]Result",
+    "link0": 10616846,
+    "link1": 0,
+    "virtual": false,
+    "on": false
+  },
+  "65721": {
+    "_id": 65721,
+    "name": "[Lumi\u00e8re Garage]Enable",
+    "link0": 0,
+    "link1": 10551305,
+    "virtual": false,
+    "on": true
+  },
+  "65722": {
+    "_id": 65722,
+    "name": "[Inverseur]Enable",
+    "link0": 0,
+    "link1": 10616847,
+    "virtual": false,
+    "on": true
+  },
+  "65723": {
+    "_id": 65723,
+    "name": "[Inverseur]Result",
+    "link0": 10616847,
+    "link1": 0,
+    "virtual": false,
+    "on": false
+  },
+  "65724": {
+    "_id": 65724,
+    "name": "[Inverseur]Enable",
+    "link0": 0,
+    "link1": 10616848,
+    "virtual": false,
+    "on": true
+  },
+  "65725": {
+    "_id": 65725,
+    "name": "[Inverseur]Result",
+    "link0": 10616848,
+    "link1": 0,
+    "virtual": false,
+    "on": false
+  },
+  "65726": {
+    "_id": 65726,
+    "name": "[Lumi\u00e8re]Enable",
+    "link0": 0,
+    "link1": 10616849,
+    "virtual": false,
+    "on": true
+  },
+  "65727": {
+    "_id": 65727,
+    "name": "[Lumi\u00e8re]Result",
+    "link0": 10616849,
+    "link1": 0,
+    "virtual": false,
+    "on": false
+  },
+  "65728": {
+    "_id": 65728,
+    "name": "[On Nuit]Enable",
+    "link0": 0,
+    "link1": 10616850,
+    "virtual": false,
+    "on": true
+  },
+  "65729": {
+    "_id": 65729,
+    "name": "[On Nuit]Result",
+    "link0": 10616850,
+    "link1": 0,
+    "virtual": false,
+    "on": false
+  },
+  "65730": {
+    "_id": 65730,
+    "name": "[Tempo]Enable",
+    "link0": 0,
+    "link1": 10616851,
+    "virtual": false,
+    "on": true
+  },
+  "65731": {
+    "_id": 65731,
+    "name": "[Tempo]Result",
+    "link0": 10616851,
+    "link1": 0,
+    "virtual": false,
+    "on": false
+  },
+  "65732": {
+    "_id": 65732,
+    "name": "[Nuit]Enable",
+    "link0": 0,
+    "link1": 10616852,
+    "virtual": false,
+    "on": false
+  },
+  "65733": {
+    "_id": 65733,
+    "name": "[Nuit]Result",
+    "link0": 10616852,
+    "link1": 0,
+    "virtual": false,
+    "on": false
+  },
+  "65734": {
+    "_id": 65734,
+    "name": "[Tempo]Enable",
+    "link0": 0,
+    "link1": 10616853,
+    "virtual": false,
+    "on": true
+  },
+  "65735": {
+    "_id": 65735,
+    "name": "[Tempo]Result",
+    "link0": 10616853,
+    "link1": 0,
+    "virtual": false,
+    "on": false
+  },
+  "65736": {
+    "_id": 65736,
+    "name": "[Tempo]Enable",
+    "link0": 0,
+    "link1": 10616854,
+    "virtual": false,
+    "on": true
+  },
+  "65737": {
+    "_id": 65737,
+    "name": "[Tempo]Result",
+    "link0": 10616854,
+    "link1": 0,
+    "virtual": false,
+    "on": false
+  },
+  "65738": {
+    "_id": 65738,
+    "name": "[Off tempo]Enable",
+    "link0": 0,
+    "link1": 10616855,
+    "virtual": false,
+    "on": true
+  },
+  "65739": {
+    "_id": 65739,
+    "name": "[Off tempo]Result",
+    "link0": 10616855,
+    "link1": 0,
+    "virtual": false,
+    "on": true
+  },
+  "65740": {
+    "_id": 65740,
+    "name": "[Int Salon D]Input",
+    "link0": 0,
+    "link1": 14352384,
+    "virtual": false,
+    "on": false
+  },
+  "65741": {
+    "_id": 65741,
+    "name": "[Int Salon D]Output",
+    "link0": 14352384,
+    "link1": 0,
+    "virtual": false,
+    "on": false
+  },
+  "65742": {
+    "_id": 65742,
+    "name": "[Int Salon D]double click",
+    "link0": 14352384,
+    "link1": 0,
+    "virtual": false,
+    "on": false
+  },
+  "65743": {
+    "_id": 65743,
+    "name": "[Salon faible]On/Off",
+    "link0": 10485782,
+    "link1": 1572876,
+    "virtual": false,
+    "on": true
+  },
+  "65744": {
+    "_id": 65744,
+    "name": "[Simple Click]Enable",
+    "link0": 0,
+    "link1": 10616856,
+    "virtual": false,
+    "on": true
+  },
+  "65745": {
+    "_id": 65745,
+    "name": "[Simple Click]Result",
+    "link0": 10616856,
+    "link1": 0,
+    "virtual": false,
+    "on": false
+  },
+  "65746": {
+    "_id": 65746,
+    "name": "[Int Chambre G]Enable",
+    "link0": 0,
+    "link1": 10616857,
+    "virtual": false,
+    "on": true
+  },
+  "65747": {
+    "_id": 65747,
+    "name": "[Int Chambre G]Result",
+    "link0": 10616857,
+    "link1": 0,
+    "virtual": false,
+    "on": false
+  },
+  "65748": {
+    "_id": 65748,
+    "name": "[Chevets]On/Off",
+    "link0": 0,
+    "link1": 1572877,
+    "virtual": false,
+    "on": true
+  },
+  "65749": {
+    "_id": 65749,
+    "name": "[COMPARATOR Lum Couloir]Enable",
+    "link0": 0,
+    "link1": 1376258,
+    "virtual": false,
+    "on": true
+  },
+  "65750": {
+    "_id": 65750,
+    "name": "[COMPARATOR Lum Couloir]Output",
+    "link0": 1376258,
+    "link1": 0,
+    "virtual": false,
+    "on": false
+  },
+  "65751": {
+    "_id": 65751,
+    "name": "[Seuil luminosit\u00e9 couloir]On/Off",
+    "link0": 0,
+    "link1": 1572878,
+    "virtual": false,
+    "on": true
+  },
+  "65752": {
+    "_id": 65752,
+    "name": "[Porte Garage]Start",
+    "link0": 10485789,
+    "link1": 13828105,
+    "virtual": false,
+    "on": false
+  },
+  "65753": {
+    "_id": 65753,
+    "name": "[Porte Garage]Enable/Rst",
+    "link0": 0,
+    "link1": 13828105,
+    "virtual": false,
+    "on": true
+  },
+  "65754": {
+    "_id": 65754,
+    "name": "[Porte Garage]Output",
+    "link0": 13828105,
+    "link1": 10485776,
+    "virtual": false,
+    "on": false
+  },
+  "65755": {
+    "_id": 65755,
+    "name": "[Lumi\u00e8re Salon]Enable",
+    "link0": 0,
+    "link1": 10551307,
+    "virtual": false,
+    "on": true
+  },
+  "65756": {
+    "_id": 65756,
+    "name": "[Capteur lum SdB to Lux]Enable",
+    "link0": 0,
+    "link1": 1048576,
+    "virtual": false,
+    "on": true
+  },
+  "65757": {
+    "_id": 65757,
+    "name": "[Interrupteur]Enable",
+    "link0": 0,
+    "link1": 10616858,
+    "virtual": false,
+    "on": false
+  },
+  "65758": {
+    "_id": 65758,
+    "name": "[Interrupteur]Result",
+    "link0": 10616858,
+    "link1": 0,
+    "virtual": false,
+    "on": false
+  },
+  "65759": {
+    "_id": 65759,
+    "name": "[Compteur eau]Inc +",
+    "link0": 10485788,
+    "link1": 1245184,
+    "virtual": false,
+    "on": false
+  },
+  "65760": {
+    "_id": 65760,
+    "name": "[Compteur eau]Dec -",
+    "link0": 0,
+    "link1": 1245184,
+    "virtual": false,
+    "on": false
+  },
+  "65761": {
+    "_id": 65761,
+    "name": "[Compteur eau]Set",
+    "link0": 0,
+    "link1": 1245184,
+    "virtual": false,
+    "on": false
+  },
+  "65762": {
+    "_id": 65762,
+    "name": "[Compteur eau]Reset",
+    "link0": 0,
+    "link1": 1245184,
+    "virtual": false,
+    "on": false
+  },
+  "65763": {
+    "_id": 65763,
+    "name": "[Compteur eau]Enable",
+    "link0": 0,
+    "link1": 1245184,
+    "virtual": false,
+    "on": true
+  },
+  "65764": {
+    "_id": 65764,
+    "name": "[Double Click]Enable",
+    "link0": 0,
+    "link1": 10616865,
+    "virtual": false,
+    "on": true
+  },
+  "65765": {
+    "_id": 65765,
+    "name": "[Double Click]Result",
+    "link0": 10616865,
+    "link1": 0,
+    "virtual": false,
+    "on": false
+  },
+  "65766": {
+    "_id": 65766,
+    "name": "[Meuble SaM]On/Off",
+    "link0": 0,
+    "link1": 1572879,
+    "virtual": false,
+    "on": false
+  },
+  "65767": {
+    "_id": 65767,
+    "name": "[PUSH]Enable",
+    "link0": 0,
+    "link1": 10551300,
+    "virtual": false,
+    "on": true
+  },
+  "65768": {
+    "_id": 65768,
+    "name": "[Det SdB]Enable",
+    "link0": 0,
+    "link1": 10616860,
+    "virtual": false,
+    "on": true
+  },
+  "65769": {
+    "_id": 65769,
+    "name": "[Det SdB]Result",
+    "link0": 10616860,
+    "link1": 0,
+    "virtual": false,
+    "on": false
+  },
+  "65770": {
+    "_id": 65770,
+    "name": "VIO Lumi\u00e8re Cuisine Auto",
+    "link0": 0,
+    "link1": 0,
+    "virtual": true,
+    "on": true
+  },
+  "65771": {
+    "_id": 65771,
+    "name": "[Push N\u00b02] HA Det Couloir",
+    "link0": 0,
+    "link1": 1114114,
+    "virtual": false,
+    "on": true
+  },
+  "65772": {
+    "_id": 65772,
+    "name": "[Meuble SaM OFF]On/Off",
+    "link0": 0,
+    "link1": 1572880,
+    "virtual": false,
+    "on": false
+  },
+  "65773": {
+    "_id": 65773,
+    "name": "VIO Lumi\u00e8re Dressing Auto",
+    "link0": 0,
+    "link1": 0,
+    "virtual": true,
+    "on": true
+  },
+  "65774": {
+    "_id": 65774,
+    "name": "VIO Lumi\u00e8re Garage Auto",
+    "link0": 0,
+    "link1": 0,
+    "virtual": true,
+    "on": true
+  },
+  "65775": {
+    "_id": 65775,
+    "name": "[Push N\u00b01] HA Det SaM",
+    "link0": 0,
+    "link1": 1114113,
+    "virtual": false,
+    "on": false
+  },
+  "65776": {
+    "_id": 65776,
+    "name": "[Push N\u00b03] HA Det Cuisine",
+    "link0": 0,
+    "link1": 1114115,
+    "virtual": false,
+    "on": false
+  },
+  "65777": {
+    "_id": 65777,
+    "name": "[Push N\u00b04] HA Det Escalier",
+    "link0": 0,
+    "link1": 1114116,
+    "virtual": false,
+    "on": false
+  },
+  "65778": {
+    "_id": 65778,
+    "name": "[Push N\u00b05] Det Dressing",
+    "link0": 0,
+    "link1": 1114117,
+    "virtual": false,
+    "on": false
+  },
+  "65779": {
+    "_id": 65779,
+    "name": "[Push N\u00b06] HA Det Garage",
+    "link0": 0,
+    "link1": 1114118,
+    "virtual": false,
+    "on": false
+  },
+  "65780": {
+    "_id": 65780,
+    "name": "[Push N\u00b07]On/Off",
+    "link0": 0,
+    "link1": 1114119,
+    "virtual": false,
+    "on": false
+  },
+  "65781": {
+    "_id": 65781,
+    "name": "[Push N\u00b08] AL Bureau",
+    "link0": 0,
+    "link1": 1114120,
+    "virtual": false,
+    "on": false
+  },
+  "65782": {
+    "_id": 65782,
+    "name": "[Push N\u00b09] AL Chambre",
+    "link0": 0,
+    "link1": 1114121,
+    "virtual": false,
+    "on": false
+  },
+  "65783": {
+    "_id": 65783,
+    "name": "[Push N\u00b010] AL Garage",
+    "link0": 0,
+    "link1": 1114122,
+    "virtual": false,
+    "on": false
+  },
+  "65784": {
+    "_id": 65784,
+    "name": "[Push N\u00b011] AL Cuisine",
+    "link0": 0,
+    "link1": 1114123,
+    "virtual": false,
+    "on": false
+  },
+  "65785": {
+    "_id": 65785,
+    "name": "[Det Couloir]Enable",
+    "link0": 0,
+    "link1": 10616861,
+    "virtual": false,
+    "on": true
+  },
+  "65786": {
+    "_id": 65786,
+    "name": "[Det Couloir]Result",
+    "link0": 10616861,
+    "link1": 0,
+    "virtual": false,
+    "on": true
+  },
+  "65787": {
+    "_id": 65787,
+    "name": "[Det Escalier]Enable",
+    "link0": 0,
+    "link1": 10616862,
+    "virtual": false,
+    "on": true
+  },
+  "65788": {
+    "_id": 65788,
+    "name": "[Det Escalier]Result",
+    "link0": 10616862,
+    "link1": 0,
+    "virtual": false,
+    "on": false
+  },
+  "65789": {
+    "_id": 65789,
+    "name": "[Det Cuisine]Enable",
+    "link0": 0,
+    "link1": 10616863,
+    "virtual": false,
+    "on": true
+  },
+  "65790": {
+    "_id": 65790,
+    "name": "[Det Cuisine]Result",
+    "link0": 10616863,
+    "link1": 0,
+    "virtual": false,
+    "on": false
+  },
+  "65791": {
+    "_id": 65791,
+    "name": "[Det Garage]Enable",
+    "link0": 0,
+    "link1": 10616864,
+    "virtual": false,
+    "on": true
+  },
+  "65792": {
+    "_id": 65792,
+    "name": "[Det Garage]Result",
+    "link0": 10616864,
+    "link1": 0,
+    "virtual": false,
+    "on": false
+  },
+  "65793": {
+    "_id": 65793,
+    "name": "[Det SaM]Enable",
+    "link0": 0,
+    "link1": 10616866,
+    "virtual": false,
+    "on": true
+  },
+  "65794": {
+    "_id": 65794,
+    "name": "[Det SaM]Result",
+    "link0": 10616866,
+    "link1": 0,
+    "virtual": false,
+    "on": false
+  },
+  "65795": {
+    "_id": 65795,
+    "name": "[Det Dressing]Enable",
+    "link0": 0,
+    "link1": 10616867,
+    "virtual": false,
+    "on": true
+  },
+  "65796": {
+    "_id": 65796,
+    "name": "[Det Dressing]Result",
+    "link0": 10616867,
+    "link1": 0,
+    "virtual": false,
+    "on": false
+  },
+  "65797": {
+    "_id": 65797,
+    "name": "[AL Bureau]Enable",
+    "link0": 0,
+    "link1": 10616868,
+    "virtual": false,
+    "on": true
+  },
+  "65798": {
+    "_id": 65798,
+    "name": "[AL Bureau]Result",
+    "link0": 10616868,
+    "link1": 0,
+    "virtual": false,
+    "on": false
+  },
+  "65799": {
+    "_id": 65799,
+    "name": "[AL Cuisine]Enable",
+    "link0": 0,
+    "link1": 10616869,
+    "virtual": false,
+    "on": true
+  },
+  "65800": {
+    "_id": 65800,
+    "name": "[AL Cuisine]Result",
+    "link0": 10616869,
+    "link1": 0,
+    "virtual": false,
+    "on": false
+  },
+  "65801": {
+    "_id": 65801,
+    "name": "[AL Chambre]Enable",
+    "link0": 0,
+    "link1": 10616870,
+    "virtual": false,
+    "on": true
+  },
+  "65802": {
+    "_id": 65802,
+    "name": "[AL Chambre]Result",
+    "link0": 10616870,
+    "link1": 0,
+    "virtual": false,
+    "on": false
+  },
+  "65803": {
+    "_id": 65803,
+    "name": "[AL Garage]Enable",
+    "link0": 0,
+    "link1": 10616871,
+    "virtual": false,
+    "on": true
+  },
+  "65804": {
+    "_id": 65804,
+    "name": "[AL Garage]Result",
+    "link0": 10616871,
+    "link1": 0,
+    "virtual": false,
+    "on": false
+  },
+  "65805": {
+    "_id": 65805,
+    "name": "[Home Assistant]Enable",
+    "link0": 0,
+    "link1": 1835008,
+    "virtual": false,
+    "on": false
+  },
+  "65806": {
+    "_id": 65806,
+    "name": "[Home Assistant]Fault",
+    "link0": 1835008,
+    "link1": 0,
+    "virtual": false,
+    "on": false
+  },
+  "65807": {
+    "_id": 65807,
+    "name": "[Fader Salon]Start",
+    "link0": 0,
+    "link1": 1769472,
+    "virtual": false,
+    "on": false
+  },
+  "65808": {
+    "_id": 65808,
+    "name": "[Fader Salon]Loop On/Off",
+    "link0": 0,
+    "link1": 1769472,
+    "virtual": false,
+    "on": false
+  },
+  "65809": {
+    "_id": 65809,
+    "name": "[Int Droite Salon]Input",
+    "link0": 10485760,
+    "link1": 14286849,
+    "virtual": false,
+    "on": false
+  },
+  "65810": {
+    "_id": 65810,
+    "name": "[Int Droite Salon]Output",
+    "link0": 14286849,
+    "link1": 0,
+    "virtual": false,
+    "on": true
+  },
+  "65811": {
+    "_id": 65811,
+    "name": "[Int Droite Salon]long click",
+    "link0": 14286849,
+    "link1": 0,
+    "virtual": false,
+    "on": false
+  },
+  "65812": {
+    "_id": 65812,
+    "name": "[Appui long]Enable",
+    "link0": 0,
+    "link1": 10616872,
+    "virtual": false,
+    "on": true
+  },
+  "65813": {
+    "_id": 65813,
+    "name": "[Appui long]Result",
+    "link0": 10616872,
+    "link1": 0,
+    "virtual": false,
+    "on": false
+  },
+  "65814": {
+    "_id": 65814,
+    "name": "[Sync preset]Enable",
+    "link0": 0,
+    "link1": 10616873,
+    "virtual": false,
+    "on": true
+  },
+  "65815": {
+    "_id": 65815,
+    "name": "[Sync preset]Result",
+    "link0": 10616873,
+    "link1": 0,
+    "virtual": false,
+    "on": true
+  },
+  "65816": {
+    "_id": 65816,
+    "name": "[On cin\u00e9ma]Enable",
+    "link0": 0,
+    "link1": 10616874,
+    "virtual": false,
+    "on": true
+  },
+  "65817": {
+    "_id": 65817,
+    "name": "[On cin\u00e9ma]Result",
+    "link0": 10616874,
+    "link1": 0,
+    "virtual": false,
+    "on": false
+  },
+  "65818": {
+    "_id": 65818,
+    "name": "[XDIMMER N\u00b00] 1 Input SaM",
+    "link0": 10485771,
+    "link1": 4849664,
+    "virtual": false,
+    "on": false
+  },
+  "65819": {
+    "_id": 65819,
+    "name": "[XDIMMER N\u00b00] 2 Input Ewan",
+    "link0": 0,
+    "link1": 4849664,
+    "virtual": false,
+    "on": false
+  },
+  "65820": {
+    "_id": 65820,
+    "name": "[XDIMMER N\u00b00] 3 Input Chev Mat",
+    "link0": 0,
+    "link1": 4849664,
+    "virtual": false,
+    "on": false
+  },
+  "65821": {
+    "_id": 65821,
+    "name": "[Push N\u00b012]On/Off",
+    "link0": 0,
+    "link1": 1114124,
+    "virtual": false,
+    "on": false
+  },
+  "65822": {
+    "_id": 65822,
+    "name": "[Sonnette]Enable",
+    "link0": 0,
+    "link1": 10616876,
+    "virtual": false,
+    "on": true
+  },
+  "65823": {
+    "_id": 65823,
+    "name": "[Sonnette]Result",
+    "link0": 10616876,
+    "link1": 0,
+    "virtual": false,
+    "on": false
+  },
+  "65824": {
+    "_id": 65824,
+    "name": "[XPSU]AC Detection",
+    "link0": 9437184,
+    "link1": 0,
+    "virtual": false,
+    "on": false
+  },
+  "65825": {
+    "_id": 65825,
+    "name": "[XDIMMER N\u00b00] 4 Input Chev Mel",
+    "link0": 0,
+    "link1": 4849664,
+    "virtual": false,
+    "on": false
+  },
+  "65826": {
+    "_id": 65826,
+    "name": "[COMPARATOR Lum Cuisine]Enable",
+    "link0": 0,
+    "link1": 1376261,
+    "virtual": false,
+    "on": true
+  },
+  "65827": {
+    "_id": 65827,
+    "name": "[HA Int Esc]On/Off",
+    "link0": 0,
+    "link1": 1114125,
+    "virtual": false,
+    "on": false
+  },
+  "65828": {
+    "_id": 65828,
+    "name": "[COMPARATOR Lum Cuisine]Output",
+    "link0": 1376261,
+    "link1": 0,
+    "virtual": false,
+    "on": false
+  },
+  "65829": {
+    "_id": 65829,
+    "name": "[Off luminosit\u00e9]Enable",
+    "link0": 0,
+    "link1": 10616875,
+    "virtual": false,
+    "on": true
+  },
+  "65830": {
+    "_id": 65830,
+    "name": "[Off luminosit\u00e9]Result",
+    "link0": 10616875,
+    "link1": 0,
+    "virtual": false,
+    "on": true
+  },
+  "65831": {
+    "_id": 65831,
+    "name": "[Capteur Rez-de-Chauss\u00e9e]Fault",
+    "link0": 4521984,
+    "link1": 0,
+    "virtual": false,
+    "on": false
+  },
+  "65832": {
+    "_id": 65832,
+    "name": "[COMPARATOR Lum RDC max]Enable",
+    "link0": 0,
+    "link1": 1376259,
+    "virtual": false,
+    "on": true
+  },
+  "65833": {
+    "_id": 65833,
+    "name": "[COMPARATOR Lum RDC max]Output",
+    "link0": 1376259,
+    "link1": 0,
+    "virtual": false,
+    "on": true
+  },
+  "65834": {
+    "_id": 65834,
+    "name": "[Lum Off]Enable",
+    "link0": 0,
+    "link1": 10616880,
+    "virtual": false,
+    "on": true
+  },
+  "65835": {
+    "_id": 65835,
+    "name": "[Lum Off]Result",
+    "link0": 10616880,
+    "link1": 0,
+    "virtual": false,
+    "on": true
+  },
+  "65836": {
+    "_id": 65836,
+    "name": "[Off Det]Enable",
+    "link0": 0,
+    "link1": 10616881,
+    "virtual": false,
+    "on": true
+  },
+  "65837": {
+    "_id": 65837,
+    "name": "[Off Det]Result",
+    "link0": 10616881,
+    "link1": 0,
+    "virtual": false,
+    "on": true
+  },
+  "65838": {
+    "_id": 65838,
+    "name": "[Off Lum]Enable",
+    "link0": 0,
+    "link1": 10616882,
+    "virtual": false,
+    "on": true
+  },
+  "65839": {
+    "_id": 65839,
+    "name": "[Off Lum]Result",
+    "link0": 10616882,
+    "link1": 0,
+    "virtual": false,
+    "on": false
+  },
+  "65840": {
+    "_id": 65840,
+    "name": "[COMPARATOR Lum SdB Max]Enable",
+    "link0": 0,
+    "link1": 1376260,
+    "virtual": false,
+    "on": true
+  },
+  "65841": {
+    "_id": 65841,
+    "name": "[COMPARATOR Lum SdB Max]Output",
+    "link0": 1376260,
+    "link1": 0,
+    "virtual": false,
+    "on": false
+  },
+  "65842": {
+    "_id": 65842,
+    "name": "[Int SdB]Input",
+    "link0": 10485773,
+    "link1": 14155778,
+    "virtual": false,
+    "on": false
+  },
+  "65843": {
+    "_id": 65843,
+    "name": "[WEATHER]Day/Night",
+    "link0": 8454144,
+    "link1": 0,
+    "virtual": false,
+    "on": true
+  },
+  "65844": {
+    "_id": 65844,
+    "name": "[Int SdB]Output",
+    "link0": 14155778,
+    "link1": 10485767,
+    "virtual": false,
+    "on": false
+  },
+  "65845": {
+    "_id": 65845,
+    "name": "[Int Salon]Input",
+    "link0": 10485780,
+    "link1": 14155779,
+    "virtual": false,
+    "on": false
+  },
+  "65846": {
+    "_id": 65846,
+    "name": "[Int Salon]Output",
+    "link0": 14155779,
+    "link1": 10485782,
+    "virtual": false,
+    "on": true
+  },
+  "65851": {
+    "_id": 65851,
+    "name": "[Escalier]On/Off",
+    "link0": 0,
+    "link1": 1572881,
+    "virtual": false,
+    "on": false
+  },
+  "196608": {
+    "_id": 196608,
+    "link0": 9437184,
+    "link1": 0,
+    "name": "[DIAG]NB CONNECTIONS RUNNING",
+    "unit": "RAW",
+    "nbdecimal": 0,
+    "virtual": false,
+    "value": 0
+  },
+  "196610": {
+    "_id": 196610,
+    "link0": 4849664,
+    "link1": 0,
+    "name": "[XDIMMER N\u00b00] 1 Etat SaM",
+    "unit": "%",
+    "nbdecimal": 0,
+    "virtual": false,
+    "value": 0
+  },
+  "196612": {
+    "_id": 196612,
+    "link0": 4849664,
+    "link1": 0,
+    "name": "[XDIMMER N\u00b00] 2 Etat Ewan",
+    "unit": "%",
+    "nbdecimal": 0,
+    "virtual": false,
+    "value": 0
+  },
+  "196614": {
+    "_id": 196614,
+    "link0": 4849664,
+    "link1": 0,
+    "name": "[XDIMMER N\u00b00] 3 Etat Chevet Mat",
+    "unit": "%",
+    "nbdecimal": 0,
+    "virtual": false,
+    "value": 0
+  },
+  "196616": {
+    "_id": 196616,
+    "link0": 4849664,
+    "link1": 0,
+    "name": "[XDIMMER N\u00b00] 4 Etat Chevet Mel",
+    "unit": "%",
+    "nbdecimal": 0,
+    "virtual": false,
+    "value": 0
+  },
+  "196617": {
+    "_id": 196617,
+    "link0": 0,
+    "link1": 4849664,
+    "name": "[XDIMMER N\u00b00]Fade speed",
+    "unit": "S",
+    "nbdecimal": 0,
+    "virtual": false,
+    "value": 2
+  },
+  "196618": {
+    "_id": 196618,
+    "link0": 10485792,
+    "link1": 4653056,
+    "name": "[XPWM N\u00b00] 1 Spots Cuisine",
+    "unit": "%",
+    "nbdecimal": 0,
+    "virtual": false,
+    "value": 0
+  },
+  "196619": {
+    "_id": 196619,
+    "link0": 10485762,
+    "link1": 4653056,
+    "name": "[XPWM N\u00b00] 2 WC",
+    "unit": "%",
+    "nbdecimal": 0,
+    "virtual": false,
+    "value": 0
+  },
+  "196620": {
+    "_id": 196620,
+    "link0": 10485783,
+    "link1": 4653056,
+    "name": "[XPWM N\u00b00] 3 Escalier",
+    "unit": "%",
+    "nbdecimal": 0,
+    "virtual": false,
+    "value": 0
+  },
+  "196621": {
+    "_id": 196621,
+    "link0": 10485777,
+    "link1": 4653056,
+    "name": "[XPWM N\u00b00] 4 Meuble SaM",
+    "unit": "%",
+    "nbdecimal": 0,
+    "virtual": false,
+    "value": 0
+  },
+  "196622": {
+    "_id": 196622,
+    "link0": 10485774,
+    "link1": 4653056,
+    "name": "[XPWM N\u00b00] 5 Dressing",
+    "unit": "%",
+    "nbdecimal": 0,
+    "virtual": false,
+    "value": 0
+  },
+  "196623": {
+    "_id": 196623,
+    "link0": 10485768,
+    "link1": 4653056,
+    "name": "[XPWM N\u00b00] 6 Couloir",
+    "unit": "%",
+    "nbdecimal": 0,
+    "virtual": false,
+    "value": 0
+  },
+  "196624": {
+    "_id": 196624,
+    "link0": 0,
+    "link1": 4653056,
+    "name": "[XPWM N\u00b00]Consign 7",
+    "unit": "%",
+    "nbdecimal": 0,
+    "virtual": false,
+    "value": 0
+  },
+  "196625": {
+    "_id": 196625,
+    "link0": 10485784,
+    "link1": 4653056,
+    "name": "[XPWM N\u00b00] 8 SdB",
+    "unit": "%",
+    "nbdecimal": 0,
+    "virtual": false,
+    "value": 0
+  },
+  "196626": {
+    "_id": 196626,
+    "link0": 0,
+    "link1": 4653056,
+    "name": "[XPWM N\u00b00] 9 Consigne Salon R",
+    "unit": "%",
+    "nbdecimal": 0,
+    "virtual": false,
+    "value": 0
+  },
+  "196627": {
+    "_id": 196627,
+    "link0": 0,
+    "link1": 4653056,
+    "name": "[XPWM N\u00b00] 10 Consigne Salon G",
+    "unit": "%",
+    "nbdecimal": 0,
+    "virtual": false,
+    "value": 0
+  },
+  "196628": {
+    "_id": 196628,
+    "link0": 0,
+    "link1": 4653056,
+    "name": "[XPWM N\u00b00] 11 Consigne Salon B",
+    "unit": "%",
+    "nbdecimal": 0,
+    "virtual": false,
+    "value": 0
+  },
+  "196629": {
+    "_id": 196629,
+    "link0": 10485765,
+    "link1": 4653056,
+    "name": "[XPWM N\u00b00] 12 Consigne Salon W",
+    "unit": "%",
+    "nbdecimal": 0,
+    "virtual": false,
+    "value": 0
+  },
+  "196630": {
+    "_id": 196630,
+    "link0": 10485766,
+    "link1": 0,
+    "name": "Valeur 0",
+    "unit": "REAL",
+    "nbdecimal": 0,
+    "virtual": true,
+    "value": 0
+  },
+  "196631": {
+    "_id": 196631,
+    "link0": 0,
+    "link1": 0,
+    "name": "Seuil lum SaM",
+    "unit": "Lux",
+    "nbdecimal": 0,
+    "virtual": true,
+    "value": 30
+  },
+  "196632": {
+    "_id": 196632,
+    "link0": 0,
+    "link1": 10485778,
+    "name": "Valeur 20",
+    "unit": "REAL",
+    "nbdecimal": 0,
+    "virtual": true,
+    "value": 20
+  },
+  "196633": {
+    "_id": 196633,
+    "link0": 0,
+    "link1": 1769472,
+    "name": "[Fader Salon]Fade time",
+    "unit": "S",
+    "nbdecimal": 0,
+    "virtual": false,
+    "value": 6
+  },
+  "196634": {
+    "_id": 196634,
+    "link0": 1769472,
+    "link1": 10485765,
+    "name": "[Fader Salon]Output",
+    "unit": "RAW",
+    "nbdecimal": 0,
+    "virtual": false,
+    "value": 86
+  },
+  "196635": {
+    "_id": 196635,
+    "link0": 0,
+    "link1": 0,
+    "name": "Valeur 100",
+    "unit": "REAL",
+    "nbdecimal": 0,
+    "virtual": true,
+    "value": 100
+  },
+  "196636": {
+    "_id": 196636,
+    "link0": 8454144,
+    "link1": 0,
+    "name": "[WEATHER]Levels day",
+    "unit": "RAW",
+    "nbdecimal": 0,
+    "virtual": false,
+    "value": 2
+  },
+  "196637": {
+    "_id": 196637,
+    "link0": 8454144,
+    "link1": 0,
+    "name": "[WEATHER]Levels day + 1",
+    "unit": "RAW",
+    "nbdecimal": 0,
+    "virtual": false,
+    "value": 2
+  },
+  "196638": {
+    "_id": 196638,
+    "link0": 8454144,
+    "link1": 0,
+    "name": "[WEATHER]Levels day + 2",
+    "unit": "RAW",
+    "nbdecimal": 0,
+    "virtual": false,
+    "value": 2
+  },
+  "196639": {
+    "_id": 196639,
+    "link0": 8454144,
+    "link1": 0,
+    "name": "[WEATHER]Levels day + 3",
+    "unit": "RAW",
+    "nbdecimal": 0,
+    "virtual": false,
+    "value": 2
+  },
+  "196640": {
+    "_id": 196640,
+    "link0": 8454144,
+    "link1": 0,
+    "name": "[WEATHER]Levels day + 4",
+    "unit": "RAW",
+    "nbdecimal": 0,
+    "virtual": false,
+    "value": 2
+  },
+  "196641": {
+    "_id": 196641,
+    "link0": 8454144,
+    "link1": 0,
+    "name": "[WEATHER]Levels day + 5",
+    "unit": "RAW",
+    "nbdecimal": 0,
+    "virtual": false,
+    "value": 4
+  },
+  "196642": {
+    "_id": 196642,
+    "link0": 8454144,
+    "link1": 0,
+    "name": "[WEATHER]Levels day + 6",
+    "unit": "RAW",
+    "nbdecimal": 0,
+    "virtual": false,
+    "value": 2
+  },
+  "196643": {
+    "_id": 196643,
+    "link0": 8454144,
+    "link1": 0,
+    "name": "[WEATHER]Levels day + 7",
+    "unit": "RAW",
+    "nbdecimal": 0,
+    "virtual": false,
+    "value": 4
+  },
+  "262144": {
+    "_id": 262144,
+    "link0": 12713984,
+    "link1": 0,
+    "name": "[IPX] 1 Lum Cuisine",
+    "unit": "RAW",
+    "nbdecimal": 0,
+    "virtual": false,
+    "value": 13004
+  },
+  "262145": {
+    "_id": 262145,
+    "link0": 12713985,
+    "link1": 10485781,
+    "name": "[IPX] 2 Lum SdB",
+    "unit": "RAW",
+    "nbdecimal": 0,
+    "virtual": false,
+    "value": 11803
+  },
+  "262146": {
+    "_id": 262146,
+    "link0": 12713986,
+    "link1": 0,
+    "name": "[IPX] 3 Vide",
+    "unit": "RAW",
+    "nbdecimal": 0,
+    "virtual": false,
+    "value": 0
+  },
+  "262147": {
+    "_id": 262147,
+    "link0": 12713987,
+    "link1": 0,
+    "name": "[IPX] 4 Vide",
+    "unit": "RAW",
+    "nbdecimal": 0,
+    "virtual": false,
+    "value": 0
+  },
+  "262148": {
+    "_id": 262148,
+    "link0": 9437184,
+    "link1": 0,
+    "name": "[DIAG]PERIOD (CHARGE)",
+    "unit": "%",
+    "nbdecimal": 0,
+    "virtual": false,
+    "value": 1
+  },
+  "262149": {
+    "_id": 262149,
+    "link0": 9437184,
+    "link1": 0,
+    "name": "[DIAG]APP (CHARGE)",
+    "unit": "%",
+    "nbdecimal": 0,
+    "virtual": false,
+    "value": 0
+  },
+  "262150": {
+    "_id": 262150,
+    "link0": 9437184,
+    "link1": 0,
+    "name": "[DIAG]RULE-ENGINE (CHARGE)",
+    "unit": "%",
+    "nbdecimal": 0,
+    "virtual": false,
+    "value": 3
+  },
+  "262151": {
+    "_id": 262151,
+    "link0": 9437184,
+    "link1": 0,
+    "name": "[DIAG]EBX (CHARGE)",
+    "unit": "%",
+    "nbdecimal": 0,
+    "virtual": false,
+    "value": 0
+  },
+  "262152": {
+    "_id": 262152,
+    "link0": 9437184,
+    "link1": 0,
+    "name": "[DIAG]BSP (CHARGE)",
+    "unit": "%",
+    "nbdecimal": 0,
+    "virtual": false,
+    "value": 0
+  },
+  "262153": {
+    "_id": 262153,
+    "link0": 4521984,
+    "link1": 10485786,
+    "name": "[Capteur Rez-de-Chauss\u00e9e]Temperature",
+    "unit": "\u00b0C",
+    "nbdecimal": 2,
+    "virtual": false,
+    "value": 24.22
+  },
+  "262154": {
+    "_id": 262154,
+    "link0": 4521984,
+    "link1": 0,
+    "name": "[Capteur Rez-de-Chauss\u00e9e]Humidity",
+    "unit": "RH",
+    "nbdecimal": 2,
+    "virtual": false,
+    "value": 72.85
+  },
+  "262155": {
+    "_id": 262155,
+    "link0": 4521984,
+    "link1": 10485772,
+    "name": "[Capteur Rez-de-Chauss\u00e9e]Luminosity",
+    "unit": "Lux",
+    "nbdecimal": 0,
+    "virtual": false,
+    "value": 174
+  },
+  "262156": {
+    "_id": 262156,
+    "link0": 1572868,
+    "link1": 10485762,
+    "name": "[WC normal]Consign",
+    "unit": "%",
+    "nbdecimal": 0,
+    "virtual": false,
+    "value": 0
+  },
+  "262157": {
+    "_id": 262157,
+    "link0": 13697025,
+    "link1": 0,
+    "name": "[TEMPO Det SaM]Countdown",
+    "unit": "S",
+    "nbdecimal": 0,
+    "virtual": false,
+    "value": 0
+  },
+  "262158": {
+    "_id": 262158,
+    "link0": 13697026,
+    "link1": 0,
+    "name": "[TEMPO Det Dressing]Countdown",
+    "unit": "S",
+    "nbdecimal": 0,
+    "virtual": false,
+    "value": 0
+  },
+  "262159": {
+    "_id": 262159,
+    "link0": 13697027,
+    "link1": 0,
+    "name": "[TEMPO Det Cuisine]Countdown",
+    "unit": "S",
+    "nbdecimal": 0,
+    "virtual": false,
+    "value": 0
+  },
+  "262160": {
+    "_id": 262160,
+    "link0": 13697028,
+    "link1": 0,
+    "name": "[TEMPO Det Garage]Countdown",
+    "unit": "S",
+    "nbdecimal": 0,
+    "virtual": false,
+    "value": 0
+  },
+  "262161": {
+    "_id": 262161,
+    "link0": 13697029,
+    "link1": 0,
+    "name": "[TEMPO Det Couloir]Countdown",
+    "unit": "S",
+    "nbdecimal": 0,
+    "virtual": false,
+    "value": 6
+  },
+  "262162": {
+    "_id": 262162,
+    "link0": 13697030,
+    "link1": 0,
+    "name": "[TEMPO Det Escalier]Countdown",
+    "unit": "S",
+    "nbdecimal": 0,
+    "virtual": false,
+    "value": 0
+  },
+  "262163": {
+    "_id": 262163,
+    "link0": 13697031,
+    "link1": 0,
+    "name": "[TEMPO Det WC]Countdown",
+    "unit": "S",
+    "nbdecimal": 0,
+    "virtual": false,
+    "value": 0
+  },
+  "262164": {
+    "_id": 262164,
+    "link0": 13697032,
+    "link1": 0,
+    "name": "[TEMPO Det SdB]Countdown",
+    "unit": "S",
+    "nbdecimal": 0,
+    "virtual": false,
+    "value": 0
+  },
+  "262165": {
+    "_id": 262165,
+    "link0": 0,
+    "link1": 0,
+    "name": "Seuil Lum SdB",
+    "unit": "REAL",
+    "nbdecimal": 0,
+    "virtual": true,
+    "value": 6000
+  },
+  "262166": {
+    "_id": 262166,
+    "link0": 1572864,
+    "link1": 10485774,
+    "name": "[Dressing fort]Consign",
+    "unit": "%",
+    "nbdecimal": 0,
+    "virtual": false,
+    "value": 0
+  },
+  "262167": {
+    "_id": 262167,
+    "link0": 1572865,
+    "link1": 10485774,
+    "name": "[Dressing faible]Consign",
+    "unit": "%",
+    "nbdecimal": 0,
+    "virtual": false,
+    "value": 0
+  },
+  "262168": {
+    "_id": 262168,
+    "link0": 1572866,
+    "link1": 10485768,
+    "name": "[Couloir fort]Consign",
+    "unit": "%",
+    "nbdecimal": 0,
+    "virtual": false,
+    "value": 0
+  },
+  "262169": {
+    "_id": 262169,
+    "link0": 1572867,
+    "link1": 10485768,
+    "name": "[Couloir faible]Consign",
+    "unit": "%",
+    "nbdecimal": 0,
+    "virtual": false,
+    "value": 0
+  },
+  "262170": {
+    "_id": 262170,
+    "link0": 1572869,
+    "link1": 10485784,
+    "name": "[SdB fort]Consign",
+    "unit": "%",
+    "nbdecimal": 0,
+    "virtual": false,
+    "value": 0
+  },
+  "262171": {
+    "_id": 262171,
+    "link0": 1572870,
+    "link1": 10485784,
+    "name": "[SdB faible]Consign",
+    "unit": "%",
+    "nbdecimal": 0,
+    "virtual": false,
+    "value": 0
+  },
+  "262172": {
+    "_id": 262172,
+    "link0": 1572871,
+    "link1": 10485765,
+    "name": "[Salon normal]Consign",
+    "unit": "%",
+    "nbdecimal": 0,
+    "virtual": false,
+    "value": 50
+  },
+  "262173": {
+    "_id": 262173,
+    "link0": 0,
+    "link1": 1638400,
+    "name": "[Thermostat]Set-point",
+    "unit": "\u00b0C",
+    "nbdecimal": 1,
+    "virtual": false,
+    "value": 15
+  },
+  "262174": {
+    "_id": 262174,
+    "link0": 10485786,
+    "link1": 1638400,
+    "name": "[Thermostat]Measure",
+    "unit": "\u00b0C",
+    "nbdecimal": 1,
+    "virtual": false,
+    "value": 24.2
+  },
+  "262175": {
+    "_id": 262175,
+    "link0": 1114112,
+    "link1": 0,
+    "name": "[HA Det Salle de bains]Status",
+    "unit": "RAW",
+    "nbdecimal": 0,
+    "virtual": false,
+    "value": 0
+  },
+  "262176": {
+    "_id": 262176,
+    "link0": 1572872,
+    "link1": 10485792,
+    "name": "[Spots cuisine fort]Consign",
+    "unit": "%",
+    "nbdecimal": 0,
+    "virtual": false,
+    "value": 0
+  },
+  "262177": {
+    "_id": 262177,
+    "link0": 1572873,
+    "link1": 10485792,
+    "name": "[Spots cuisine faible]Consign",
+    "unit": "%",
+    "nbdecimal": 0,
+    "virtual": false,
+    "value": 0
+  },
+  "262178": {
+    "_id": 262178,
+    "link0": 1572874,
+    "link1": 0,
+    "name": "[Seuil luminosit\u00e9 SdB]Consign",
+    "unit": "%",
+    "nbdecimal": 0,
+    "virtual": false,
+    "value": 100
+  },
+  "262179": {
+    "_id": 262179,
+    "link0": 13828096,
+    "link1": 0,
+    "name": "[Sonnette]Countdown(TA)",
+    "unit": "S",
+    "nbdecimal": 0,
+    "virtual": false,
+    "value": 0
+  },
+  "262180": {
+    "_id": 262180,
+    "link0": 13828096,
+    "link1": 0,
+    "name": "[Sonnette]Countdown(TB)",
+    "unit": "S",
+    "nbdecimal": 0,
+    "virtual": false,
+    "value": 0
+  },
+  "262181": {
+    "_id": 262181,
+    "link0": 1572876,
+    "link1": 10485770,
+    "name": "[Salon faible]Consign",
+    "unit": "%",
+    "nbdecimal": 0,
+    "virtual": false,
+    "value": 20
+  },
+  "262182": {
+    "_id": 262182,
+    "link0": 1572877,
+    "link1": 10485761,
+    "name": "[Chevets]Consign",
+    "unit": "%",
+    "nbdecimal": 0,
+    "virtual": false,
+    "value": 30
+  },
+  "262183": {
+    "_id": 262183,
+    "link0": 1572875,
+    "link1": 0,
+    "name": "[Seuil luminosit\u00e9 RDC]Consign",
+    "unit": "%",
+    "nbdecimal": 0,
+    "virtual": false,
+    "value": 80
+  },
+  "262184": {
+    "_id": 262184,
+    "link0": 1572878,
+    "link1": 0,
+    "name": "[Seuil luminosit\u00e9 couloir]Consign",
+    "unit": "%",
+    "nbdecimal": 0,
+    "virtual": false,
+    "value": 80
+  },
+  "262185": {
+    "_id": 262185,
+    "link0": 13828105,
+    "link1": 0,
+    "name": "[Porte Garage]Countdown(TA)",
+    "unit": "S",
+    "nbdecimal": 0,
+    "virtual": false,
+    "value": 0
+  },
+  "262186": {
+    "_id": 262186,
+    "link0": 13828105,
+    "link1": 0,
+    "name": "[Porte Garage]Countdown(TB)",
+    "unit": "S",
+    "nbdecimal": 0,
+    "virtual": false,
+    "value": 0
+  },
+  "262187": {
+    "_id": 262187,
+    "link0": 0,
+    "link1": 1245184,
+    "name": "[Compteur eau]Step value",
+    "unit": "REAL",
+    "nbdecimal": 0,
+    "virtual": false,
+    "value": 1
+  },
+  "262188": {
+    "_id": 262188,
+    "link0": 1572879,
+    "link1": 10485777,
+    "name": "[Meuble SaM]Consign",
+    "unit": "%",
+    "nbdecimal": 0,
+    "virtual": false,
+    "value": 0
+  },
+  "262189": {
+    "_id": 262189,
+    "link0": 1572880,
+    "link1": 10485777,
+    "name": "[Meuble SaM OFF]Consign",
+    "unit": "%",
+    "nbdecimal": 0,
+    "virtual": false,
+    "value": 0
+  },
+  "262190": {
+    "_id": 262190,
+    "link0": 1114113,
+    "link1": 0,
+    "name": "[HA Det SaM]Status",
+    "unit": "RAW",
+    "nbdecimal": 0,
+    "virtual": false,
+    "value": 0
+  },
+  "262191": {
+    "_id": 262191,
+    "link0": 1114114,
+    "link1": 0,
+    "name": "[HA Det Couloir]Status",
+    "unit": "RAW",
+    "nbdecimal": 0,
+    "virtual": false,
+    "value": 0
+  },
+  "262192": {
+    "_id": 262192,
+    "link0": 1114115,
+    "link1": 0,
+    "name": "[HA Det Cuisine]Status",
+    "unit": "RAW",
+    "nbdecimal": 0,
+    "virtual": false,
+    "value": 0
+  },
+  "262193": {
+    "_id": 262193,
+    "link0": 1114116,
+    "link1": 0,
+    "name": "[HA Det Escalier]Status",
+    "unit": "RAW",
+    "nbdecimal": 0,
+    "virtual": false,
+    "value": 200
+  },
+  "262194": {
+    "_id": 262194,
+    "link0": 1114117,
+    "link1": 0,
+    "name": "[HA Det Dressing]Status",
+    "unit": "RAW",
+    "nbdecimal": 0,
+    "virtual": false,
+    "value": 0
+  },
+  "262195": {
+    "_id": 262195,
+    "link0": 1114118,
+    "link1": 0,
+    "name": "[HA Det Garage]Status",
+    "unit": "RAW",
+    "nbdecimal": 0,
+    "virtual": false,
+    "value": 0
+  },
+  "262196": {
+    "_id": 262196,
+    "link0": 1114119,
+    "link1": 0,
+    "name": "[HA Det WC]Status",
+    "unit": "RAW",
+    "nbdecimal": 0,
+    "virtual": false,
+    "value": 0
+  },
+  "262197": {
+    "_id": 262197,
+    "link0": 1114120,
+    "link1": 0,
+    "name": "[HA AL Bureau]Status",
+    "unit": "RAW",
+    "nbdecimal": 0,
+    "virtual": false,
+    "value": 0
+  },
+  "262198": {
+    "_id": 262198,
+    "link0": 1114121,
+    "link1": 0,
+    "name": "[HA AL Chambre]Status",
+    "unit": "RAW",
+    "nbdecimal": 0,
+    "virtual": false,
+    "value": 0
+  },
+  "262199": {
+    "_id": 262199,
+    "link0": 1114122,
+    "link1": 0,
+    "name": "[HA AL Garage]Status",
+    "unit": "RAW",
+    "nbdecimal": 0,
+    "virtual": false,
+    "value": 0
+  },
+  "262200": {
+    "_id": 262200,
+    "link0": 1114123,
+    "link1": 0,
+    "name": "[HA AL Cuisine]Status",
+    "unit": "RAW",
+    "nbdecimal": 0,
+    "virtual": false,
+    "value": 0
+  },
+  "262201": {
+    "_id": 262201,
+    "link0": 1114124,
+    "link1": 0,
+    "name": "[HA Sonnette]Status",
+    "unit": "RAW",
+    "nbdecimal": 0,
+    "virtual": false,
+    "value": 0
+  },
+  "262202": {
+    "_id": 262202,
+    "link0": 1114125,
+    "link1": 0,
+    "name": "[HA Int Esc]Status",
+    "unit": "RAW",
+    "nbdecimal": 0,
+    "virtual": false,
+    "value": 0
+  },
+  "262203": {
+    "_id": 262203,
+    "link0": 8454144,
+    "link1": 0,
+    "name": "[WEATHER]Temperature day",
+    "unit": "\u00b0C",
+    "nbdecimal": 2,
+    "virtual": false,
+    "value": 15.4
+  },
+  "262204": {
+    "_id": 262204,
+    "link0": 8454144,
+    "link1": 0,
+    "name": "[WEATHER]Pressure day",
+    "unit": "hPa",
+    "nbdecimal": 0,
+    "virtual": false,
+    "value": 1012
+  },
+  "262205": {
+    "_id": 262205,
+    "link0": 8454144,
+    "link1": 0,
+    "name": "[WEATHER]Humidity day",
+    "unit": "RH",
+    "nbdecimal": 0,
+    "virtual": false,
+    "value": 90
+  },
+  "262206": {
+    "_id": 262206,
+    "link0": 8454144,
+    "link1": 0,
+    "name": "[WEATHER]Wind speed day",
+    "unit": "meter/sec",
+    "nbdecimal": 2,
+    "virtual": false,
+    "value": 4.12
+  },
+  "262207": {
+    "_id": 262207,
+    "link0": 8454144,
+    "link1": 0,
+    "name": "[WEATHER]Clouds day",
+    "unit": "%",
+    "nbdecimal": 2,
+    "virtual": false,
+    "value": 100
+  },
+  "262208": {
+    "_id": 262208,
+    "link0": 8454144,
+    "link1": 0,
+    "name": "[WEATHER]Temperature day + 1",
+    "unit": "\u00b0C",
+    "nbdecimal": 2,
+    "virtual": false,
+    "value": 21.53
+  },
+  "262209": {
+    "_id": 262209,
+    "link0": 8454144,
+    "link1": 0,
+    "name": "[WEATHER]Pressure day + 1",
+    "unit": "hPa",
+    "nbdecimal": 0,
+    "virtual": false,
+    "value": 1016
+  },
+  "262210": {
+    "_id": 262210,
+    "link0": 8454144,
+    "link1": 0,
+    "name": "[WEATHER]Humidity day + 1",
+    "unit": "RH",
+    "nbdecimal": 0,
+    "virtual": false,
+    "value": 63
+  },
+  "262211": {
+    "_id": 262211,
+    "link0": 8454144,
+    "link1": 0,
+    "name": "[WEATHER]Wind speed day + 1",
+    "unit": "meter/sec",
+    "nbdecimal": 2,
+    "virtual": false,
+    "value": 5.73
+  },
+  "262212": {
+    "_id": 262212,
+    "link0": 8454144,
+    "link1": 0,
+    "name": "[WEATHER]Clouds day + 1",
+    "unit": "%",
+    "nbdecimal": 2,
+    "virtual": false,
+    "value": 100
+  },
+  "262213": {
+    "_id": 262213,
+    "link0": 8454144,
+    "link1": 0,
+    "name": "[WEATHER]Temperature day + 2",
+    "unit": "\u00b0C",
+    "nbdecimal": 2,
+    "virtual": false,
+    "value": 19.37
+  },
+  "262214": {
+    "_id": 262214,
+    "link0": 8454144,
+    "link1": 0,
+    "name": "[WEATHER]Pressure day + 2",
+    "unit": "hPa",
+    "nbdecimal": 0,
+    "virtual": false,
+    "value": 1019
+  },
+  "262215": {
+    "_id": 262215,
+    "link0": 8454144,
+    "link1": 0,
+    "name": "[WEATHER]Humidity day + 2",
+    "unit": "RH",
+    "nbdecimal": 0,
+    "virtual": false,
+    "value": 73
+  },
+  "262216": {
+    "_id": 262216,
+    "link0": 8454144,
+    "link1": 0,
+    "name": "[WEATHER]Wind speed day + 2",
+    "unit": "meter/sec",
+    "nbdecimal": 2,
+    "virtual": false,
+    "value": 5.15
+  },
+  "262217": {
+    "_id": 262217,
+    "link0": 8454144,
+    "link1": 0,
+    "name": "[WEATHER]Clouds day + 2",
+    "unit": "%",
+    "nbdecimal": 2,
+    "virtual": false,
+    "value": 100
+  },
+  "262218": {
+    "_id": 262218,
+    "link0": 8454144,
+    "link1": 0,
+    "name": "[WEATHER]Temperature day + 3",
+    "unit": "\u00b0C",
+    "nbdecimal": 2,
+    "virtual": false,
+    "value": 23.01
+  },
+  "262219": {
+    "_id": 262219,
+    "link0": 8454144,
+    "link1": 0,
+    "name": "[WEATHER]Pressure day + 3",
+    "unit": "hPa",
+    "nbdecimal": 0,
+    "virtual": false,
+    "value": 1013
+  },
+  "262220": {
+    "_id": 262220,
+    "link0": 8454144,
+    "link1": 0,
+    "name": "[WEATHER]Humidity day + 3",
+    "unit": "RH",
+    "nbdecimal": 0,
+    "virtual": false,
+    "value": 48
+  },
+  "262221": {
+    "_id": 262221,
+    "link0": 8454144,
+    "link1": 0,
+    "name": "[WEATHER]Wind speed day + 3",
+    "unit": "meter/sec",
+    "nbdecimal": 2,
+    "virtual": false,
+    "value": 7.33
+  },
+  "262222": {
+    "_id": 262222,
+    "link0": 8454144,
+    "link1": 0,
+    "name": "[WEATHER]Clouds day + 3",
+    "unit": "%",
+    "nbdecimal": 2,
+    "virtual": false,
+    "value": 98
+  },
+  "262223": {
+    "_id": 262223,
+    "link0": 8454144,
+    "link1": 0,
+    "name": "[WEATHER]Temperature day + 4",
+    "unit": "\u00b0C",
+    "nbdecimal": 2,
+    "virtual": false,
+    "value": 18.7
+  },
+  "262224": {
+    "_id": 262224,
+    "link0": 8454144,
+    "link1": 0,
+    "name": "[WEATHER]Pressure day + 4",
+    "unit": "hPa",
+    "nbdecimal": 0,
+    "virtual": false,
+    "value": 1017
+  },
+  "262225": {
+    "_id": 262225,
+    "link0": 8454144,
+    "link1": 0,
+    "name": "[WEATHER]Humidity day + 4",
+    "unit": "RH",
+    "nbdecimal": 0,
+    "virtual": false,
+    "value": 62
+  },
+  "262226": {
+    "_id": 262226,
+    "link0": 8454144,
+    "link1": 0,
+    "name": "[WEATHER]Wind speed day + 4",
+    "unit": "meter/sec",
+    "nbdecimal": 2,
+    "virtual": false,
+    "value": 5.91
+  },
+  "262227": {
+    "_id": 262227,
+    "link0": 8454144,
+    "link1": 0,
+    "name": "[WEATHER]Clouds day + 4",
+    "unit": "%",
+    "nbdecimal": 2,
+    "virtual": false,
+    "value": 93
+  },
+  "262228": {
+    "_id": 262228,
+    "link0": 8454144,
+    "link1": 0,
+    "name": "[WEATHER]Temperature day + 5",
+    "unit": "\u00b0C",
+    "nbdecimal": 2,
+    "virtual": false,
+    "value": 15.64
+  },
+  "262229": {
+    "_id": 262229,
+    "link0": 8454144,
+    "link1": 0,
+    "name": "[WEATHER]Pressure day + 5",
+    "unit": "hPa",
+    "nbdecimal": 0,
+    "virtual": false,
+    "value": 1009
+  },
+  "262230": {
+    "_id": 262230,
+    "link0": 8454144,
+    "link1": 0,
+    "name": "[WEATHER]Humidity day + 5",
+    "unit": "RH",
+    "nbdecimal": 0,
+    "virtual": false,
+    "value": 81
+  },
+  "262231": {
+    "_id": 262231,
+    "link0": 8454144,
+    "link1": 0,
+    "name": "[WEATHER]Wind speed day + 5",
+    "unit": "meter/sec",
+    "nbdecimal": 2,
+    "virtual": false,
+    "value": 7.75
+  },
+  "262232": {
+    "_id": 262232,
+    "link0": 8454144,
+    "link1": 0,
+    "name": "[WEATHER]Clouds day + 5",
+    "unit": "%",
+    "nbdecimal": 2,
+    "virtual": false,
+    "value": 100
+  },
+  "262233": {
+    "_id": 262233,
+    "link0": 8454144,
+    "link1": 0,
+    "name": "[WEATHER]Temperature day + 6",
+    "unit": "\u00b0C",
+    "nbdecimal": 2,
+    "virtual": false,
+    "value": 16.01
+  },
+  "262234": {
+    "_id": 262234,
+    "link0": 8454144,
+    "link1": 0,
+    "name": "[WEATHER]Pressure day + 6",
+    "unit": "hPa",
+    "nbdecimal": 0,
+    "virtual": false,
+    "value": 1018
+  },
+  "262235": {
+    "_id": 262235,
+    "link0": 8454144,
+    "link1": 0,
+    "name": "[WEATHER]Humidity day + 6",
+    "unit": "RH",
+    "nbdecimal": 0,
+    "virtual": false,
+    "value": 66
+  },
+  "262236": {
+    "_id": 262236,
+    "link0": 8454144,
+    "link1": 0,
+    "name": "[WEATHER]Wind speed day + 6",
+    "unit": "meter/sec",
+    "nbdecimal": 2,
+    "virtual": false,
+    "value": 8.48
+  },
+  "262237": {
+    "_id": 262237,
+    "link0": 8454144,
+    "link1": 0,
+    "name": "[WEATHER]Clouds day + 6",
+    "unit": "%",
+    "nbdecimal": 2,
+    "virtual": false,
+    "value": 31
+  },
+  "262238": {
+    "_id": 262238,
+    "link0": 8454144,
+    "link1": 0,
+    "name": "[WEATHER]Temperature day + 7",
+    "unit": "\u00b0C",
+    "nbdecimal": 2,
+    "virtual": false,
+    "value": 15.05
+  },
+  "262239": {
+    "_id": 262239,
+    "link0": 8454144,
+    "link1": 0,
+    "name": "[WEATHER]Pressure day + 7",
+    "unit": "hPa",
+    "nbdecimal": 0,
+    "virtual": false,
+    "value": 1013
+  },
+  "262240": {
+    "_id": 262240,
+    "link0": 8454144,
+    "link1": 0,
+    "name": "[WEATHER]Humidity day + 7",
+    "unit": "RH",
+    "nbdecimal": 0,
+    "virtual": false,
+    "value": 64
+  },
+  "262241": {
+    "_id": 262241,
+    "link0": 8454144,
+    "link1": 0,
+    "name": "[WEATHER]Wind speed day + 7",
+    "unit": "meter/sec",
+    "nbdecimal": 2,
+    "virtual": false,
+    "value": 9.88
+  },
+  "262242": {
+    "_id": 262242,
+    "link0": 8454144,
+    "link1": 0,
+    "name": "[WEATHER]Clouds day + 7",
+    "unit": "%",
+    "nbdecimal": 2,
+    "virtual": false,
+    "value": 58
+  },
+  "262243": {
+    "_id": 262243,
+    "link0": 0,
+    "link1": 4849664,
+    "name": "[XDIMMER N\u00b00] 1 Consign SaM",
+    "unit": "%",
+    "nbdecimal": 0,
+    "virtual": false,
+    "value": 12
+  },
+  "262244": {
+    "_id": 262244,
+    "link0": 0,
+    "link1": 4849664,
+    "name": "[XDIMMER N\u00b00] 2 Consign Ewan",
+    "unit": "%",
+    "nbdecimal": 0,
+    "virtual": false,
+    "value": 2
+  },
+  "262245": {
+    "_id": 262245,
+    "link0": 10485761,
+    "link1": 4849664,
+    "name": "[XDIMMER N\u00b00] 3 Chevet Mat",
+    "unit": "%",
+    "nbdecimal": 0,
+    "virtual": false,
+    "value": 2
+  },
+  "262246": {
+    "_id": 262246,
+    "link0": 10485761,
+    "link1": 4849664,
+    "name": "[XDIMMER N\u00b00] 4 Chevet Mel",
+    "unit": "%",
+    "nbdecimal": 0,
+    "virtual": false,
+    "value": 40
+  },
+  "262247": {
+    "_id": 262247,
+    "link0": 1572881,
+    "link1": 10485783,
+    "name": "[Escalier]Consign",
+    "unit": "%",
+    "nbdecimal": 0,
+    "virtual": false,
+    "value": 0
+  },
+  "327680": {
+    "_id": 327680,
+    "link0": 9437184,
+    "link1": 0,
+    "name": "[DIAG]PERIOD (CYCLE)",
+    "unit": "US",
+    "nbdecimal": 0,
+    "virtual": false,
+    "value": 156.0
+  },
+  "327681": {
+    "_id": 327681,
+    "link0": 9437184,
+    "link1": 0,
+    "name": "[DIAG]APP (CYCLE)",
+    "unit": "US",
+    "nbdecimal": 0,
+    "virtual": false,
+    "value": 57.0
+  },
+  "327682": {
+    "_id": 327682,
+    "link0": 9437184,
+    "link1": 0,
+    "name": "[DIAG]RULE-ENGINE (CYCLE)",
+    "unit": "US",
+    "nbdecimal": 0,
+    "virtual": false,
+    "value": 39.0
+  },
+  "327683": {
+    "_id": 327683,
+    "link0": 9437184,
+    "link1": 0,
+    "name": "[DIAG]EBX (CYCLE)",
+    "unit": "US",
+    "nbdecimal": 0,
+    "virtual": false,
+    "value": 0.0
+  },
+  "327684": {
+    "_id": 327684,
+    "link0": 9437184,
+    "link1": 0,
+    "name": "[DIAG]BSP (CYCLE)",
+    "unit": "US",
+    "nbdecimal": 0,
+    "virtual": false,
+    "value": 8.0
+  },
+  "327685": {
+    "_id": 327685,
+    "link0": 9437184,
+    "link1": 0,
+    "name": "[DIAG]HEAP FREE",
+    "unit": "RAW",
+    "nbdecimal": 0,
+    "virtual": false,
+    "value": 86008.0
+  },
+  "327686": {
+    "_id": 327686,
+    "link0": 9437184,
+    "link1": 0,
+    "name": "[DIAG]DELTA HEAP FREE",
+    "unit": "RAW",
+    "nbdecimal": 0,
+    "virtual": false,
+    "value": 0.0
+  },
+  "327687": {
+    "_id": 327687,
+    "link0": 9437184,
+    "link1": 0,
+    "name": "[IPX]CLOCK",
+    "unit": "RAW",
+    "nbdecimal": 0,
+    "virtual": false,
+    "value": 1692353029.0
+  },
+  "327688": {
+    "_id": 327688,
+    "link0": 0,
+    "link1": 4653056,
+    "name": "[XPWM N\u00b00]Fade speed",
+    "unit": "MS",
+    "nbdecimal": 0,
+    "virtual": false,
+    "value": 1500.0
+  },
+  "327689": {
+    "_id": 327689,
+    "link0": 0,
+    "link1": 13828096,
+    "name": "[Sonnette]Time(TA)",
+    "unit": "S",
+    "nbdecimal": 0,
+    "virtual": false,
+    "value": 0.0
+  },
+  "327690": {
+    "_id": 327690,
+    "link0": 10485772,
+    "link1": 1376256,
+    "name": "[COMPARATOR Lum SaM]Analog input A",
+    "unit": "REAL",
+    "nbdecimal": 2,
+    "virtual": false,
+    "value": 174.0
+  },
+  "327691": {
+    "_id": 327691,
+    "link0": 0,
+    "link1": 1376256,
+    "name": "[COMPARATOR Lum SaM]Analog input B",
+    "unit": "REAL",
+    "nbdecimal": 0,
+    "virtual": false,
+    "value": 10.0
+  },
+  "327692": {
+    "_id": 327692,
+    "link0": 0,
+    "link1": 13697025,
+    "name": "[TEMPO Det SaM]Time(TB)",
+    "unit": "S",
+    "nbdecimal": 0,
+    "virtual": false,
+    "value": 30.0
+  },
+  "327693": {
+    "_id": 327693,
+    "link0": 0,
+    "link1": 13697026,
+    "name": "[TEMPO Det Dressing]Time(TB)",
+    "unit": "S",
+    "nbdecimal": 0,
+    "virtual": false,
+    "value": 30.0
+  },
+  "327694": {
+    "_id": 327694,
+    "link0": 0,
+    "link1": 13697027,
+    "name": "[TEMPO Det Cuisine]Time(TB)",
+    "unit": "S",
+    "nbdecimal": 0,
+    "virtual": false,
+    "value": 30.0
+  },
+  "327695": {
+    "_id": 327695,
+    "link0": 0,
+    "link1": 13697028,
+    "name": "[TEMPO Det Garage]Time(TB)",
+    "unit": "S",
+    "nbdecimal": 0,
+    "virtual": false,
+    "value": 60.0
+  },
+  "327696": {
+    "_id": 327696,
+    "link0": 0,
+    "link1": 13697029,
+    "name": "[TEMPO Det Couloir]Time(TB)",
+    "unit": "S",
+    "nbdecimal": 0,
+    "virtual": false,
+    "value": 15.0
+  },
+  "327697": {
+    "_id": 327697,
+    "link0": 0,
+    "link1": 13697030,
+    "name": "[TEMPO Det Escalier]Time(TB)",
+    "unit": "S",
+    "nbdecimal": 0,
+    "virtual": false,
+    "value": 10.0
+  },
+  "327698": {
+    "_id": 327698,
+    "link0": 0,
+    "link1": 13697031,
+    "name": "[TEMPO Det WC]Time(TB)",
+    "unit": "S",
+    "nbdecimal": 0,
+    "virtual": false,
+    "value": 60.0
+  },
+  "327699": {
+    "_id": 327699,
+    "link0": 0,
+    "link1": 13697032,
+    "name": "[TEMPO Det SdB]Time(TB)",
+    "unit": "S",
+    "nbdecimal": 0,
+    "virtual": false,
+    "value": 240.0
+  },
+  "327700": {
+    "_id": 327700,
+    "link0": 10485796,
+    "link1": 1376257,
+    "name": "[COMPARATOR Lum SdB]Analog input A",
+    "unit": "REAL",
+    "nbdecimal": 2,
+    "virtual": false,
+    "value": 39.34
+  },
+  "327701": {
+    "_id": 327701,
+    "link0": 0,
+    "link1": 1376257,
+    "name": "[COMPARATOR Lum SdB]Analog input B",
+    "unit": "REAL",
+    "nbdecimal": 0,
+    "virtual": false,
+    "value": 40.0
+  },
+  "327702": {
+    "_id": 327702,
+    "link0": 0,
+    "link1": 13828096,
+    "name": "[Sonnette]Time(TB)",
+    "unit": "S",
+    "nbdecimal": 0,
+    "virtual": false,
+    "value": 1.0
+  },
+  "327703": {
+    "_id": 327703,
+    "link0": 10485772,
+    "link1": 1376258,
+    "name": "[COMPARATOR Lum Couloir]Analog input A",
+    "unit": "REAL",
+    "nbdecimal": 2,
+    "virtual": false,
+    "value": 174.0
+  },
+  "327704": {
+    "_id": 327704,
+    "link0": 0,
+    "link1": 1376258,
+    "name": "[COMPARATOR Lum Couloir]Analog input B",
+    "unit": "REAL",
+    "nbdecimal": 2,
+    "virtual": false,
+    "value": 20.0
+  },
+  "327705": {
+    "_id": 327705,
+    "link0": 10485781,
+    "link1": 1048576,
+    "name": "[Capteur lum SdB to Lux]Input (x)",
+    "unit": "REAL",
+    "nbdecimal": 2,
+    "virtual": false,
+    "value": 11803.0
+  },
+  "327706": {
+    "_id": 327706,
+    "link0": 1048576,
+    "link1": 10485796,
+    "name": "[Capteur lum SdB to Lux]Result",
+    "unit": "REAL",
+    "nbdecimal": 2,
+    "virtual": false,
+    "value": 39.34
+  },
+  "327707": {
+    "_id": 327707,
+    "link0": 0,
+    "link1": 13828105,
+    "name": "[Porte Garage]Time(TA)",
+    "unit": "S",
+    "nbdecimal": 0,
+    "virtual": false,
+    "value": 0.0
+  },
+  "327708": {
+    "_id": 327708,
+    "link0": 0,
+    "link1": 13828105,
+    "name": "[Porte Garage]Time(TB)",
+    "unit": "S",
+    "nbdecimal": 0,
+    "virtual": false,
+    "value": 1.0
+  },
+  "327709": {
+    "_id": 327709,
+    "link0": 0,
+    "link1": 1245184,
+    "name": "[COUNTER N\u00b00]Set value",
+    "unit": "REAL",
+    "nbdecimal": 0,
+    "virtual": false,
+    "value": 145087.0
+  },
+  "327710": {
+    "_id": 327710,
+    "link0": 1245184,
+    "link1": 0,
+    "name": "[Compteur eau]Counter value",
+    "unit": "REAL",
+    "nbdecimal": 0,
+    "virtual": false,
+    "value": 164967.0
+  },
+  "327711": {
+    "_id": 327711,
+    "link0": 10485772,
+    "link1": 1376259,
+    "name": "[COMPARATOR Lum RDC max]Analog input A",
+    "unit": "REAL",
+    "nbdecimal": 2,
+    "virtual": false,
+    "value": 174.0
+  },
+  "327712": {
+    "_id": 327712,
+    "link0": 0,
+    "link1": 1376259,
+    "name": "[COMPARATOR Lum max]Analog input B",
+    "unit": "REAL",
+    "nbdecimal": 0,
+    "virtual": false,
+    "value": 100.0
+  },
+  "327713": {
+    "_id": 327713,
+    "link0": 10485796,
+    "link1": 1376260,
+    "name": "[COMPARATOR Lum SdB Max]Analog input A",
+    "unit": "REAL",
+    "nbdecimal": 2,
+    "virtual": false,
+    "value": 39.34
+  },
+  "327714": {
+    "_id": 327714,
+    "link0": 0,
+    "link1": 1376260,
+    "name": "[COMPARATOR Lum SdB Max]Analog input B",
+    "unit": "REAL",
+    "nbdecimal": 0,
+    "virtual": false,
+    "value": 100.0
+  },
+  "327715": {
+    "_id": 327715,
+    "link0": 8454144,
+    "link1": 0,
+    "name": "[WEATHER]Sunrise day",
+    "unit": "RAW",
+    "nbdecimal": 0,
+    "virtual": false,
+    "value": 1666773761.0
+  },
+  "327716": {
+    "_id": 327716,
+    "link0": 8454144,
+    "link1": 0,
+    "name": "[WEATHER]Sunset day",
+    "unit": "RAW",
+    "nbdecimal": 0,
+    "virtual": false,
+    "value": 1666810767.0
+  },
+  "327717": {
+    "_id": 327717,
+    "link0": 10485772,
+    "link1": 1376261,
+    "name": "[COMPARATOR Lum Cuisine]Analog input A",
+    "unit": "REAL",
+    "nbdecimal": 2,
+    "virtual": false,
+    "value": 174.0
+  },
+  "327718": {
+    "_id": 327718,
+    "link0": 0,
+    "link1": 1376261,
+    "name": "[COMPARATOR Lum Cuisine]Analog input B",
+    "unit": "REAL",
+    "nbdecimal": 2,
+    "virtual": false,
+    "value": 20.0
+  }
+}

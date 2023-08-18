@@ -1,0 +1,95 @@
+[
+  {
+    "type": "xthl",
+    "id": 4521984,
+    "name": "Capteur Rez-de-Chauss\u00e9e",
+    "params": {
+      "_id": 4521984,
+      "name": "Capteur Rez-de-Chauss\u00e9e",
+      "codeExt": "30011002",
+      "errorStatus": "0x0000",
+      "bVersion2": false,
+      "anaTemp_id": 262153,
+      "anaHum_id": 262154,
+      "anaLum_id": 262155,
+      "ioFault_id": 65831
+    }
+  },
+  {
+    "type": "x24d",
+    "id": 4325376,
+    "name": "X24D N\u00b00",
+    "params": {
+      "_id": 4325376,
+      "name": "X24D N\u00b00",
+      "codeExt": "10ba0421",
+      "errorStatus": "0x0000",
+      "bVersion2": false,
+      "ioInput_id": [
+        65598, 65599, 65600, 65601, 65602, 65603, 65604, 65605, 65606, 65607,
+        65608, 65609, 65610, 65611, 65612, 65613, 65614, 65615, 65616, 65617,
+        65618, 65619, 65620, 65621
+      ]
+    }
+  },
+  {
+    "type": "xdimmer",
+    "id": 4849664,
+    "name": "XDIMMER N\u00b00",
+    "params": {
+      "_id": 4849664,
+      "name": "XDIMMER N\u00b00",
+      "codeExt": "0a000379",
+      "minLvlLed": 14,
+      "maxLvlLed": 100,
+      "minLvlHalo": 9,
+      "maxLvlHalo": 100,
+      "typeCh1": true,
+      "typeCh2": true,
+      "typeCh3": false,
+      "typeCh4": false,
+      "errorStatus": "0x0000",
+      "ioOn_id": [65622, 65623, 65624, 65625],
+      "ioInput_id": [65818, 65819, 65820, 65825],
+      "ioOnAll_id": 65626,
+      "anaSpeedTransition_id": 196617,
+      "anaCommand_id": [262243, 262244, 262245, 262246],
+      "anaPosition_id": [196610, 196612, 196614, 196616]
+    }
+  },
+  {
+    "type": "x8r",
+    "id": 4259840,
+    "name": "X8R N\u00b00",
+    "params": {
+      "_id": 4259840,
+      "name": "X8R N\u00b00",
+      "codeExt": "20aa0f36",
+      "errorStatus": "0x0000",
+      "pushDelais": [1, 0, 0, 1, 0, 1, 0, 1],
+      "bConnect": false,
+      "ioLongPush_id": [65574, 65575, 65576, 65577, 65578, 65579, 65580, 65581],
+      "ioOutput_id": [65582, 65583, 65584, 65585, 65586, 65587, 65588, 65589],
+      "ioOutputState_id": [
+        65590, 65591, 65592, 65593, 65594, 65595, 65596, 65597
+      ]
+    }
+  },
+  {
+    "type": "xpwm",
+    "id": 4653056,
+    "name": "XPWM N\u00b00",
+    "params": {
+      "_id": 4653056,
+      "name": "XPWM N\u00b00",
+      "codeExt": "4001aafc",
+      "mode": false,
+      "errorStatus": "0x0000",
+      "anaSpeedTransition_id": 327688,
+      "anaCommand_id": [
+        196618, 196619, 196620, 196621, 196622, 196623, 196624, 196625, 196626,
+        196627, 196628, 196629
+      ]
+    }
+  }
+]

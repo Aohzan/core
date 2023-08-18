@@ -735,6 +735,7 @@ build.json @home-assistant/supervisor
 /homeassistant/components/ipp/ @ctalkington
 /tests/components/ipp/ @ctalkington
 /homeassistant/components/ipx800v5/ @Aohzan
+/tests/components/ipx800v5/ @Aohzan
 /homeassistant/components/iqvia/ @bachya
 /tests/components/iqvia/ @bachya
 /homeassistant/components/irish_rail_transport/ @ttroy50

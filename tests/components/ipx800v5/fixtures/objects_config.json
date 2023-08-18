@@ -1,0 +1,197 @@
+[
+  {
+    "type": "thermostat",
+    "id": 1638400,
+    "name": "Thermostat",
+    "params": {
+      "_id": 1638400,
+      "name": "Thermostat",
+      "errorStatus": "0x0000",
+      "hysteresis": 0.2,
+      "setPointComfort": 19.0,
+      "setPointEco": 18.0,
+      "setPointNoFrost": 15.0,
+      "faultTime": 120,
+      "invMode": false,
+      "safeMode": true,
+      "ioOutput_id": 65690,
+      "ioOnOff_id": 65692,
+      "ioComfort_id": 65693,
+      "ioEco_id": 65694,
+      "ioNoFrost_id": 65695,
+      "anaCurrSetPoint_id": 262173,
+      "anaMeasure_id": 262174,
+      "ioFault_id": 65691
+    }
+  },
+  {
+    "type": "counter",
+    "id": 1245184,
+    "name": "Compteur eau",
+    "params": {
+      "_id": 1245184,
+      "name": "Compteur eau",
+      "errorStatus": "0x0000",
+      "ioAdd_id": 65759,
+      "ioSub_id": 65760,
+      "ioSet_id": 65761,
+      "ioReset_id": 65762,
+      "ioEnable_id": 65763,
+      "anaPulseValue_id": 262187,
+      "anaSetValue_id": 327709,
+      "anaOut_id": 327710
+    }
+  },
+  {
+    "type": "tempo",
+    "id": 1310721,
+    "name": "TEMPO Det SaM",
+    "params": {
+      "_id": 1310721,
+      "name": "TEMPO Det SaM",
+      "errorStatus": "0x0000",
+      "func": "tempo",
+      "bSecond": true,
+      "bOnOff": false,
+      "bSingle": false,
+      "ioStart_id": 65645,
+      "ioEnable_id": 65646,
+      "anaCounter1_id": 262157,
+      "anaTime1_id": 327692,
+      "ioOut_id": 65647
+    }
+  },
+  {
+    "type": "tempo",
+    "id": 1310722,
+    "name": "TEMPO Det Dressing",
+    "params": {
+      "_id": 1310722,
+      "name": "TEMPO Det Dressing",
+      "errorStatus": "0x0000",
+      "func": "tempo",
+      "bSecond": true,
+      "bOnOff": false,
+      "bSingle": false,
+      "ioStart_id": 65648,
+      "ioEnable_id": 65649,
+      "anaCounter1_id": 262158,
+      "anaTime1_id": 327693,
+      "ioOut_id": 65650
+    }
+  },
+  {
+    "type": "tempo",
+    "id": 1310723,
+    "name": "TEMPO Det Cuisine",
+    "params": {
+      "_id": 1310723,
+      "name": "TEMPO Det Cuisine",
+      "errorStatus": "0x0000",
+      "func": "tempo",
+      "bSecond": true,
+      "bOnOff": false,
+      "bSingle": false,
+      "ioStart_id": 65651,
+      "ioEnable_id": 65652,
+      "anaCounter1_id": 262159,
+      "anaTime1_id": 327694,
+      "ioOut_id": 65653
+    }
+  },
+  {
+    "type": "tempo",
+    "id": 1310724,
+    "name": "TEMPO Det Garage",
+    "params": {
+      "_id": 1310724,
+      "name": "TEMPO Det Garage",
+      "errorStatus": "0x0000",
+      "func": "tempo",
+      "bSecond": true,
+      "bOnOff": false,
+      "bSingle": false,
+      "ioStart_id": 65654,
+      "ioEnable_id": 65655,
+      "anaCounter1_id": 262160,
+      "anaTime1_id": 327695,
+      "ioOut_id": 65656
+    }
+  },
+  {
+    "type": "tempo",
+    "id": 1310725,
+    "name": "TEMPO Det Couloir",
+    "params": {
+      "_id": 1310725,
+      "name": "TEMPO Det Couloir",
+      "errorStatus": "0x0000",
+      "func": "tempo",
+      "bSecond": true,
+      "bOnOff": false,
+      "bSingle": false,
+      "ioStart_id": 65657,
+      "ioEnable_id": 65658,
+      "anaCounter1_id": 262161,
+      "anaTime1_id": 327696,
+      "ioOut_id": 65659
+    }
+  },
+  {
+    "type": "tempo",
+    "id": 1310726,
+    "name": "TEMPO Det Escalier",
+    "params": {
+      "_id": 1310726,
+      "name": "TEMPO Det Escalier",
+      "errorStatus": "0x0000",
+      "func": "tempo",
+      "bSecond": true,
+      "bOnOff": false,
+      "bSingle": false,
+      "ioStart_id": 65660,
+      "ioEnable_id": 65661,
+      "anaCounter1_id": 262162,
+      "anaTime1_id": 327697,
+      "ioOut_id": 65662
+    }
+  },
+  {
+    "type": "tempo",
+    "id": 1310727,
+    "name": "TEMPO Det WC",
+    "params": {
+      "_id": 1310727,
+      "name": "TEMPO Det WC",
+      "errorStatus": "0x0000",
+      "func": "tempo",
+      "bSecond": true,
+      "bOnOff": false,
+      "bSingle": false,
+      "ioStart_id": 65663,
+      "ioEnable_id": 65664,
+      "anaCounter1_id": 262163,
+      "anaTime1_id": 327698,
+      "ioOut_id": 65665
+    }
+  },
+  {
+    "type": "tempo",
+    "id": 1310728,
+    "name": "TEMPO Det SdB",
+    "params": {
+      "_id": 1310728,
+      "name": "TEMPO Det SdB",
+      "errorStatus": "0x0000",
+      "func": "tempo",
+      "bSecond": true,
+      "bOnOff": false,
+      "bSingle": false,
+      "ioStart_id": 65666,
+      "ioEnable_id": 65667,
+      "anaCounter1_id": 262164,
+      "anaTime1_id": 327699,
+      "ioOut_id": 65668
+    }
+  }
+]

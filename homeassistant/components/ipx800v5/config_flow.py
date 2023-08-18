@@ -197,6 +197,7 @@ async def _build_param_schema(
 
     # if entry created with config_flow, add options
     if entry_source == "user":
+        _LOGGER.debug("Add options for user entry")
         devices_config = config.get(CONF_DEVICES, {})
         schema.update(
             {
@@ -211,6 +212,7 @@ async def _build_param_schema(
             }
         )
 
+        _LOGGER.debug("Connect to the IPX to get its configuration")
         ipx = IPX800(
             host=base_config[CONF_HOST],
             port=base_config[CONF_PORT],
@@ -219,7 +221,7 @@ async def _build_param_schema(
         )
         await ipx.init_config()
 
-        # Build schema according to needed options for the IPX configuration
+        _LOGGER.debug("Build schema according to the IPX configuration")
         for i in range(8):
             device = get_device_in_devices_config(
                 devices_config,
@@ -239,11 +241,14 @@ async def _build_param_schema(
                     ): vol.All(str, vol.Lower, vol.In(["switch", "light"])),
                 }
             )
-        # Extensions
+
+        _LOGGER.debug("Build schema according to the extensions found")
         for ext_type, extensions in groupby(ipx.extensions_config, lambda x: x["type"]):
-            ext_number = 0
+            _LOGGER.debug("Found %s: %s", ext_type, extensions)
             for extension in extensions:
+                ext_number = 0
                 if ext_type == EXT_X8R:
+                    _LOGGER.debug("Add X8R N°%s to the params", ext_number)
                     for i in range(8):
                         device = get_device_in_devices_config(
                             devices_config,
