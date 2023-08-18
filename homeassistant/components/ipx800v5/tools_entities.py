@@ -5,6 +5,7 @@ import logging
 from pypx800v5 import (
     API_CONFIG_NAME,
     API_CONFIG_TYPE,
+    EXT_X010V,
     EXT_X4FP,
     EXT_X4VR,
     EXT_X8D,
@@ -297,7 +298,7 @@ def build_extensions_entities(
     ):
         if entry_source == "user" or ext_type in auto_ext_list:
             _LOGGER.debug("Build entities for %s extension", ext_type)
-            ext_number = 1
+            ext_number = 0
             for extension in extensions:
                 if ext_type == EXT_X8R:
                     for i in range(8):
@@ -411,6 +412,21 @@ def build_extensions_entities(
                             },
                         )
                     )
+                elif ext_type == EXT_X010V:
+                    for i in range(4):
+                        entities.append(
+                            get_device_in_devices_config(
+                                devices_config,
+                                {
+                                    CONF_NAME: f"{extension[API_CONFIG_NAME]} Sortie {i + 1}",
+                                    CONF_COMPONENT: "light",
+                                    CONF_EXT_TYPE: ext_type,
+                                    CONF_EXT_NUMBER: ext_number,
+                                    CONF_EXT_NAME: extension[API_CONFIG_NAME],
+                                    CONF_IO_NUMBER: i + 1,
+                                },
+                            )
+                        )
                 else:
                     _LOGGER.warning(
                         "%s extension type not currently supported", ext_type

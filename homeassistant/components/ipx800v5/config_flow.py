@@ -1,7 +1,9 @@
 """Config flow to configure the ipx800v5 integration."""
 from itertools import groupby
 import logging
+from typing import Any
 
+from aiohttp import ClientSession
 from pypx800v5 import (
     API_CONFIG_NAME,
     EXT_X8R,
@@ -59,9 +61,9 @@ class IpxConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     VERSION = 1
     CONNECTION_CLASS = config_entries.CONN_CLASS_LOCAL_POLL
 
-    def __init__(self):
+    def __init__(self) -> None:
         """Initialize class variables."""
-        self.base_config = {}
+        self.base_config: dict[str, Any] = {}
 
     async def async_step_import(self, import_info) -> FlowResult:
         """Import an advanced configuration from YAML config."""
@@ -157,7 +159,7 @@ class IpxOptionsFlowHandler(config_entries.OptionsFlow):
         )
 
 
-async def _test_connection(session, base_config):
+async def _test_connection(session: ClientSession, base_config: dict) -> dict[str, str]:
     errors = {}
 
     controller = IPX800(
@@ -239,7 +241,7 @@ async def _build_param_schema(
             )
         # Extensions
         for ext_type, extensions in groupby(ipx.extensions_config, lambda x: x["type"]):
-            ext_number = 1
+            ext_number = 0
             for extension in extensions:
                 if ext_type == EXT_X8R:
                     for i in range(8):
@@ -249,7 +251,7 @@ async def _build_param_schema(
                                 CONF_NAME: f"{DEFAULT_IPX_NAME} Relais {i + 1}",
                                 CONF_COMPONENT: "switch",
                                 CONF_EXT_TYPE: IPX,
-                                CONF_EXT_NUMBER: 0,
+                                CONF_EXT_NUMBER: ext_number,
                                 CONF_IO_NUMBER: i + 1,
                             },
                         )
@@ -257,7 +259,7 @@ async def _build_param_schema(
                             {
                                 vol.Required(
                                     f"{ext_type}_{ext_number}_{i + 1}",
-                                    description=f"{extension[API_CONFIG_NAME]} N°{i + 1}",
+                                    description=f"{extension[API_CONFIG_NAME]} N°{i}",
                                     default=device.get(CONF_COMPONENT, "switch"),
                                 ): vol.All(str, vol.Lower, vol.In(["switch", "light"])),
                             }

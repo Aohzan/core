@@ -132,8 +132,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     )
 
     try:
-        if not await ipx.ping():
-            raise IPX800CannotConnectError()
+        await ipx.ping()
     except IPX800CannotConnectError as exception:
         _LOGGER.error(
             "Cannot connect to the %s IPX800 V5, check host and port",
