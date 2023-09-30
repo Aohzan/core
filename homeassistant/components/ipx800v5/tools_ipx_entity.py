@@ -78,7 +78,9 @@ class IpxEntity(CoordinatorEntity):
         configuration_url = f"http://{self.ipx.host}:{self.ipx.port}/"
 
         device_model = (
-            Upper(self._ext_type) if self._ext_type in EXTENSIONS else "IPX800 V5"
+            Upper(self._ext_type[:1] + "-" + self._ext_type[1:])
+            if self._ext_type in EXTENSIONS
+            else "IPX800 V5"
         )
         if self._ext_type == IPX:
             self._attr_device_info = DeviceInfo(
