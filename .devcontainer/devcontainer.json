@@ -4,7 +4,6 @@
   "dockerFile": "../Dockerfile.dev",
   "postCreateCommand": "git config --global --add safe.directory ${containerWorkspaceFolder} && script/setup",
   "postStartCommand": "script/bootstrap",
-zsh:1: command not found: q
     "PYTHONASYNCIODEBUG": "1"
   },
   "features": {
@@ -19,8 +18,6 @@ zsh:1: command not found: q
     "label=disable",
     "--userns=keep-id:uid=1000,gid=1000"
   ],
-  "containerUser": "vscode",
-  "updateRemoteUserUID": true,
   "customizations": {
     "vscode": {
       "extensions": [
