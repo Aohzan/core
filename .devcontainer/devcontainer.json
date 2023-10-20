@@ -16,6 +16,7 @@
     "-e",
     "GIT_EDITOR=code --wait",
   ],
+  "remoteUser": "root",
   "customizations": {
     "vscode": {
       "extensions": [
