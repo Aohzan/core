@@ -732,6 +732,7 @@ build.json @home-assistant/supervisor
 /tests/components/ipma/ @dgomes
 /homeassistant/components/ipp/ @ctalkington
 /tests/components/ipp/ @ctalkington
+/homeassistant/components/ipx800v4/ @Aohzan
 /homeassistant/components/iqvia/ @bachya
 /tests/components/iqvia/ @bachya
 /homeassistant/components/irish_rail_transport/ @ttroy50
@@ -1744,4 +1745,3 @@ build.json @home-assistant/supervisor
 
 # Remove codeowners from files
 /homeassistant/components/*/translations/
-
