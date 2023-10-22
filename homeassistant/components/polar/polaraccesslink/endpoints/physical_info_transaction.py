@@ -14,3 +14,13 @@ class PhysicalInfoTransaction(Transaction):
     def get_physical_info(self, url):
         """Get user's physical information from the transaction."""
         return self._get(endpoint=None, url=url, access_token=self.access_token)
+
+    def set_weight(self, url, weight: float):
+        """Update weight."""
+        response = self._post(
+            endpoint=None,
+            url=url,
+            access_token=self.access_token,
+            data={"weight": weight},
+        )
+        return response

@@ -28,7 +28,7 @@ def parse_date(raw_date: str) -> str:
 class AccessLink:
     """Wrapper class for Polar Open AccessLink API v3."""
 
-    def __init__(self, client_id, client_secret, redirect_url=None):
+    def __init__(self, client_id, client_secret, redirect_url=None) -> None:
         """Init an Accesslink access."""
         if not client_id or not client_secret:
             raise ValueError("Client id and secret must be provided.")
@@ -153,3 +153,11 @@ class AccessLink:
                 )
 
         return activities
+
+    def set_weight(self, user_id, access_token, weight: float) -> None:
+        """Update weight."""
+        transaction = self.physical_info.create_transaction(
+            user_id=user_id, access_token=access_token
+        )
+        transaction.set_weight(transaction.url, weight)
+        transaction.commit()

@@ -95,6 +95,13 @@ class PolarCoordinator(DataUpdateCoordinator):
 
     async def _async_update_data(self) -> dict:
         """Fetch the latest data from the source."""
+        # await self.hass.async_add_executor_job(
+        #     self.accesslink.set_weight,
+        #     self._entry.data[CONF_USER_ID],
+        #     self._entry.data[CONF_ACCESS_TOKEN],
+        #     77.5,
+        # )
+        # enddbeug
         userdata = await self.hass.async_add_executor_job(
             self.accesslink.get_userdata,
             self._entry.data[CONF_USER_ID],
