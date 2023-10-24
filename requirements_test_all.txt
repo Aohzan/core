@@ -2387,7 +2387,6 @@ xknx==3.2.0
 xknxproject==3.8.1
 
 # homeassistant.components.fritz
-# homeassistant.components.prix_carburant
 # homeassistant.components.rest
 # homeassistant.components.startca
 # homeassistant.components.ted5000

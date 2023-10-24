@@ -47,9 +47,6 @@ ProgettiHWSW==0.1.3
 # homeassistant.components.cast
 PyChromecast==14.0.4
 
-# homeassistant.components.prix_carburant
-Prix-Carburant-FR-Client==1.0.3
-
 # homeassistant.components.flick_electric
 PyFlick==0.0.2
 
@@ -3001,7 +2998,6 @@ xknx==3.2.0
 xknxproject==3.8.1
 
 # homeassistant.components.fritz
-# homeassistant.components.prix_carburant
 # homeassistant.components.rest
 # homeassistant.components.startca
 # homeassistant.components.ted5000
