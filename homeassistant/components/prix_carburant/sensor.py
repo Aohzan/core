@@ -1,7 +1,7 @@
 """Prix Carburant sensor platform."""
 from __future__ import annotations
 
-from datetime import datetime, timedelta
+from datetime import datetime
 import logging
 
 import voluptuous as vol
@@ -10,8 +10,6 @@ from homeassistant.components.sensor import SensorDeviceClass, SensorEntity
 from homeassistant.config_entries import SOURCE_IMPORT, ConfigEntry
 from homeassistant.const import ATTR_LATITUDE, ATTR_LONGITUDE, ATTR_NAME, CURRENCY_EURO
 from homeassistant.core import HomeAssistant
-from homeassistant.exceptions import ConfigEntryNotReady
-from homeassistant.helpers.aiohttp_client import async_get_clientsession
 import homeassistant.helpers.config_validation as cv
 from homeassistant.helpers.config_validation import PLATFORM_SCHEMA_BASE
 from homeassistant.helpers.device_registry import DeviceInfo
@@ -24,12 +22,12 @@ from .const import (
     ATTR_BRAND,
     ATTR_CITY,
     ATTR_DAYS_SINCE_LAST_UPDATE,
+    ATTR_DISTANCE,
     ATTR_FUELS,
     ATTR_POSTAL_CODE,
     ATTR_PRICE,
     ATTR_UPDATED_DATE,
     CONF_FUELS,
-    CONF_MAX_KM,
     CONF_STATIONS,
     DOMAIN,
     FUELS,
@@ -68,50 +66,17 @@ async def async_setup_entry(
     async_add_entities: AddEntitiesCallback,
 ) -> None:
     """Set up the platform from config_entry."""
+    data = hass.data[DOMAIN][entry.entry_id]
     config = entry.data
     options = entry.options
 
-    websession = async_get_clientsession(hass)
-
-    tool = PrixCarburantTool(time_zone=hass.config.time_zone, session=websession)
-
-    # yaml configuration
-    if CONF_STATIONS in config:
-        _LOGGER.info("Init stations data from yaml list")
-        await tool.init_stations_from_list(config[CONF_STATIONS])
-    # ui configuration
-    else:
-        _LOGGER.info("Init stations list near Home-Assistant location")
-        max_distance = options.get(CONF_MAX_KM, config.get(CONF_MAX_KM))
-        await tool.init_stations_from_location(
-            user_latitude=hass.config.latitude,
-            user_longitude=hass.config.longitude,
-            user_range=max_distance,
-        )
-        _LOGGER.info("%s stations found", str(len(tool.stations)))
+    coordinator: DataUpdateCoordinator = data["coordinator"]
+    tool: PrixCarburantTool = data["tool"]
 
     enabled_fuels = {}
     for fuel in FUELS:
         fuel_key = f"{CONF_FUELS}_{fuel}"
         enabled_fuels[fuel] = options.get(fuel_key, config.get(fuel_key, True))
-
-    async def async_update_data():
-        """Fetch data from API."""
-        await tool.update_stations_prices()
-        return tool.stations
-
-    coordinator = DataUpdateCoordinator(
-        hass,
-        _LOGGER,
-        name=DOMAIN,
-        update_method=async_update_data,
-        update_interval=timedelta(minutes=60),
-    )
-
-    await coordinator.async_refresh()
-
-    if not coordinator.last_update_success:
-        raise ConfigEntryNotReady
 
     entities = []
     for station_id, station_data in tool.stations.items():
@@ -164,7 +129,7 @@ class PrixCarburant(SensorEntity):
 
         self._attr_device_info = DeviceInfo(
             identifiers={(DOMAIN, self.station_id)},
-            manufacturer="Station",
+            manufacturer=station_info.get(ATTR_BRAND, "Station"),
             model=self.station_id,
             name=station_name,
             configuration_url="https://www.prix-carburants.gouv.fr/",
@@ -177,6 +142,7 @@ class PrixCarburant(SensorEntity):
             ATTR_CITY: self.station_info[ATTR_CITY],
             ATTR_LATITUDE: self.station_info[ATTR_LATITUDE],
             ATTR_LONGITUDE: self.station_info[ATTR_LONGITUDE],
+            ATTR_DISTANCE: self.station_info[ATTR_DISTANCE],
             ATTR_UPDATED_DATE: None,
             ATTR_DAYS_SINCE_LAST_UPDATE: None,
         }
