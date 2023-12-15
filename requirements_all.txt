@@ -2997,10 +2997,8 @@ xknx==3.2.0
 # homeassistant.components.knx
 xknxproject==3.8.0
 
-# homeassistant.components.ecodevices
-xmltodict==0.12.0
-
 # homeassistant.components.bluesound
+# homeassistant.components.ecodevices
 # homeassistant.components.fritz
 # homeassistant.components.rest
 # homeassistant.components.startca

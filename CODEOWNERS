@@ -373,6 +373,7 @@ build.json @home-assistant/supervisor
 /homeassistant/components/easyenergy/ @klaasnicolaas
 /tests/components/easyenergy/ @klaasnicolaas
 /homeassistant/components/ecodevices/ @Aohzan
+/tests/components/ecodevices/ @Aohzan
 /homeassistant/components/ecoforest/ @pjanuario
 /tests/components/ecoforest/ @pjanuario
 /homeassistant/components/econet/ @w1ll1am23
