@@ -14,7 +14,7 @@
                     "fuels_SP95": "Show SP95",
                     "fuels_SP98": "Show SP98",
                     "max_km": "Maximum distance from home",
-                    "scan_interval": "Time in minute between two data updates"
+                    "scan_interval": "Time in hours between two data updates"
                 },
                 "description": "Get stations from your Home-Assistant location (check general settings to check it)"
             }
@@ -35,9 +35,29 @@
                     "fuels_SP95": "Show SP95",
                     "fuels_SP98": "Show SP98",
                     "max_km": "Maximum distance from home",
-                    "scan_interval": "Time in minute between two data updates"
+                    "scan_interval": "Time in hours between two data updates"
                 }
             }
         }
+    },
+    "services": {
+      "find_nearest_stations": {
+        "name": "Find nearest station",
+        "description": "Find less expansive nearest stations",
+        "fields": {
+          "entity_id": {
+            "name": "Entity",
+            "description": "Entity with location attributes"
+          },
+          "fuel": {
+            "name": "Fuel",
+            "description": "Fuel type"
+          },
+          "distance": {
+            "name": "Maximum distance",
+            "description": "Maximum distance between the stations and the entity"
+          }
+        }
+      }
     }
 }

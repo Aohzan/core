@@ -4,7 +4,7 @@
       "user": {
         "description": "Get stations from your Home-Assistant location (check general settings to check it)",
         "data": {
-          "scan_interval": "Time in minute between two data updates",
+          "scan_interval": "Time in hours between two data updates",
           "display_entity_pictures": "Add brand logo to entity pictures",
           "max_km": "Maximum distance from home",
           "fuels_Gazole": "Show Gazole",
@@ -24,7 +24,7 @@
     "step": {
       "init": {
         "data": {
-          "scan_interval": "Time in minute between two data updates",
+          "scan_interval": "Time in hours between two data updates",
           "display_entity_pictures": "Add brand logo to entity pictures",
           "max_km": "Maximum distance from home",
           "fuels_Gazole": "Show Gazole",
@@ -38,6 +38,26 @@
     },
     "abort": {
       "yaml_configuration": "Integration configured in configuration.yaml"
+    }
+  },
+  "services": {
+    "find_nearest_stations": {
+      "name": "Find nearest station",
+      "description": "Find less expansive nearest stations",
+      "fields": {
+        "entity_id": {
+          "name": "Entity",
+          "description": "Entity with location attributes"
+        },
+        "fuel": {
+          "name": "Fuel",
+          "description": "Fuel type"
+        },
+        "distance": {
+          "name": "Maximum distance",
+          "description": "Maximum distance between the stations and the entity"
+        }
+      }
     }
   }
 }
