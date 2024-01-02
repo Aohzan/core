@@ -6,13 +6,15 @@
         "step": {
             "user": {
                 "data": {
+                    "display_entity_pictures": "Add brand logo to entity pictures",
                     "fuels_E10": "Show E10",
                     "fuels_E85": "Show E85",
                     "fuels_GPLc": "Show GPL",
                     "fuels_Gazole": "Show Gazole",
                     "fuels_SP95": "Show SP95",
                     "fuels_SP98": "Show SP98",
-                    "max_km": "Maximum distance from home"
+                    "max_km": "Maximum distance from home",
+                    "scan_interval": "Time in minute between two data updates"
                 },
                 "description": "Get stations from your Home-Assistant location (check general settings to check it)"
             }
@@ -25,13 +27,15 @@
         "step": {
             "init": {
                 "data": {
+                    "display_entity_pictures": "Add brand logo to entity pictures",
                     "fuels_E10": "Show E10",
                     "fuels_E85": "Show E85",
                     "fuels_GPLc": "Show GPL",
                     "fuels_Gazole": "Show Gazole",
                     "fuels_SP95": "Show SP95",
                     "fuels_SP98": "Show SP98",
-                    "max_km": "Maximum distance from home"
+                    "max_km": "Maximum distance from home",
+                    "scan_interval": "Time in minute between two data updates"
                 }
             }
         }
