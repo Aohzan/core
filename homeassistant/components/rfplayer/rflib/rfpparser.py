@@ -1,10 +1,13 @@
 """Parsers."""
 
+from collections.abc import Callable, Generator
 from enum import Enum
 import json
 import logging
 import re
-from typing import Any, Callable, Dict, Generator, cast
+from typing import Any, cast
+
+from .exception import RfPlayerException
 
 log = logging.getLogger(__name__)
 
@@ -33,7 +36,7 @@ DTC_STATUS_LOOKUP = {
 }
 
 VALUE_TRANSLATION = cast(
-    Dict[str, Callable[[str], str]],
+    dict[str, Callable[[str], str]],
     {
         "detector": lambda x: DTC_STATUS_LOOKUP.get(x, "unknown"),
     },
@@ -52,7 +55,7 @@ PACKET_HEADER_RE = (
 
 packet_header_re = re.compile(PACKET_HEADER_RE)
 
-PacketType = Dict[str, Any]
+PacketType = dict[str, Any]
 
 
 class PacketHeader(Enum):
@@ -118,7 +121,7 @@ def encode_packet(packet: PacketType) -> str:
         return f"ZIA++{command} {protocol} ID {packet['id']}"
     if "address" in packet:
         return f"ZIA++{command} {protocol} {packet['address']}"
-    raise Exception("No ID or Address found")
+    raise RfPlayerException("No ID or Address found")
 
 
 def serialize_packet_id(packet: PacketType) -> str:
@@ -135,7 +138,7 @@ def serialize_packet_id(packet: PacketType) -> str:
     )
 
 
-def deserialize_packet_id(packet_id: str) -> Dict[str, str]:
+def deserialize_packet_id(packet_id: str) -> dict[str, str]:
     """Deserialize packet id."""
     if packet_id == "rfplayer":
         return {"protocol": "unknown"}

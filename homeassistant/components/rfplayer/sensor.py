@@ -1,7 +1,10 @@
 """Support for Rfplayer sensors."""
 import logging
 
+from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import CONF_DEVICES
+from homeassistant.core import HomeAssistant
+from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from . import RfplayerDevice
 from .const import (
@@ -34,7 +37,9 @@ def lookup_unit_for_sensor_type(sensor_type):
     return UNITS.get(field_abbrev.get(sensor_type))
 
 
-async def async_setup_entry(hass, entry, async_add_entities):
+async def async_setup_entry(
+    hass: HomeAssistant, entry: ConfigEntry, async_add_entities: AddEntitiesCallback
+) -> None:
     """Set up the Rfplayer platform."""
     config = entry.data
     options = entry.options
@@ -59,9 +64,9 @@ async def async_setup_entry(hass, entry, async_add_entities):
         async_add_entities([device])
 
     if CONF_DEVICES in config:
-        for device_id, device_info in config[CONF_DEVICES].items():
-            if EVENT_KEY_SENSOR in device_info:
-                await add_new_device(device_info)
+        for device in config[CONF_DEVICES].values():
+            if EVENT_KEY_SENSOR in device:
+                await add_new_device(device)
 
     if options.get(CONF_AUTOMATIC_ADD, config[CONF_AUTOMATIC_ADD]):
         hass.data[DOMAIN][DATA_DEVICE_REGISTER][EVENT_KEY_SENSOR] = add_new_device
@@ -78,8 +83,9 @@ class RfplayerSensor(RfplayerDevice):
         initial_event=None,
         name=None,
         **kwargs,
-    ):
+    ) -> None:
         """Handle sensor specific args and super init."""
+        self._state: float | None = None
         self._protocol = protocol
         self._device_id = device_id
         self._attr_name = name
@@ -88,7 +94,7 @@ class RfplayerSensor(RfplayerDevice):
             protocol, device_id=device_id, initial_event=initial_event, **kwargs
         )
 
-    async def async_added_to_hass(self):
+    async def async_added_to_hass(self) -> None:
         """Register update callback."""
         # Register id and aliases
         await super().async_added_to_hass()
@@ -99,9 +105,9 @@ class RfplayerSensor(RfplayerDevice):
 
     def _handle_event(self, event):
         """Domain specific event handler."""
-        self._state = event["value"]
+        self._state = float(event["value"])
 
     @property
-    def state(self):
+    def state(self) -> float | None:
         """Return value."""
         return self._state
