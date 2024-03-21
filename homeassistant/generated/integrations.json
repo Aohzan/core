@@ -5160,6 +5160,12 @@
       "config_flow": false,
       "iot_class": "assumed_state"
     },
+    "rfplayer": {
+      "name": "GCE RFPlayer",
+      "integration_type": "hub",
+      "config_flow": true,
+      "iot_class": "assumed_state"
+    },
     "rfxtrx": {
       "name": "RFXCOM RFXtrx",
       "integration_type": "hub",

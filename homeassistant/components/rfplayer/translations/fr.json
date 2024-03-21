@@ -29,5 +29,33 @@
           }
         }
       }
+    },
+    "services": {
+      "send_command": {
+        "name": "Envoyer une commande",
+        "description": "Envoyer une commande sur un appareil à travers RFPlayer et facultativement l'ajouter en tant qu'entité.",
+        "fields": {
+          "command": {
+            "name": "Commande",
+            "description": "La commande à envoyer."
+          },
+          "protocol": {
+            "name": "Protocol",
+            "description": "Protocole compatible RFPlayer."
+          },
+          "device_address": {
+            "name": "Adresse de l'appareil",
+            "description": "Exclusif avec l'ID, exemple: A1."
+          },
+          "device_id": {
+            "name": "ID de l'appareil",
+            "description": "Exclusif avec l'adresse, exemple: 1."
+          },
+          "automatic_add": {
+            "name": "Créer une entité",
+            "description": "Créer l'entité de type switch associée."
+          }
+        }
+      }
     }
   }
