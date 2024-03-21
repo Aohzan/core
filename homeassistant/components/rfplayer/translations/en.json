@@ -3,6 +3,7 @@
         "abort": {
             "already_configured": "Device is already configured",
             "already_in_progress": "Configuration flow is already in progress",
+            "no_devices_found": "No USB device found.",
             "unknown": "Unexpected error"
         },
         "error": {
@@ -15,8 +16,7 @@
                     "device": "RFPlayer USB device",
                     "reconnect_interval": "Reconnect interval"
                 },
-                "description": "Configure RFPlayer integration",
-                "title": "GCE RFPlayer"
+                "description": "Configure RFPlayer integration"
             }
         }
     },
@@ -31,31 +31,31 @@
         }
     },
     "services": {
-      "send_command": {
-        "name": "Send command",
-        "description": "Send device command through RFPlayer and facultativly add it as an entity.",
-        "fields": {
-          "command": {
-            "name": "Command",
-            "description": "The command to be sent."
-          },
-          "protocol": {
-            "name": "Protocol",
-            "description": "RFPlayer compatible protocol."
-          },
-          "device_address": {
-            "name": "Device address",
-            "description": "Exclusive with device ID, eg A1."
-          },
-          "device_id": {
-            "name": "Device ID",
-            "description": "Exclusive with device address, eg 1."
-          },
-          "automatic_add": {
-            "name": "Create entity",
-            "description": "Create associated switch entity."
-          }
+        "send_command": {
+            "description": "Send device command through RFPlayer and facultativly add it as an entity.",
+            "fields": {
+                "automatic_add": {
+                    "description": "Create associated switch entity.",
+                    "name": "Create entity"
+                },
+                "command": {
+                    "description": "The command to be sent.",
+                    "name": "Command"
+                },
+                "device_address": {
+                    "description": "Exclusive with device ID, eg A1.",
+                    "name": "Device address"
+                },
+                "device_id": {
+                    "description": "Exclusive with device address, eg 1.",
+                    "name": "Device ID"
+                },
+                "protocol": {
+                    "description": "RFPlayer compatible protocol.",
+                    "name": "Protocol"
+                }
+            },
+            "name": "Send command"
         }
-      }
     }
 }

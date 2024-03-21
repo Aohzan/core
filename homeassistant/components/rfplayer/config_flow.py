@@ -15,6 +15,7 @@ from homeassistant.config_entries import (
 )
 from homeassistant.const import CONF_DEVICE, CONF_DEVICES
 from homeassistant.core import callback
+from homeassistant.data_entry_flow import AbortFlow
 
 from .const import (
     CONF_AUTOMATIC_ADD,
@@ -55,6 +56,9 @@ class RfplayerConfigFlow(ConfigFlow, domain=DOMAIN):
                 f"{port}, s/n: {port.serial_number or 'n/a'}"
                 + (f" - {port.manufacturer}" if port.manufacturer else "")
             )
+
+        if not list_of_ports:
+            raise AbortFlow("no_devices_found")
 
         data = {
             vol.Required(CONF_DEVICE): vol.In(list_of_ports),
