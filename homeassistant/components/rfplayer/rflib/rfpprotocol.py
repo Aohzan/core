@@ -29,12 +29,11 @@ class ProtocolBase(asyncio.Protocol):
 
     def __init__(
         self,
-        # loop: Optional[asyncio.AbstractEventLoop] = None,
         disconnect_callback: Optional[Callable[[Optional[Exception]], None]] = None,
         **kwargs: Any,
     ) -> None:
         """Initialize class."""
-        self.transport: asyncio.WriteTransport
+        self.transport: asyncio.WriteTransport | None = None
         self.packet = ""
         self.buffer = ""
         self.packet_callback: Callable[[PacketType], None] | None = None
@@ -79,6 +78,7 @@ class ProtocolBase(asyncio.Protocol):
         """Encode and put packet string onto write buffer."""
         data = bytes(packet + "\n\r", "utf-8")
         log.debug("writing data: %s", repr(data))
+        assert self.transport is not None
         self.transport.write(data)
 
     def connection_lost(self, exc: Optional[Exception]) -> None:
