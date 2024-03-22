@@ -77,17 +77,28 @@ def identify_event_type(event):
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Set up GCE RFPlayer from a config entry."""
-    hass.data.setdefault(DOMAIN, {})
 
     config = entry.data
     options = entry.options
+
+    hass.data.setdefault(
+        DOMAIN,
+        {
+            CONF_DEVICE: config[CONF_DEVICE],
+            DATA_ENTITY_LOOKUP: {
+                EVENT_KEY_COMMAND: defaultdict(list),
+                EVENT_KEY_SENSOR: defaultdict(list),
+            },
+            DATA_DEVICE_REGISTER: {},
+        },
+    )
 
     async def async_send_command(call):
         """Send Rfplayer command."""
         _LOGGER.debug("Rfplayer send command for %s", str(call.data))
         if not await hass.data[DOMAIN][RFPLAYER_PROTOCOL].send_command_ack(
-            call.data[CONF_PROTOCOL],
-            call.data[CONF_COMMAND],
+            protocol=call.data[CONF_PROTOCOL],
+            command=call.data[CONF_COMMAND],
             device_address=call.data.get(CONF_DEVICE_ADDRESS),
             device_id=call.data.get(CONF_DEVICE_ID),
         ):
@@ -181,7 +192,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         )
 
         try:
-            with timeout(CONNECTION_TIMEOUT):
+            async with timeout(CONNECTION_TIMEOUT):
                 transport, protocol = await connection
 
         except (TimeoutError, SerialException, OSError) as exc:
@@ -199,15 +210,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         # mark entities as available
         async_dispatcher_send(hass, SIGNAL_AVAILABILITY, True)
 
-        hass.data[DOMAIN] = {
-            RFPLAYER_PROTOCOL: protocol,
-            CONF_DEVICE: config[CONF_DEVICE],
-            DATA_ENTITY_LOOKUP: {
-                EVENT_KEY_COMMAND: defaultdict(list),
-                EVENT_KEY_SENSOR: defaultdict(list),
-            },
-            DATA_DEVICE_REGISTER: {},
-        }
+        hass.data[DOMAIN][RFPLAYER_PROTOCOL] = protocol
 
         if options.get(CONF_AUTOMATIC_ADD, config[CONF_AUTOMATIC_ADD]) is True:
             for device_type in "sensor", "command":
@@ -249,8 +252,8 @@ class RfplayerDevice(RestoreEntity):
         # Rflink specific attributes for every component type
         self._initial_event = initial_event
         self._protocol = protocol
-        self._device_id = device_id
-        self._device_address = device_address
+        self._device_id = str(device_id)
+        self._device_address = str(device_address)
         self._event = None
         self._attr_assumed_state = True
         self._attr_unique_id = "_".join(
@@ -307,7 +310,7 @@ class RfplayerDevice(RestoreEntity):
                     DOMAIN,
                     self.hass.data[DOMAIN][
                         CONF_DEVICE
-                    ],  # + "_" + self._attr_unique_id,
+                    ],  # TODO + "_" + self._attr_unique_id,
                 )
             },
             manufacturer="GCE",

@@ -30,7 +30,7 @@ class RfplayerJammingNumber(RfplayerDevice, RestoreNumber):
     def __init__(self) -> None:
         """Init the number rfplayer entity."""
         self._state: int | None = None
-        super().__init__("JAMMING")
+        super().__init__(protocol="JAMMING", device_id=0)
 
     async def async_added_to_hass(self) -> None:
         """Restore RFPlayer device state."""
@@ -47,10 +47,10 @@ class RfplayerJammingNumber(RfplayerDevice, RestoreNumber):
 
     @callback
     def _handle_event(self, event):
-        self._state = int(event["command"])
+        self._state = int(event["value"])
 
     @property
-    def value(self):
+    def native_value(self) -> float | None:
         """Return the current setting."""
         return self._state
 
@@ -59,3 +59,4 @@ class RfplayerJammingNumber(RfplayerDevice, RestoreNumber):
         rfplayer = self.hass.data[DOMAIN][RFPLAYER_PROTOCOL]
         await rfplayer.send_command_ack(command=int(value), protocol=self._protocol)
         self._state = int(value)
+        self.async_write_ha_state()
