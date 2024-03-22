@@ -45,11 +45,11 @@
         },
         "device_address": {
           "name": "Device address",
-          "description": "Exclusive with device ID."
+          "description": "Exclusive with device ID (eg 1)."
         },
         "device_id": {
           "name": "Device ID",
-          "description": "Exclusive with device address."
+          "description": "Exclusive with device address (eg A1)."
         },
         "automatic_add": {
           "name": "Create entity",
