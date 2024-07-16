@@ -337,7 +337,6 @@ class EdSensorEntity(CoordinatorEntity, RestoreSensor):
 
         if last_state:
             self._last_state = float(last_state.state)
-            self._attr_native_value = float(last_state.state)
 
 
 class TeleinfoInputEdDevice(EdSensorEntity):
