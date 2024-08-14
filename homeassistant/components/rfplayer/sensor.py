@@ -1,11 +1,14 @@
 """Support for Rfplayer sensors."""
+
 import logging
 from typing import Any
 
+from homeassistant.components.sensor import RestoreSensor
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import CONF_DEVICES
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
+from homeassistant.helpers.typing import StateType
 
 from . import RfplayerDevice
 from .const import (
@@ -17,19 +20,8 @@ from .const import (
     EVENT_KEY_SENSOR,
     EVENT_KEY_UNIT,
 )
-from .rflib.rfpparser import PACKET_FIELDS, UNITS
 
 _LOGGER = logging.getLogger(__name__)
-
-
-def lookup_unit_for_sensor_type(sensor_type):
-    """Get unit for sensor type.
-
-    Async friendly.
-    """
-    field_abbrev = {v: k for k, v in PACKET_FIELDS.items()}
-
-    return UNITS.get(field_abbrev.get(sensor_type))
 
 
 async def async_setup_entry(
@@ -62,11 +54,12 @@ async def async_setup_entry(
         hass.data[DOMAIN][DATA_DEVICE_REGISTER][EVENT_KEY_SENSOR] = add_new_device
 
 
-class RfplayerSensor(RfplayerDevice):
+class RfplayerSensor(RfplayerDevice, RestoreSensor):
     """Representation of a Rfplayer sensor."""
 
-    _attr_native_value: float | None = None
+    _attr_native_value: StateType | None = None
 
+    # pylint: disable-next=too-many-arguments
     def __init__(
         self,
         protocol: str,
@@ -77,7 +70,7 @@ class RfplayerSensor(RfplayerDevice):
         unit_of_measurement: str | None = None,
     ) -> None:
         """Handle sensor specific args and super init."""
-        self._attr_unit_of_measurement = unit_of_measurement
+        self._attr_native_unit_of_measurement = unit_of_measurement
         super().__init__(
             protocol=protocol,
             device_id=device_id,
@@ -96,6 +89,6 @@ class RfplayerSensor(RfplayerDevice):
                 self._initial_event[EVENT_KEY_ID]
             ] = self.entity_id
 
-    def _handle_event(self, event):
+    def _handle_event(self, event: dict[str, Any]) -> None:
         """Domain specific event handler."""
-        self._attr_native_value = float(event["value"])
+        self._attr_native_value = event["value"]

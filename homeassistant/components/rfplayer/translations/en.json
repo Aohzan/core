@@ -9,15 +9,14 @@
         },
         "error": {
             "cannot_connect": "Failed to connect",
-            "device_missing": "A device must be specified from list or manually.",
-            "no_devices_found": "No USB device found."
+            "device_missing": "A device must be specified from list or manually."
         },
         "step": {
             "user": {
                 "data": {
+                    "automatic_add": "Add device automatically when signal received",
                     "device": "USB devices found",
                     "manual_device": "USB manual path",
-                    "automatic_add": "Add device automatically when signal received",
                     "reconnect_interval": "Reconnect interval"
                 },
                 "description": "Configure RFPlayer integration"

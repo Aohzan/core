@@ -18,9 +18,9 @@
     "--security-opt",
     "label=disable",
     "--userns=keep-id:uid=1000,gid=1000",
-    "--privileged",
-    "-v",
-    "/dev/ttyUSB0:/dev/ttyUSB0" // on host: sudo chmod 666 /dev/ttyUSB0
+    "--privileged"
+    // "-v",
+    // "/dev/ttyUSB0:/dev/ttyUSB0" // on host: sudo chmod 666 /dev/ttyUSB0
   ],
   "containerUser": "vscode",
   "updateRemoteUserUID": true,
