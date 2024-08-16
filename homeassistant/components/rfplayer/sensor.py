@@ -8,6 +8,7 @@ from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import CONF_DEVICES
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
+from homeassistant.helpers.typing import StateType
 
 from . import RfplayerDevice
 from .const import (
@@ -68,7 +69,7 @@ class RfplayerSensor(RfplayerDevice, RestoreSensor):
     ) -> None:
         """Handle sensor specific args and super init."""
         self._attr_native_unit_of_measurement = unit_of_measurement
-        self._event_value: float | str | None = None
+        self._event_value: StateType = None
         super().__init__(
             protocol=protocol,
             device_id=device_id,
@@ -92,6 +93,6 @@ class RfplayerSensor(RfplayerDevice, RestoreSensor):
         self._event_value = event["value"]
 
     @property
-    def native_value(self) -> float | str | None:
+    def native_value(self) -> StateType:
         """Return the value of the event."""
         return self._event_value
