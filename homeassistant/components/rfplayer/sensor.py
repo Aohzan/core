@@ -8,7 +8,6 @@ from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import CONF_DEVICES
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
-from homeassistant.helpers.typing import StateType
 
 from . import RfplayerDevice
 from .const import (
@@ -57,8 +56,6 @@ async def async_setup_entry(
 class RfplayerSensor(RfplayerDevice, RestoreSensor):
     """Representation of a Rfplayer sensor."""
 
-    _attr_native_value: StateType | None = None
-
     # pylint: disable-next=too-many-arguments
     def __init__(
         self,
@@ -71,6 +68,7 @@ class RfplayerSensor(RfplayerDevice, RestoreSensor):
     ) -> None:
         """Handle sensor specific args and super init."""
         self._attr_native_unit_of_measurement = unit_of_measurement
+        self._event_value: float | str | None = None
         super().__init__(
             protocol=protocol,
             device_id=device_id,
@@ -91,4 +89,9 @@ class RfplayerSensor(RfplayerDevice, RestoreSensor):
 
     def _handle_event(self, event: dict[str, Any]) -> None:
         """Domain specific event handler."""
-        self._attr_native_value = event["value"]
+        self._event_value = event["value"]
+
+    @property
+    def native_value(self) -> float | str | None:
+        """Return the value of the event."""
+        return self._event_value
