@@ -1,4 +1,5 @@
 """Support for IPX800 V4 sensors."""
+
 import logging
 
 from pypx800 import IPX800
@@ -13,7 +14,6 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 
-from . import IpxEntity
 from .const import (
     CONF_DEVICES,
     CONF_TYPE,
@@ -26,6 +26,7 @@ from .const import (
     TYPE_VIRTUALANALOGIN,
     TYPE_XTHL,
 )
+from .entity import IpxEntity
 
 _LOGGER = logging.getLogger(__name__)
 PARALLEL_UPDATES = GLOBAL_PARALLEL_UPDATES

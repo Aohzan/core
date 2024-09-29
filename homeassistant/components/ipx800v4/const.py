@@ -1,4 +1,5 @@
 """Constants for the ipx800v4 integration."""
+
 DOMAIN = "ipx800v4"
 
 CONTROLLER = "controller"
@@ -37,16 +38,6 @@ TYPE_X4VR_BSO = "x4vr_bso"
 TYPE_XTHL = "xthl"
 TYPE_X4FP = "x4fp"
 TYPE_COUNTER = "counter"
-
-CONF_COMPONENT_ALLOWED = [
-    "light",
-    "switch",
-    "sensor",
-    "binary_sensor",
-    "cover",
-    "climate",
-    "number",
-]
 
 CONF_TYPE_ALLOWED = [
     TYPE_RELAY,
