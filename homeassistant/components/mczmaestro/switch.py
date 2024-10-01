@@ -1,4 +1,5 @@
 """Support for the MCZ switches."""
+
 import logging
 from typing import Any
 
@@ -6,9 +7,11 @@ from homeassistant.components.switch import SwitchEntity
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
+from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 
-from . import MczEntity
 from .const import CONTROLLER, COORDINATOR, DOMAIN
+from .entity import MczEntity
+from .maestro import MaestroController
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -37,10 +40,17 @@ async def async_setup_entry(
 class MczSwitchEntity(MczEntity, SwitchEntity):
     """Representation of a MCZ switch."""
 
-    def __init__(self, controller, coordinator, name, command_name, command_id):
+    def __init__(
+        self,
+        controller: MaestroController,
+        coordinator: DataUpdateCoordinator,
+        name: str,
+        command_name: str,
+        command_id: int,
+    ) -> None:
         """Initialize the sensor."""
         super().__init__(controller, coordinator, name, command_name)
-        self._command_id = command_id
+        self._command_id: int = command_id
 
     @property
     def is_on(self) -> bool:
@@ -49,10 +59,10 @@ class MczSwitchEntity(MczEntity, SwitchEntity):
 
     async def async_turn_on(self, **kwargs: Any) -> None:
         """Turn on the switch."""
-        self.controller.send(f"C|WriteParametri|{self._command_id}|1")
+        self.controller.send(f"C|WriteParametri|{self._command_id!s}|1")
         await self.coordinator.async_request_refresh()
 
     async def async_turn_off(self, **kwargs: Any) -> None:
         """Turn off the switch."""
-        self.controller.send(f"C|WriteParametri|{self._command_id}|0")
+        self.controller.send(f"C|WriteParametri|{self._command_id!s}|0")
         await self.coordinator.async_request_refresh()

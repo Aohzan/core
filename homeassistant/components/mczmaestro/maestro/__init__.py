@@ -1,4 +1,5 @@
 """MCZ Maestro."""
+
 import websocket
 
 
@@ -41,7 +42,7 @@ class MaestroController:
 class MaestroStoveState:
     """Maestro Stove State."""
 
-    def __init__(self, stateid, description, onoroff):
+    def __init__(self, stateid, description, onoroff) -> None:
         """Init a new state."""
         self.stateid = stateid  # Position in recuperoinfo-frame
         self.description = description  # Maestro command ID to be sent via websocket
@@ -51,7 +52,7 @@ class MaestroStoveState:
 class MaestroInformation:
     """Maestro Information. Consists of a readable name., a websocket ID and a command type."""
 
-    def __init__(self, frameid, name, messagetype):
+    def __init__(self, frameid, name, messagetype) -> None:
         """Init a new information."""
         self.frameid = frameid  # Position in recuperoinfo-frame
         self.name = name  # Maestro command ID to be sent via websocket

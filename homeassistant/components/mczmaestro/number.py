@@ -1,15 +1,17 @@
 """Support for MCZ numbers."""
+
 import logging
 
 from homeassistant.components.number import NumberDeviceClass, NumberEntity
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.const import TEMP_CELSIUS
+from homeassistant.const import EntityCategory, UnitOfTemperature
 from homeassistant.core import HomeAssistant
-from homeassistant.helpers.entity import EntityCategory
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
+from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 
-from . import MczEntity
 from .const import CONTROLLER, COORDINATOR, DOMAIN
+from .entity import MczEntity
+from .maestro import MaestroController
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -45,15 +47,22 @@ class MczNumberEntity(MczEntity, NumberEntity):
     _attr_native_max_value = 30
     _attr_native_min_value = 8
     _attr_native_step = 1
-    _attr_native_unit_of_measurement = TEMP_CELSIUS
+    _attr_native_unit_of_measurement = UnitOfTemperature.CELSIUS
     _attr_device_class = NumberDeviceClass.TEMPERATURE
     _attr_entity_category = EntityCategory.CONFIG
 
-    def __init__(self, controller, coordinator, name, command_name, command_id):
+    def __init__(
+        self,
+        controller: MaestroController,
+        coordinator: DataUpdateCoordinator,
+        name: str,
+        command_name: str,
+        command_id: int,
+    ) -> None:
         """Initialize the sensor."""
         super().__init__(controller, coordinator, name, command_name)
-        self._command_id = command_id
-        self._value = 0
+        self._command_id: int = command_id
+        self._value: float = 0
 
     @property
     def native_value(self) -> float:
@@ -62,7 +71,7 @@ class MczNumberEntity(MczEntity, NumberEntity):
 
     async def async_set_native_value(self, value: float) -> None:
         """Update the current value."""
-        self.controller.send(f"C|WriteParametri|{self._command_id}|{value}")
+        self.controller.send(f"C|WriteParametri|{self._command_id!s}|{value!s}")
         # set value in local if it's not return by the strove
         self._value = value
         await self.coordinator.async_request_refresh()

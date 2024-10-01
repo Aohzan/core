@@ -1,4 +1,5 @@
 """Support for the MCZ climate."""
+
 import logging
 from typing import Any
 
@@ -9,12 +10,12 @@ from homeassistant.components.climate import (
     HVACMode,
 )
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.const import ATTR_TEMPERATURE, TEMP_CELSIUS
+from homeassistant.const import ATTR_TEMPERATURE, UnitOfTemperature
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
-from . import MczEntity
 from .const import CONTROLLER, COORDINATOR, DOMAIN
+from .entity import MczEntity
 from .maestro import get_maestro_power_state
 
 _LOGGER = logging.getLogger(__name__)
@@ -42,7 +43,7 @@ async def async_setup_entry(
 class MczClimateEntity(MczEntity, ClimateEntity):
     """Representation of a MCZ climate."""
 
-    _attr_temperature_unit = TEMP_CELSIUS
+    _attr_temperature_unit = UnitOfTemperature.CELSIUS
     _attr_hvac_modes = [HVACMode.HEAT, HVACMode.AUTO, HVACMode.OFF]
     _attr_supported_features = ClimateEntityFeature.TARGET_TEMPERATURE
     _attr_target_temperature_step = 0.5
@@ -60,7 +61,7 @@ class MczClimateEntity(MczEntity, ClimateEntity):
     @property
     def hvac_action(self) -> HVACAction:
         """Return the current running hvac operation if supported."""
-        if not get_maestro_power_state(self.coordinator.data["Stove_State"]):
+        if not get_maestro_power_state(int(self.coordinator.data["Stove_State"])):
             return HVACAction.OFF
         if self.coordinator.data["Active_Mode"] == 1:
             return HVACAction.HEATING
@@ -69,7 +70,7 @@ class MczClimateEntity(MczEntity, ClimateEntity):
     @property
     def hvac_mode(self) -> HVACMode:
         """Return hvac operation ie. heat, cool mode."""
-        if get_maestro_power_state(self.coordinator.data["Stove_State"]) == 0:
+        if get_maestro_power_state(int(self.coordinator.data["Stove_State"])) == 0:
             return HVACMode.OFF
         if self.coordinator.data["Control_Mode"] == 1:
             return HVACMode.AUTO

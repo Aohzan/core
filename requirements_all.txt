@@ -2958,11 +2958,11 @@ weatherflow4py==1.0.6
 # homeassistant.components.webmin
 webmin-xmlrpc==0.0.2
 
-# homeassistant.components.weheat
-weheat==2024.09.23
-
 # homeassistant.components.mczmaestro
 websocket-client==0.57.0
+
+# homeassistant.components.weheat
+weheat==2024.09.23
 
 # homeassistant.components.whirlpool
 whirlpool-sixth-sense==0.18.8
