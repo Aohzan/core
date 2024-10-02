@@ -1852,7 +1852,7 @@ pydroid-ipcam==2.0.0
 pyebox==1.1.4
 
 # homeassistant.components.ecodevices
-pyecodevices==1.6.1
+pyecodevices==1.7.0
 
 # homeassistant.components.ecoforest
 pyecoforest==0.4.0
@@ -2997,7 +2997,6 @@ xknx==3.2.0
 # homeassistant.components.knx
 xknxproject==3.8.0
 
-# homeassistant.components.bluesound
 # homeassistant.components.ecodevices
 # homeassistant.components.fritz
 # homeassistant.components.rest
