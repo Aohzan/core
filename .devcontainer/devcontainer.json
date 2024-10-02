@@ -15,8 +15,10 @@
   "runArgs": [
     "-e",
     "GIT_EDITOR=code --wait",
+    "--userns=keep-id:uid=1000,gid=1000"
   ],
-  "remoteUser": "root",
+  "containerUser": "vscode",
+  "updateRemoteUserUID": true,
   "customizations": {
     "vscode": {
       "extensions": [
