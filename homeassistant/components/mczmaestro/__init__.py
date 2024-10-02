@@ -50,7 +50,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
     undo_listener = entry.add_update_listener(_async_update_listener)
 
-    hass.data[DOMAIN][entry.entry_id] = {
+    hass.data.setdefault(DOMAIN, {})[entry.entry_id] = {
         CONTROLLER: controller,
         COORDINATOR: coordinator,
         CONF_HOST: controller.host,
