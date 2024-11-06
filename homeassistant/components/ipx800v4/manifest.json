@@ -6,5 +6,5 @@
   "dependencies": ["http"],
   "documentation": "https://www.home-assistant.io/integrations/ipx800v4",
   "iot_class": "local_polling",
-  "requirements": ["pypx800==2.5.0"]
+  "requirements": ["pypx800==2.5.1"]
 }
