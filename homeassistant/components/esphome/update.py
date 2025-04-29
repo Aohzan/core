@@ -18,15 +18,15 @@ from homeassistant.components.update import (
     UpdateEntity,
     UpdateEntityFeature,
 )
-from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import CALLBACK_TYPE, HomeAssistant, callback
 from homeassistant.exceptions import HomeAssistantError
 from homeassistant.helpers import device_registry as dr
 from homeassistant.helpers.device_registry import DeviceInfo
-from homeassistant.helpers.entity_platform import AddEntitiesCallback
+from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 from homeassistant.util.enum import try_parse_enum
 
+from .const import DOMAIN
 from .coordinator import ESPHomeDashboardCoordinator
 from .dashboard import async_get_dashboard
 from .domain_data import DomainData
@@ -36,7 +36,9 @@ from .entity import (
     esphome_state_property,
     platform_async_setup_entry,
 )
-from .entry_data import RuntimeEntryData
+from .entry_data import ESPHomeConfigEntry, RuntimeEntryData
+
+PARALLEL_UPDATES = 0
 
 KEY_UPDATE_LOCK = "esphome_update_lock"
 
@@ -45,8 +47,8 @@ NO_FEATURES = UpdateEntityFeature(0)
 
 async def async_setup_entry(
     hass: HomeAssistant,
-    entry: ConfigEntry,
-    async_add_entities: AddEntitiesCallback,
+    entry: ESPHomeConfigEntry,
+    async_add_entities: AddConfigEntryEntitiesCallback,
 ) -> None:
     """Set up ESPHome update based on a config entry."""
     await platform_async_setup_entry(
@@ -61,15 +63,20 @@ async def async_setup_entry(
     if (dashboard := async_get_dashboard(hass)) is None:
         return
     entry_data = DomainData.get(hass).get_entry_data(entry)
+    assert entry_data.device_info is not None
+    device_name = entry_data.device_info.name
     unsubs: list[CALLBACK_TYPE] = []
 
     @callback
     def _async_setup_update_entity() -> None:
         """Set up the update entity."""
-        nonlocal unsubs
         assert dashboard is not None
         # Keep listening until device is available
         if not entry_data.available or not dashboard.last_update_success:
+            return
+
+        # Do not add Dashboard Entity if this device is not known to the ESPHome dashboard.
+        if dashboard.data is None or dashboard.data.get(device_name) is None:
             return
 
         for unsub in unsubs:
@@ -78,14 +85,21 @@ async def async_setup_entry(
 
         async_add_entities([ESPHomeDashboardUpdateEntity(entry_data, dashboard)])
 
-    if entry_data.available and dashboard.last_update_success:
+    if (
+        entry_data.available
+        and dashboard.last_update_success
+        and dashboard.data is not None
+        and dashboard.data.get(device_name)
+    ):
         _async_setup_update_entity()
         return
 
-    unsubs = [
-        entry_data.async_subscribe_device_updated(_async_setup_update_entity),
-        dashboard.async_add_listener(_async_setup_update_entity),
-    ]
+    unsubs.extend(
+        [
+            entry_data.async_subscribe_device_updated(_async_setup_update_entity),
+            dashboard.async_add_listener(_async_setup_update_entity),
+        ]
+    )
 
 
 class ESPHomeDashboardUpdateEntity(
@@ -96,7 +110,6 @@ class ESPHomeDashboardUpdateEntity(
     _attr_has_entity_name = True
     _attr_device_class = UpdateDeviceClass.FIRMWARE
     _attr_title = "ESPHome"
-    _attr_name = "Firmware"
     _attr_release_url = "https://esphome.io/changelog/"
     _attr_entity_registry_enabled_default = False
 
@@ -133,10 +146,8 @@ class ESPHomeDashboardUpdateEntity(
             self._attr_supported_features = NO_FEATURES
         self._attr_installed_version = device_info.esphome_version
         device = coordinator.data.get(device_info.name)
-        if device is None:
-            self._attr_latest_version = None
-        else:
-            self._attr_latest_version = device["current_version"]
+        assert device is not None
+        self._attr_latest_version = device["current_version"]
 
     @callback
     def _handle_coordinator_update(self) -> None:
@@ -191,16 +202,23 @@ class ESPHomeDashboardUpdateEntity(
             api = coordinator.api
             device = coordinator.data.get(self._device_info.name)
             assert device is not None
+            configuration = device["configuration"]
             try:
-                if not await api.compile(device["configuration"]):
+                if not await api.compile(configuration):
                     raise HomeAssistantError(
-                        f"Error compiling {device['configuration']}; "
-                        "Try again in ESPHome dashboard for more information."
+                        translation_domain=DOMAIN,
+                        translation_key="error_compiling",
+                        translation_placeholders={
+                            "configuration": configuration,
+                        },
                     )
-                if not await api.upload(device["configuration"], "OTA"):
+                if not await api.upload(configuration, "OTA"):
                     raise HomeAssistantError(
-                        f"Error updating {device['configuration']} via OTA; "
-                        "Try again in ESPHome dashboard for more information."
+                        translation_domain=DOMAIN,
+                        translation_key="error_uploading",
+                        translation_placeholders={
+                            "configuration": configuration,
+                        },
                     )
             finally:
                 await self.coordinator.async_request_refresh()
@@ -224,7 +242,7 @@ class ESPHomeUpdateEntity(EsphomeEntity[UpdateInfo, UpdateState], UpdateEntity):
 
     @property
     @esphome_state_property
-    def installed_version(self) -> str | None:
+    def installed_version(self) -> str:
         """Return the installed version."""
         return self._state.current_version
 
@@ -242,19 +260,19 @@ class ESPHomeUpdateEntity(EsphomeEntity[UpdateInfo, UpdateState], UpdateEntity):
 
     @property
     @esphome_state_property
-    def release_summary(self) -> str | None:
+    def release_summary(self) -> str:
         """Return the release summary."""
         return self._state.release_summary
 
     @property
     @esphome_state_property
-    def release_url(self) -> str | None:
+    def release_url(self) -> str:
         """Return the release URL."""
         return self._state.release_url
 
     @property
     @esphome_state_property
-    def title(self) -> str | None:
+    def title(self) -> str:
         """Return the title of the update."""
         return self._state.title
 

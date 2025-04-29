@@ -30,6 +30,8 @@ from .entity import (
 )
 from .enum_mapper import EsphomeEnumMapper
 
+PARALLEL_UPDATES = 0
+
 ORDERED_NAMED_FAN_SPEEDS = [FanSpeed.LOW, FanSpeed.MEDIUM, FanSpeed.HIGH]
 
 
@@ -45,7 +47,6 @@ class EsphomeFan(EsphomeEntity[FanInfo, FanState], FanEntity):
     """A fan implementation for ESPHome."""
 
     _supports_speed_levels: bool = True
-    _enable_turn_on_off_backwards_compatibility = False
 
     async def async_set_percentage(self, percentage: int) -> None:
         """Set the speed percentage of the fan."""
@@ -105,7 +106,7 @@ class EsphomeFan(EsphomeEntity[FanInfo, FanState], FanEntity):
 
     @property
     @esphome_state_property
-    def is_on(self) -> bool | None:
+    def is_on(self) -> bool:
         """Return true if the entity is on."""
         return self._state.state
 
@@ -125,7 +126,7 @@ class EsphomeFan(EsphomeEntity[FanInfo, FanState], FanEntity):
 
     @property
     @esphome_state_property
-    def oscillating(self) -> bool | None:
+    def oscillating(self) -> bool:
         """Return the oscillation state."""
         return self._state.oscillating
 
@@ -137,7 +138,7 @@ class EsphomeFan(EsphomeEntity[FanInfo, FanState], FanEntity):
 
     @property
     @esphome_state_property
-    def preset_mode(self) -> str | None:
+    def preset_mode(self) -> str:
         """Return the current fan preset mode."""
         return self._state.preset_mode
 

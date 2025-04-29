@@ -13,11 +13,14 @@ from homeassistant.components.binary_sensor import (
     BinarySensorEntityDescription,
 )
 from homeassistant.core import HomeAssistant
-from homeassistant.helpers.entity_platform import AddEntitiesCallback
+from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
 from homeassistant.helpers.typing import StateType
 
 from . import RenaultConfigEntry
 from .entity import RenaultDataEntity, RenaultDataEntityDescription
+
+# Coordinator is used to centralize the data updates
+PARALLEL_UPDATES = 0
 
 
 @dataclass(frozen=True, kw_only=True)
@@ -28,13 +31,13 @@ class RenaultBinarySensorEntityDescription(
     """Class describing Renault binary sensor entities."""
 
     on_key: str
-    on_value: StateType | list[StateType]
+    on_value: StateType
 
 
 async def async_setup_entry(
     hass: HomeAssistant,
     config_entry: RenaultConfigEntry,
-    async_add_entities: AddEntitiesCallback,
+    async_add_entities: AddConfigEntryEntitiesCallback,
 ) -> None:
     """Set up the Renault entities from config entry."""
     entities: list[RenaultBinarySensor] = [
@@ -59,8 +62,6 @@ class RenaultBinarySensor(
         if (data := self._get_data_attr(self.entity_description.on_key)) is None:
             return None
 
-        if isinstance(self.entity_description.on_value, list):
-            return data in self.entity_description.on_value
         return data == self.entity_description.on_value
 
 
@@ -71,10 +72,7 @@ BINARY_SENSOR_TYPES: tuple[RenaultBinarySensorEntityDescription, ...] = tuple(
             coordinator="battery",
             device_class=BinarySensorDeviceClass.PLUG,
             on_key="plugStatus",
-            on_value=[
-                PlugState.PLUGGED.value,
-                PlugState.PLUGGED_WAITING_FOR_CHARGE.value,
-            ],
+            on_value=PlugState.PLUGGED.value,
         ),
         RenaultBinarySensorEntityDescription(
             key="charging",

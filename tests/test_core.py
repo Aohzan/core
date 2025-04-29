@@ -20,6 +20,7 @@ import pytest
 from pytest_unordered import unordered
 import voluptuous as vol
 
+from homeassistant import core as ha
 from homeassistant.const import (
     ATTR_FRIENDLY_NAME,
     EVENT_CALL_SERVICE,
@@ -34,8 +35,8 @@ from homeassistant.const import (
     EVENT_STATE_CHANGED,
     EVENT_STATE_REPORTED,
     MATCH_ALL,
+    STATE_UNKNOWN,
 )
-import homeassistant.core as ha
 from homeassistant.core import (
     CoreState,
     HassJob,
@@ -59,8 +60,8 @@ from homeassistant.exceptions import (
 )
 from homeassistant.helpers.json import json_dumps
 from homeassistant.setup import async_setup_component
+from homeassistant.util import dt as dt_util
 from homeassistant.util.async_ import create_eager_task
-import homeassistant.util.dt as dt_util
 from homeassistant.util.read_only_dict import ReadOnlyDict
 
 from .common import (
@@ -68,7 +69,6 @@ from .common import (
     async_mock_service,
     help_test_all,
     import_and_test_deprecated_alias,
-    import_and_test_deprecated_constant_enum,
 )
 
 PST = dt_util.get_time_zone("America/Los_Angeles")
@@ -1369,9 +1369,6 @@ def test_state_init() -> None:
     with pytest.raises(InvalidEntityFormatError):
         ha.State("invalid_entity_format", "test_state")
 
-    with pytest.raises(InvalidStateError):
-        ha.State("domain.long_state", "t" * 256)
-
 
 def test_state_domain() -> None:
     """Test domain."""
@@ -1439,6 +1436,38 @@ def test_state_repr() -> None:
         )
         == "<state happy.happy=on; brightness=144 @ 1984-12-08T12:00:00+00:00>"
     )
+
+
+async def test_statemachine_async_set_invalid_state(hass: HomeAssistant) -> None:
+    """Test setting an invalid state with the async_set method."""
+    with pytest.raises(
+        InvalidStateError,
+        match="Invalid state with length 256. State max length is 255 characters.",
+    ):
+        hass.states.async_set("light.bowl", "o" * 256, {})
+
+
+async def test_statemachine_async_set_internal_invalid_state(
+    hass: HomeAssistant, caplog: pytest.LogCaptureFixture
+) -> None:
+    """Test setting an invalid state with the async_set_internal method."""
+    long_state = "o" * 256
+    hass.states.async_set_internal(
+        "light.bowl",
+        long_state,
+        {},
+        force_update=False,
+        context=None,
+        state_info=None,
+        timestamp=time.time(),
+    )
+    assert hass.states.get("light.bowl").state == STATE_UNKNOWN
+    assert (
+        "homeassistant.core",
+        logging.ERROR,
+        f"State {long_state} for light.bowl is longer than 255, "
+        f"falling back to {STATE_UNKNOWN}",
+    ) in caplog.record_tuples
 
 
 async def test_statemachine_is_state(hass: HomeAssistant) -> None:
@@ -1563,10 +1592,10 @@ async def test_statemachine_avoids_updating_attributes(hass: HomeAssistant) -> N
 
 def test_service_call_repr() -> None:
     """Test ServiceCall repr."""
-    call = ha.ServiceCall("homeassistant", "start")
+    call = ha.ServiceCall(None, "homeassistant", "start")
     assert str(call) == f"<ServiceCall homeassistant.start (c:{call.context.id})>"
 
-    call2 = ha.ServiceCall("homeassistant", "start", {"fast": "yes"})
+    call2 = ha.ServiceCall(None, "homeassistant", "start", {"fast": "yes"})
     assert (
         str(call2)
         == f"<ServiceCall homeassistant.start (c:{call2.context.id}): fast=yes>"
@@ -2980,22 +3009,6 @@ def test_all() -> None:
     help_test_all(ha)
 
 
-@pytest.mark.parametrize(
-    ("enum"),
-    [
-        ha.ConfigSource.DISCOVERED,
-        ha.ConfigSource.YAML,
-        ha.ConfigSource.STORAGE,
-    ],
-)
-def test_deprecated_constants(
-    caplog: pytest.LogCaptureFixture,
-    enum: ha.ConfigSource,
-) -> None:
-    """Test deprecated constants."""
-    import_and_test_deprecated_constant_enum(caplog, ha, enum, "SOURCE_", "2025.1")
-
-
 def test_deprecated_config(caplog: pytest.LogCaptureFixture) -> None:
     """Test deprecated Config class."""
     import_and_test_deprecated_alias(caplog, ha, "Config", Config, "2025.11")
@@ -3040,10 +3053,9 @@ async def test_async_run_job_deprecated(
 
     hass.async_run_job(_test)
     assert (
-        "Detected code that calls `async_run_job`, which is deprecated "
-        "and will be removed in Home Assistant 2025.4; Please review "
+        "Detected code that calls `async_run_job`, which should be reviewed against "
         "https://developers.home-assistant.io/blog/2024/03/13/deprecate_add_run_job"
-        " for replacement options"
+        " for replacement options. This will stop working in Home Assistant 2025.4"
     ) in caplog.text
 
 
@@ -3057,10 +3069,9 @@ async def test_async_add_job_deprecated(
 
     hass.async_add_job(_test)
     assert (
-        "Detected code that calls `async_add_job`, which is deprecated "
-        "and will be removed in Home Assistant 2025.4; Please review "
+        "Detected code that calls `async_add_job`, which should be reviewed against "
         "https://developers.home-assistant.io/blog/2024/03/13/deprecate_add_run_job"
-        " for replacement options"
+        " for replacement options. This will stop working in Home Assistant 2025.4"
     ) in caplog.text
 
 
@@ -3074,10 +3085,9 @@ async def test_async_add_hass_job_deprecated(
 
     hass.async_add_hass_job(HassJob(_test))
     assert (
-        "Detected code that calls `async_add_hass_job`, which is deprecated "
-        "and will be removed in Home Assistant 2025.5; Please review "
+        "Detected code that calls `async_add_hass_job`, which should be reviewed against "
         "https://developers.home-assistant.io/blog/2024/04/07/deprecate_add_hass_job"
-        " for replacement options"
+        " for replacement options. This will stop working in Home Assistant 2025.5"
     ) in caplog.text
 
 
@@ -3245,8 +3255,8 @@ async def test_async_listen_with_run_immediately_deprecated(
     func = getattr(hass.bus, method)
     func(EVENT_HOMEASSISTANT_START, _test, run_immediately=run_immediately)
     assert (
-        f"Detected code that calls `{method}` with run_immediately, which is "
-        "deprecated and will be removed in Home Assistant 2025.5."
+        f"Detected code that calls `{method}` with run_immediately. "
+        "This will stop working in Home Assistant 2025.5"
     ) in caplog.text
 
 
@@ -3310,7 +3320,7 @@ async def test_thread_safety_message(hass: HomeAssistant) -> None:
             "which may cause Home Assistant to crash or data to corrupt. For more "
             "information, see "
             "https://developers.home-assistant.io/docs/asyncio_thread_safety/#test"
-            ". Please report this issue.",
+            ". Please report this issue",
         ),
     ):
         await hass.async_add_executor_job(hass.verify_event_loop_thread, "test")

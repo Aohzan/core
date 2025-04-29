@@ -2,14 +2,14 @@
 
 from __future__ import annotations
 
-from collections.abc import Callable, Coroutine
+from datetime import timedelta
 import logging
-from typing import Any, Concatenate
+from typing import Any
 
 from linkplay.bridge import LinkPlayBridge
 from linkplay.consts import EqualizerMode, LoopMode, PlayingMode, PlayingStatus
 from linkplay.controller import LinkPlayController, LinkPlayMultiroom
-from linkplay.exceptions import LinkPlayException, LinkPlayRequestException
+from linkplay.exceptions import LinkPlayRequestException
 import voluptuous as vol
 
 from homeassistant.components import media_source
@@ -28,16 +28,15 @@ from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import HomeAssistantError, ServiceValidationError
 from homeassistant.helpers import (
     config_validation as cv,
-    device_registry as dr,
     entity_platform,
     entity_registry as er,
 )
-from homeassistant.helpers.entity_platform import AddEntitiesCallback
+from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
 from homeassistant.util.dt import utcnow
 
 from . import LinkPlayConfigEntry, LinkPlayData
 from .const import CONTROLLER_KEY, DOMAIN
-from .utils import MANUFACTURER_GENERIC, get_info_from_project
+from .entity import LinkPlayBaseEntity, exception_wrap
 
 _LOGGER = logging.getLogger(__name__)
 STATE_MAP: dict[PlayingStatus, MediaPlayerState] = {
@@ -48,6 +47,7 @@ STATE_MAP: dict[PlayingStatus, MediaPlayerState] = {
 }
 
 SOURCE_MAP: dict[PlayingMode, str] = {
+    PlayingMode.NETWORK: "Wifi",
     PlayingMode.LINE_IN: "Line In",
     PlayingMode.BLUETOOTH: "Bluetooth",
     PlayingMode.OPTICAL: "Optical",
@@ -68,6 +68,8 @@ SOURCE_MAP: dict[PlayingMode, str] = {
     PlayingMode.FM: "FM Radio",
     PlayingMode.RCA: "RCA",
     PlayingMode.UDISK: "USB",
+    PlayingMode.SPOTIFY: "Spotify",
+    PlayingMode.TIDAL: "Tidal",
     PlayingMode.FOLLOWER: "Follower",
 }
 
@@ -85,15 +87,9 @@ REPEAT_MAP: dict[LoopMode, RepeatMode] = {
 
 REPEAT_MAP_INV: dict[RepeatMode, LoopMode] = {v: k for k, v in REPEAT_MAP.items()}
 
-EQUALIZER_MAP: dict[EqualizerMode, str] = {
-    EqualizerMode.NONE: "None",
-    EqualizerMode.CLASSIC: "Classic",
-    EqualizerMode.POP: "Pop",
-    EqualizerMode.JAZZ: "Jazz",
-    EqualizerMode.VOCAL: "Vocal",
+EQUALIZER_MAP_INV: dict[str, EqualizerMode] = {
+    mode.value: mode for mode in EqualizerMode
 }
-
-EQUALIZER_MAP_INV: dict[str, EqualizerMode] = {v: k for k, v in EQUALIZER_MAP.items()}
 
 DEFAULT_FEATURES: MediaPlayerEntityFeature = (
     MediaPlayerEntityFeature.PLAY
@@ -124,11 +120,15 @@ SERVICE_PLAY_PRESET_SCHEMA = cv.make_entity_service_schema(
     }
 )
 
+RETRY_POLL_MAXIMUM = 3
+SCAN_INTERVAL = timedelta(seconds=5)
+PARALLEL_UPDATES = 1
+
 
 async def async_setup_entry(
     hass: HomeAssistant,
     entry: LinkPlayConfigEntry,
-    async_add_entities: AddEntitiesCallback,
+    async_add_entities: AddConfigEntryEntitiesCallback,
 ) -> None:
     """Set up a media player from a config entry."""
 
@@ -142,67 +142,38 @@ async def async_setup_entry(
     async_add_entities([LinkPlayMediaPlayerEntity(entry.runtime_data.bridge)])
 
 
-def exception_wrap[_LinkPlayEntityT: LinkPlayMediaPlayerEntity, **_P, _R](
-    func: Callable[Concatenate[_LinkPlayEntityT, _P], Coroutine[Any, Any, _R]],
-) -> Callable[Concatenate[_LinkPlayEntityT, _P], Coroutine[Any, Any, _R]]:
-    """Define a wrapper to catch exceptions and raise HomeAssistant errors."""
-
-    async def _wrap(self: _LinkPlayEntityT, *args: _P.args, **kwargs: _P.kwargs) -> _R:
-        try:
-            return await func(self, *args, **kwargs)
-        except LinkPlayRequestException as err:
-            raise HomeAssistantError(
-                f"Exception occurred when communicating with API {func}: {err}"
-            ) from err
-
-    return _wrap
-
-
-class LinkPlayMediaPlayerEntity(MediaPlayerEntity):
+class LinkPlayMediaPlayerEntity(LinkPlayBaseEntity, MediaPlayerEntity):
     """Representation of a LinkPlay media player."""
 
-    _attr_sound_mode_list = list(EQUALIZER_MAP.values())
     _attr_device_class = MediaPlayerDeviceClass.RECEIVER
     _attr_media_content_type = MediaType.MUSIC
-    _attr_has_entity_name = True
     _attr_name = None
 
     def __init__(self, bridge: LinkPlayBridge) -> None:
         """Initialize the LinkPlay media player."""
 
-        self._bridge = bridge
+        super().__init__(bridge)
         self._attr_unique_id = bridge.device.uuid
+        self._retry_count = 0
 
         self._attr_source_list = [
             SOURCE_MAP[playing_mode] for playing_mode in bridge.device.playmode_support
         ]
-
-        manufacturer, model = get_info_from_project(bridge.device.properties["project"])
-        model_id = None
-        if model != MANUFACTURER_GENERIC:
-            model_id = bridge.device.properties["project"]
-
-        self._attr_device_info = dr.DeviceInfo(
-            configuration_url=bridge.endpoint,
-            connections={(dr.CONNECTION_NETWORK_MAC, bridge.device.properties["MAC"])},
-            hw_version=bridge.device.properties["hardware"],
-            identifiers={(DOMAIN, bridge.device.uuid)},
-            manufacturer=manufacturer,
-            model=model,
-            model_id=model_id,
-            name=bridge.device.name,
-            sw_version=bridge.device.properties["firmware"],
-        )
+        self._attr_sound_mode_list = [
+            mode.value for mode in bridge.player.available_equalizer_modes
+        ]
 
     @exception_wrap
     async def async_update(self) -> None:
         """Update the state of the media player."""
         try:
             await self._bridge.player.update_status()
+            self._retry_count = 0
             self._update_properties()
-        except LinkPlayException:
-            self._attr_available = False
-            raise
+        except LinkPlayRequestException:
+            self._retry_count += 1
+            if self._retry_count >= RETRY_POLL_MAXIMUM:
+                self._attr_available = False
 
     @exception_wrap
     async def async_select_source(self, source: str) -> None:
@@ -291,7 +262,15 @@ class LinkPlayMediaPlayerEntity(MediaPlayerEntity):
     @exception_wrap
     async def async_play_preset(self, preset_number: int) -> None:
         """Play preset number."""
-        await self._bridge.player.play_preset(preset_number)
+        try:
+            await self._bridge.player.play_preset(preset_number)
+        except ValueError as err:
+            raise HomeAssistantError(err) from err
+
+    @exception_wrap
+    async def async_media_seek(self, position: float) -> None:
+        """Seek to a position."""
+        await self._bridge.player.seek(round(position))
 
     @exception_wrap
     async def async_join_players(self, group_members: list[str]) -> None:
@@ -368,7 +347,7 @@ class LinkPlayMediaPlayerEntity(MediaPlayerEntity):
         self._attr_is_volume_muted = self._bridge.player.muted
         self._attr_repeat = REPEAT_MAP[self._bridge.player.loop_mode]
         self._attr_shuffle = self._bridge.player.loop_mode == LoopMode.RANDOM_PLAYBACK
-        self._attr_sound_mode = EQUALIZER_MAP[self._bridge.player.equalizer_mode]
+        self._attr_sound_mode = self._bridge.player.equalizer_mode.value
         self._attr_supported_features = DEFAULT_FEATURES
 
         if self._bridge.player.status == PlayingStatus.PLAYING:
@@ -378,9 +357,9 @@ class LinkPlayMediaPlayerEntity(MediaPlayerEntity):
                 )
 
             self._attr_source = SOURCE_MAP.get(self._bridge.player.play_mode, "other")
-            self._attr_media_position = self._bridge.player.current_position / 1000
+            self._attr_media_position = self._bridge.player.current_position_in_seconds
             self._attr_media_position_updated_at = utcnow()
-            self._attr_media_duration = self._bridge.player.total_length / 1000
+            self._attr_media_duration = self._bridge.player.total_length_in_seconds
             self._attr_media_artist = self._bridge.player.artist
             self._attr_media_title = self._bridge.player.title
             self._attr_media_album_name = self._bridge.player.album
